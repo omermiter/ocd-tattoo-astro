@@ -1,0 +1,120 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ink);
+  color-scheme: dark;
+  scroll-behavior: auto;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: var(--fs-1);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--paper);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+em {
+  font-style: italic;
+  color: var(--violet-bright);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  border-radius: var(--radius);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+/* Utility: mono metadata label — the "precision/register" typographic
+   signature that recurs across every section (serials, counters, tags). */
+.data {
+  font-family: var(--font-data);
+  font-size: var(--fs-00);
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--dust);
+}
+
+.data strong {
+  color: var(--paper);
+  font-weight: 500;
+}
+
+.eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--fs-00);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The literal "every square" motif — a faint, precise grid used sparingly as
+   a structural backdrop (hero, placeholder panels), never as general texture. */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: var(--grid-unit) var(--grid-unit);
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--violet);
+  color: var(--paper);
+}
+
+hr {
+  border: none;
+  border-block-start: var(--border-hairline);
+  margin: 0;
+}

@@ -1,84 +1,40 @@
 ---
-import type { Locale } from '../i18n';
-import { getDict } from '../i18n';
-import { pagePath, otherLocale } from '../lib/paths';
-
 interface Props {
-  locale: Locale;
-  active?: 'home' | 'work' | 'flash' | 'register' | 'studio' | 'request';
+  active?: 'pieces' | 'register' | 'contact';
 }
 
-const { locale, active } = Astro.props;
-const t = getDict(locale);
-const other = otherLocale(locale);
+const { active } = Astro.props;
 
-const links: { key: NonNullable<Props['active']>; label: string; path: string }[] = [
-  { key: 'home', label: t.nav.home, path: '' },
-  { key: 'work', label: t.nav.archive, path: 'work' },
-  { key: 'flash', label: t.nav.vault, path: 'flash' },
-  { key: 'register', label: t.nav.register, path: 'register' },
-  { key: 'studio', label: t.nav.studio, path: 'studio' },
-];
-
-const langTargetPath = active === 'home' || !active ? '' : (links.find((l) => l.key === active)?.path ?? '');
+const links = [
+  { key: 'pieces', label: 'Pieces', href: '/pieces/' },
+  { key: 'register', label: 'Register', href: '/register/' },
+  { key: 'contact', label: 'Contact', href: '/contact/' },
+] as const;
 ---
 
-<nav class="nav" data-locale={locale}>
-  <a class="brand mono" href={pagePath(locale, '')}>OCD·TATTOO</a>
+<nav class="nav">
+  <a class="brand data" href="/">OCD·TATTOO</a>
 
-  <button
-    class="menu-toggle"
-    type="button"
-    aria-expanded="false"
-    aria-controls="nav-panel"
-    aria-label={t.nav.menu}
-  >
-    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.25">
-      <line x1="0" y1="1" x2="20" y2="1"></line>
-      <line x1="0" y1="7" x2="20" y2="7"></line>
-      <line x1="0" y1="13" x2="20" y2="13"></line>
-    </svg>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu">
+    <span></span>
   </button>
 
   <div class="panel" id="nav-panel">
-    <ul class="links mono">
+    <ul class="links data">
       {
         links.map((l) => (
           <li>
-            <a href={pagePath(locale, l.path)} aria-current={active === l.key ? 'page' : undefined}>
+            <a href={l.href} aria-current={active === l.key ? 'page' : undefined}>
               {l.label}
             </a>
           </li>
         ))
       }
     </ul>
-    <div class="side">
-      <a
-        class="request mono"
-        href={pagePath(locale, 'request')}
-        aria-current={active === 'request' ? 'page' : undefined}
-      >
-        {t.nav.request}
-      </a>
-      <a class="lang mono" href={pagePath(other, langTargetPath)}>
-        {t.nav.langSwitch}
-      </a>
-    </div>
   </div>
 </nav>
 
 <script>
-  const nav = document.querySelector<HTMLElement>('.nav[data-locale]');
-  const langLink = nav?.querySelector<HTMLAnchorElement>('.lang');
-  langLink?.addEventListener('click', () => {
-    const target = nav?.dataset.locale === 'he' ? 'en' : 'he';
-    try {
-      localStorage.setItem('ocd-locale', target);
-    } catch {
-      /* storage unavailable — non-essential preference, ignore */
-    }
-  });
-
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const panel = document.querySelector<HTMLElement>('#nav-panel');
   if (toggle && panel) {
@@ -104,24 +60,46 @@ const langTargetPath = active === 'home' || !active ? '' : (links.find((l) => l.
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--sp-3);
+    justify-content: space-between;
     padding: var(--sp-2) var(--sp-3);
     border-block-end: var(--border-hairline);
   }
 
   .brand {
-    font-size: var(--fs-00);
-    color: var(--bone);
     text-decoration: none;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
+    color: var(--paper);
   }
 
   .menu-toggle {
     display: none;
-    margin-inline-start: auto;
-    padding: var(--sp-1);
-    color: var(--pewter);
+    width: 20px;
+    height: 14px;
+    position: relative;
     cursor: pointer;
+  }
+
+  .menu-toggle span,
+  .menu-toggle span::before,
+  .menu-toggle span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--paper);
+  }
+
+  .menu-toggle span {
+    top: 6px;
+  }
+
+  .menu-toggle span::before {
+    top: -6px;
+  }
+
+  .menu-toggle span::after {
+    top: 6px;
   }
 
   .panel {
@@ -130,43 +108,25 @@ const langTargetPath = active === 'home' || !active ? '' : (links.find((l) => l.
 
   .links {
     display: flex;
-    gap: var(--sp-3);
+    gap: var(--sp-4);
     list-style: none;
     margin: 0;
     padding: 0;
-    font-size: var(--fs-000);
-    flex: 1;
+    text-transform: uppercase;
   }
 
-  .links a,
-  .side a {
+  .links a {
     text-decoration: none;
-    color: var(--ash);
-    transition: color var(--dur-base) var(--ease-house);
+    color: var(--dust);
+    transition: color var(--dur-base) var(--ease-precise);
   }
 
-  .links a:hover,
-  .side a:hover {
-    color: var(--pewter);
+  .links a:hover {
+    color: var(--paper);
   }
 
   .links a[aria-current='page'] {
-    color: var(--bone);
-  }
-
-  .side {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-    font-size: var(--fs-000);
-  }
-
-  .request {
-    color: var(--transfer);
-  }
-
-  .request:hover {
-    color: var(--transfer);
+    color: var(--violet-bright);
   }
 
   @media (max-width: 640px) {
@@ -179,13 +139,13 @@ const langTargetPath = active === 'home' || !active ? '' : (links.find((l) => l.
       position: absolute;
       inset-inline: 0;
       top: 100%;
-      background: var(--carbon);
+      background: var(--ink);
       border-block-end: var(--border-hairline);
       opacity: 0;
       visibility: hidden;
       transition:
-        opacity var(--dur-base) var(--ease-house),
-        visibility var(--dur-base) var(--ease-house);
+        opacity var(--dur-base) var(--ease-precise),
+        visibility var(--dur-base) var(--ease-precise);
       z-index: 20;
     }
 
@@ -203,11 +163,6 @@ const langTargetPath = active === 'home' || !active ? '' : (links.find((l) => l.
       display: block;
       padding: var(--sp-2) var(--sp-3);
       border-block-end: var(--border-hairline);
-    }
-
-    .side {
-      padding: var(--sp-2) var(--sp-3);
-      justify-content: space-between;
     }
   }
 </style>

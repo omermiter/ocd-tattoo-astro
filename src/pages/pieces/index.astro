@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PieceCard from '../../components/PieceCard.astro';
+
+const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
+---
+
+<BaseLayout
+  title="Pieces — OCD Tattoo"
+  description="Color pixel art tattoos, precision-built one at a time. Every piece documented: placement, sessions, hours, and the artist's own notes on execution."
+>
+  <Nav active="pieces" />
+
+  <main class="page">
+    <header class="page-head">
+      <p class="eyebrow">Pieces</p>
+      <h1>A growing collection, built one at a time.</h1>
+      <p class="intro">
+        Not a portfolio in the volume sense — a record. Each piece below is documented in full:
+        placement, time, and what the execution actually required.
+      </p>
+    </header>
+
+    <div class="piece-list">
+      {pieces.map((p) => <PieceCard entry={p} />)}
+    </div>
+  </main>
+
+  <Footer />
+
+  <style>
+    .page {
+      max-width: var(--content-max);
+      margin-inline: auto;
+      padding: var(--sp-6) var(--sp-3);
+    }
+
+    .page-head {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      max-width: 40rem;
+      margin-block-end: var(--sp-6);
+    }
+
+    .page-head .eyebrow {
+      text-transform: uppercase;
+    }
+
+    .page-head h1 {
+      font-size: var(--fs-display-md);
+    }
+
+    .intro {
+      color: var(--dust);
+      font-size: var(--fs-2);
+      line-height: 1.5;
+    }
+
+    .piece-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-7);
+    }
+  </style>
+</BaseLayout>

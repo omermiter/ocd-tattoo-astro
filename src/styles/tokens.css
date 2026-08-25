@@ -1,167 +1,67 @@
 /*
   OCD Tattoo — design tokens.
-  Every color, size, and motion value used anywhere in the codebase must
-  trace back to a variable defined here. No one-off hex values elsewhere.
+  Every color, size, and motion value used anywhere in the codebase traces
+  back to a variable defined here.
 */
 
 :root {
   /* ---- Color ---- */
-  --ink: #0a090c;
-  --carbon: #16131c;
-  --graphite: #2a272f;
-  --ash: #847e8a;
-  --pewter: #b4afa9;
-  --bone: #ede7e1;
-  --stencil: #6a4cb8;
-  --transfer: #9b7bf0;
+  --ink: #08080a; /* base ground — true near-black, not warm */
+  --surface: #131215; /* raised panel fill */
+  --line: #242229; /* hairline borders */
+  --paper: #ede9e2; /* primary text — warm off-white, the one warm note */
+  --dust: #86828c; /* secondary/metadata text */
+  --violet: #6e3f5e; /* the one accent — muted, dusty magenta-violet */
+  --violet-bright: #9a6485; /* accent on hover/active, same family */
 
   /* ---- Type families ---- */
-  --font-display-latin: 'Newsreader', serif;
-  --font-display-hebrew: 'Frank Ruhl Libre', serif;
-  --font-body-latin: 'Instrument Sans', sans-serif;
-  --font-body-hebrew: 'Assistant', sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Archivo', sans-serif;
+  --font-data: 'Martian Mono', ui-monospace, monospace;
 
   /* ---- Type scale (body/UI, ratio 1.25) ---- */
-  --fs-000: 0.64rem;
-  --fs-00: 0.8rem;
-  --fs-0: 1rem;
-  --fs-1: 1.25rem;
-  --fs-2: 1.5625rem;
-  --fs-3: 1.953rem;
+  --fs-00: 0.75rem; /* 12px — micro labels */
+  --fs-0: 0.9375rem; /* 15px — data/mono */
+  --fs-1: 1rem; /* 16px — body */
+  --fs-2: 1.25rem; /* 20px — lede */
+  --fs-3: 1.75rem; /* 28px — sub-heads */
 
-  /* ---- Display scale (breaks the ratio deliberately) ---- */
-  --fs-display-sm: clamp(2.5rem, 6vw, 4.5rem);
-  --fs-display-md: clamp(3rem, 10vw, 7rem);
-  --fs-display-lg: clamp(3.5rem, 14vw, 10rem);
+  /* ---- Display scale — breaks the ratio deliberately, fluid ---- */
+  --fs-display-sm: clamp(2.25rem, 4vw + 1rem, 3.5rem);
+  --fs-display-md: clamp(3rem, 6vw + 1rem, 5.5rem);
+  --fs-display-lg: clamp(3.5rem, 9vw + 1rem, 9rem);
 
-  /* ---- Space scale (rem, base 8px, fibonacci-derived) ---- */
+  /* ---- Space scale (rem, base 8px) ---- */
   --sp-1: 0.5rem;
   --sp-2: 1rem;
-  --sp-3: 2rem;
-  --sp-4: 3rem;
-  --sp-5: 5rem;
-  --sp-6: 8rem;
-  --sp-7: 13rem;
+  --sp-3: 1.75rem;
+  --sp-4: 2.75rem;
+  --sp-5: 4.5rem;
+  --sp-6: 7.25rem;
+  --sp-7: 11.75rem;
 
   /* ---- Shape ---- */
   --radius: 0px;
-  --radius-image: 2px;
-  --border-hairline: 0.5px solid var(--graphite);
+  --border-hairline: 1px solid var(--line);
 
   /* ---- Motion ---- */
   --dur-slow: 900ms;
-  --dur-base: 200ms;
-  --dur-fast: 120ms;
-  --ease-house: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-base: 240ms;
+  --dur-fast: 130ms;
+  --ease-precise: cubic-bezier(0.19, 1, 0.22, 1);
 
   /* ---- Layout ---- */
-  --content-max: 90rem;
-  --focus-ring: 2px solid var(--transfer);
+  --content-max: 84rem;
+  --focus-ring: 2px solid var(--violet-bright);
+
+  /* ---- Grid unit — the literal "every square" backdrop ---- */
+  --grid-unit: 28px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-slow: 0.01ms;
-    --dur-base: 120ms;
-    --dur-fast: 120ms;
+    --dur-base: 0.01ms;
+    --dur-fast: 0.01ms;
   }
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  background: var(--ink);
-  color-scheme: dark;
-}
-
-body {
-  margin: 0;
-  background: var(--ink);
-  color: var(--pewter);
-  font-family: var(--font-body-latin);
-  font-size: var(--fs-0);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-:lang(he) body,
-[dir='rtl'] {
-  font-family: var(--font-body-hebrew);
-}
-
-h1,
-h2,
-h3 {
-  font-family: var(--font-display-latin);
-  color: var(--bone);
-  font-weight: 300;
-  line-height: 1.05;
-  margin: 0;
-}
-
-:lang(he) h1,
-:lang(he) h2,
-:lang(he) h3 {
-  font-family: var(--font-display-hebrew);
-}
-
-.mono,
-.registry-data {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-
-/*
-  Date ranges and dimensions (e.g. "2025.02–2025.04") mix two LTR-numeral
-  groups joined by a neutral dash. Inside an RTL paragraph the bidi algorithm
-  reorders the two groups around that neutral character. Isolating them as
-  their own LTR run keeps the written order intact regardless of page
-  direction — this is a correctness fix, not a style choice.
-*/
-.ltr-num {
-  direction: ltr;
-  unicode-bidi: isolate;
-}
-
-a {
-  color: inherit;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-  border-radius: var(--radius-image);
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-}
-
-:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: 2px;
-}
-
-::selection {
-  background: var(--transfer);
-  color: var(--ink);
-}
-
-hr {
-  border: none;
-  border-block-start: var(--border-hairline);
-  margin: 0;
 }

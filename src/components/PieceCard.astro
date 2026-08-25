@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PieceMedia from './PieceMedia.astro';
+
+interface Props {
+  entry: CollectionEntry<'pieces'>;
+}
+
+const { entry } = Astro.props;
+const p = entry.data;
+---
+
+<article class="piece">
+  <PieceMedia photo={p.photo} serial={p.serial} alt={p.title} />
+  <div class="piece-meta">
+    <span class="data serial">{p.serial}</span>
+    <h2>{p.title}</h2>
+    <dl class="data specs">
+      <div>
+        <dt>Placement</dt>
+        <dd>{p.placement}</dd>
+      </div>
+      <div>
+        <dt>Size</dt>
+        <dd>{p.size}</dd>
+      </div>
+      <div>
+        <dt>Sessions</dt>
+        <dd>{p.sessions}</dd>
+      </div>
+      <div>
+        <dt>Hours</dt>
+        <dd>{p.hours}</dd>
+      </div>
+      <div>
+        <dt>Date</dt>
+        <dd>{p.date}</dd>
+      </div>
+    </dl>
+    <p class="note">{p.note}</p>
+  </div>
+</article>
+
+<style>
+  .piece {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: var(--sp-4);
+    align-items: start;
+  }
+
+  .piece-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding-block-start: var(--sp-1);
+  }
+
+  .piece-meta .serial {
+    color: var(--dust);
+  }
+
+  .piece-meta h2 {
+    font-size: var(--fs-3);
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-1) var(--sp-3);
+    margin: 0;
+    border-block: var(--border-hairline);
+    padding-block: var(--sp-2);
+  }
+
+  .specs div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-2);
+  }
+
+  .specs dt {
+    color: var(--dust);
+  }
+
+  .specs dd {
+    margin: 0;
+    color: var(--paper);
+  }
+
+  .note {
+    color: var(--paper);
+    max-width: 30rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 800px) {
+    .piece {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

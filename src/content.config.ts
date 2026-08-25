@@ -1,48 +1,38 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const work = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/work' }),
-  schema: ({ image }) =>
-    z.object({
-      serial: z.string(),
-      title_he: z.string(),
-      title_en: z.string(),
-      dateRange: z.string(),
-      placement_he: z.string(),
-      placement_en: z.string(),
-      sessions: z.number().int().positive(),
-      hours: z.number().positive(),
-      healedAt_he: z.string(),
-      healedAt_en: z.string(),
-      images: z.object({
-        reference: image(),
-        stencil: image(),
-        fresh: image(),
-        healed: image(),
-      }),
-      artistNote_he: z.string(),
-      artistNote_en: z.string(),
-      featured: z.boolean().default(false),
-    }),
+// `photo` is a plain relative path string (not Astro's `image()` helper) on
+// purpose: only ~2 real pieces exist right now and neither has a photo file
+// yet. Astro's `image()` schema validates the file exists at build time and
+// fails the build if it doesn't — a plain string lets an entry ship today
+// with a considered "not photographed yet" panel (see PhotoOrPlaceholder.astro)
+// and pick up the real photo later with zero schema changes.
+const pieces = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pieces' }),
+  schema: z.object({
+    serial: z.string(),
+    title: z.string(),
+    placement: z.string(),
+    size: z.string(),
+    sessions: z.number().int().positive(),
+    hours: z.number().positive(),
+    date: z.string(),
+    note: z.string(),
+    photo: z.string().optional(),
+  }),
 });
 
 const flash = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/flash' }),
-  schema: ({ image }) =>
-    z.object({
-      serial: z.string(),
-      title_he: z.string(),
-      title_en: z.string(),
-      releaseAt: z.string(),
-      status: z.enum(['sealed', 'available', 'retired']),
-      placementSuggested: z.array(z.string()),
-      approxSize: z.string(),
-      image: image(),
-      claimedCity_he: z.string().default(''),
-      claimedCity_en: z.string().default(''),
-      claimedDate: z.string().default(''),
-    }),
+  schema: z.object({
+    serial: z.string(),
+    title: z.string(),
+    status: z.enum(['available', 'claimed']),
+    size: z.string(),
+    placement: z.string(),
+    claimedDate: z.string().default(''),
+    photo: z.string().optional(),
+  }),
 });
 
-export const collections = { work, flash };
+export const collections = { pieces, flash };

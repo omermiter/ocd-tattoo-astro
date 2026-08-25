@@ -1,0 +1,9 @@
+name = "ocd-tattoo-contact"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# TODO(client): set to the real site origin once the custom domain is live
+# (e.g. "https://ocdtattoo.com"). Keeping this specific (not "*") stops other
+# sites from using your Resend relay/API key.
+[vars]
+ALLOWED_ORIGIN = "https://ocdtattoo.com"

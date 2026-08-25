@@ -1,80 +1,51 @@
 ---
-// GitHub Pages serves a single flat 404.html for the whole project site
-// regardless of the /he//en/ prefix the visitor was under, so this can't
-// truly be locale-aware the way every other page is. Defaults to Hebrew
-// (the site's source language and Astro's configured defaultLocale) with a
-// visible language-toggle link via Nav, same as every other page.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import { getDict } from '../i18n';
-import { pagePath } from '../lib/paths';
-import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
-
-const locale = 'he' as const;
-const t = getDict(locale);
-const hasIllustration = pixelArtExists('404.png');
 ---
 
-<BaseLayout locale={locale} title={`${t.notFound.title} — OCD Tattoo`} description={t.notFound.title}>
-  <Nav locale={locale} />
+<BaseLayout title="Page not found — OCD Tattoo" description="This page doesn't exist, or the piece moved.">
+  <Nav />
 
-  <main class="not-found">
-    {
-      hasIllustration ? (
-        <img
-          class="illustration pixel-art"
-          src={pixelArtPath('404.png')}
-          alt={t.notFound.title}
-          loading="lazy"
-          onerror="this.remove()"
-        />
-      ) : (
-        <span class="fallback mono">404</span>
-      )
-    }
-    <h1>{t.notFound.title}</h1>
-    <p>{t.notFound.body}</p>
-    <a class="back mono" href={pagePath(locale, 'work')}>← {t.notFound.backCta}</a>
+  <main class="not-found grid-texture">
+    <p class="data code">404</p>
+    <h1>Page not found.</h1>
+    <p class="intro">This page doesn't exist, or the piece moved.</p>
+    <a class="back data" href="/pieces/">← Back to Pieces</a>
   </main>
 
-  <Footer locale={locale} />
+  <Footer />
 
   <style>
     .not-found {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      gap: var(--sp-3);
-      max-width: 34rem;
-      margin-inline: auto;
-      padding: var(--sp-6) var(--sp-3);
-      min-block-size: 50vh;
       justify-content: center;
+      text-align: center;
+      gap: var(--sp-2);
+      min-block-size: 60vh;
+      padding: var(--sp-6) var(--sp-3);
     }
 
-    .illustration {
-      max-width: 16rem;
-      height: auto;
-    }
-
-    .fallback {
-      font-size: var(--fs-display-md);
-      color: var(--graphite);
+    .code {
+      color: var(--dust);
+      font-size: var(--fs-3);
     }
 
     .not-found h1 {
       font-size: var(--fs-display-sm);
     }
 
-    .not-found p {
-      color: var(--pewter);
+    .intro {
+      color: var(--dust);
     }
 
     .back {
-      color: var(--transfer);
+      margin-block-start: var(--sp-2);
+      color: var(--violet-bright);
       text-decoration: none;
+      text-transform: uppercase;
     }
   </style>
 </BaseLayout>

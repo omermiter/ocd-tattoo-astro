@@ -1,0 +1,84 @@
+---
+// The one orchestrated motion moment on the site, and it's not decorative —
+// it's the brand's thesis rendered literally. A precision grid draws in on
+// load (the stencil going down), then a soft violet spotlight tracks the
+// pointer across it (the eye checking each square). Static and reduced to a
+// plain grid on touch devices and prefers-reduced-motion.
+---
+
+<div class="precision-grid" data-precision-grid>
+  <div class="grid-layer grid-texture" data-grid-layer></div>
+  <div class="spotlight" data-spotlight></div>
+  <div class="content">
+    <slot />
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-precision-grid]');
+  if (root) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = window.matchMedia('(pointer: fine)').matches;
+
+    const gridLayer = root.querySelector<HTMLElement>('[data-grid-layer]');
+    if (gridLayer && !reduced) {
+      requestAnimationFrame(() => gridLayer.classList.add('drawn'));
+    } else if (gridLayer) {
+      gridLayer.classList.add('drawn');
+      gridLayer.style.transition = 'none';
+    }
+
+    if (fine && !reduced) {
+      root.addEventListener('pointermove', (e) => {
+        const rect = root.getBoundingClientRect();
+        root.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        root.style.setProperty('--my', `${e.clientY - rect.top}px`);
+      });
+      root.addEventListener('pointerenter', () => root.classList.add('active'));
+      root.addEventListener('pointerleave', () => root.classList.remove('active'));
+    }
+  }
+</script>
+
+<style>
+  .precision-grid {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .grid-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity var(--dur-slow) var(--ease-precise),
+      transform var(--dur-slow) var(--ease-precise);
+  }
+
+  .grid-layer.drawn {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .spotlight {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--violet) 55%, transparent) 0%,
+      transparent 42%
+    );
+    transition: opacity var(--dur-base) var(--ease-precise);
+    mix-blend-mode: screen;
+  }
+
+  .precision-grid.active .spotlight {
+    opacity: 0.5;
+  }
+
+  .content {
+    position: relative;
+  }
+</style>

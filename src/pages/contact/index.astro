@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { whatsappLink, CONTACT_ENDPOINT } from '../../lib/contact';
+---
+
+<BaseLayout
+  title="Contact — OCD Tattoo"
+  description="Start a commission or ask a question. Reviewed personally, not queued."
+>
+  <Nav active="contact" />
+
+  <main class="page">
+    <header class="page-head">
+      <p class="eyebrow">Contact</p>
+      <h1>Tell me what you want.</h1>
+      <p class="intro">
+        I read every message myself. If it's a fit, I'll ask for a reference and a placement; if
+        it isn't, I'll say so directly instead of leaving you waiting.
+      </p>
+    </header>
+
+    <form class="form" data-contact-form novalidate>
+      <div class="field">
+        <label class="data" for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required />
+      </div>
+
+      <div class="field">
+        <label class="data" for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required />
+      </div>
+
+      <div class="field">
+        <label class="data" for="message">What are you looking for?</label>
+        <textarea id="message" name="message" rows="6" placeholder="Placement, size, the idea — as much or as little as you have." required
+        ></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="submit data" type="submit" data-submit>Send →</button>
+        <p class="status data" data-status role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </main>
+
+  <Footer />
+
+  <style>
+    .page {
+      max-width: 40rem;
+      margin-inline: auto;
+      padding: var(--sp-6) var(--sp-3) var(--sp-7);
+    }
+
+    .page-head {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      margin-block-end: var(--sp-5);
+    }
+
+    .page-head .eyebrow {
+      text-transform: uppercase;
+    }
+
+    .page-head h1 {
+      font-size: var(--fs-display-md);
+    }
+
+    .intro {
+      color: var(--dust);
+      font-size: var(--fs-2);
+      line-height: 1.5;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-4);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+
+    .field label {
+      text-transform: uppercase;
+      color: var(--dust);
+    }
+
+    .field input,
+    .field textarea {
+      border-block-end: var(--border-hairline);
+      padding-block: var(--sp-1);
+      font-size: var(--fs-2);
+      color: var(--paper);
+      background: transparent;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--violet-bright);
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      margin-block-start: var(--sp-2);
+    }
+
+    .submit {
+      cursor: pointer;
+      color: var(--paper);
+      text-transform: uppercase;
+      border-block-end: 1px solid var(--violet);
+      padding-block-end: 2px;
+      transition: color var(--dur-base) var(--ease-precise);
+    }
+
+    .submit:hover {
+      color: var(--violet-bright);
+    }
+
+    .submit:disabled {
+      cursor: default;
+      color: var(--dust);
+      border-color: var(--line);
+    }
+
+    .status {
+      color: var(--dust);
+    }
+
+    .status[data-state='ok'] {
+      color: var(--violet-bright);
+    }
+
+    .status a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  </style>
+
+  <script is:inline define:vars={{ wa: whatsappLink(), ENDPOINT: CONTACT_ENDPOINT }}>
+    const form = document.querySelector('[data-contact-form]');
+    const submitBtn = document.querySelector('[data-submit]');
+    const status = document.querySelector('[data-status]');
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!(form instanceof HTMLFormElement) || !submitBtn || !status) return;
+
+      const data = new FormData(form);
+      const payload = {
+        name: String(data.get('name') ?? ''),
+        email: String(data.get('email') ?? ''),
+        message: String(data.get('message') ?? ''),
+      };
+
+      submitBtn.disabled = true;
+      status.dataset.state = '';
+      status.textContent = 'Sending…';
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        status.dataset.state = 'ok';
+        status.textContent = 'Sent. I read every message myself — expect a reply within a few days.';
+        form.reset();
+      } catch {
+        status.dataset.state = 'error';
+        status.innerHTML = `Something went wrong. Message me directly on <a href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a> instead.`;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</BaseLayout>

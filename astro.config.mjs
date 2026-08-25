@@ -1,18 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages project-site base path. Update BASE_PATH once the repo is
-// created if the repo name differs from "ocd-tattoo" (see README.md).
-const BASE_PATH = '/ocd-tattoo';
-
+// Custom domain (see public/CNAME) — served from the root, not a GitHub
+// Pages project subpath, so base stays "/".
 export default defineConfig({
-  base: BASE_PATH,
+  base: '/',
   trailingSlash: 'always',
-  i18n: {
-    locales: ['he', 'en'],
-    defaultLocale: 'he',
-    routing: {
-      prefixDefaultLocale: false,
-    },
-  },
+  site: 'https://ocdtattoo.com',
 });

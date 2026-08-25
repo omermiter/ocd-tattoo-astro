@@ -1,0 +1,161 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { whatsappLink, claimMessage } from '../lib/contact';
+
+interface Props {
+  entry: CollectionEntry<'flash'>;
+}
+
+const { entry } = Astro.props;
+const f = entry.data;
+const wa = whatsappLink(claimMessage(f.serial, f.title));
+---
+
+<li class={`row status-${f.status}`} data-flash-row>
+  <div class="row-main">
+    <span class="col-serial data">{f.serial}</span>
+    <span class="col-title">{f.title}</span>
+    <span class="col-placement data">{f.placement}</span>
+    <span class="col-size data">{f.size}</span>
+    {
+      f.status === 'available' ? (
+        <button
+          class="col-status data claim-toggle"
+          type="button"
+          data-claim-toggle
+          aria-expanded="false"
+        >
+          Available →
+        </button>
+      ) : (
+        <span class="col-status data claimed-label">Claimed · {f.claimedDate}</span>
+      )
+    }
+  </div>
+
+  {
+    f.status === 'available' && (
+      <div class="claim-panel" data-claim-panel hidden>
+        <p class="claim-copy">
+          One-of-one. Drawn once, tattooed once. A deposit holds it — credited to the session, non-refundable.
+        </p>
+        <a class="wa data" href={wa} target="_blank" rel="noopener noreferrer">
+          Confirm on WhatsApp →
+        </a>
+      </div>
+    )
+  }
+</li>
+
+<style>
+  .row {
+    border-block-end: var(--border-hairline);
+  }
+
+  .row-main {
+    display: grid;
+    grid-template-columns: 8rem 1fr 8rem 6rem 9rem;
+    gap: var(--sp-2);
+    padding-block: var(--sp-2);
+    align-items: baseline;
+  }
+
+  .col-serial {
+    color: var(--paper);
+  }
+
+  .col-title {
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: var(--fs-1);
+  }
+
+  .col-placement,
+  .col-size {
+    color: var(--dust);
+  }
+
+  .col-status {
+    text-align: end;
+  }
+
+  .claim-toggle {
+    cursor: pointer;
+    color: var(--violet-bright);
+    text-transform: uppercase;
+    transition: color var(--dur-base) var(--ease-precise);
+  }
+
+  .claim-toggle:hover {
+    color: var(--paper);
+  }
+
+  .status-claimed .col-title,
+  .status-claimed .col-placement,
+  .status-claimed .col-size {
+    color: var(--dust);
+  }
+
+  .claimed-label {
+    color: var(--dust);
+  }
+
+  .claim-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    padding: var(--sp-2) 0 var(--sp-3);
+  }
+
+  .claim-panel[hidden] {
+    display: none;
+  }
+
+  .claim-copy {
+    max-width: 30rem;
+    color: var(--dust);
+    font-size: var(--fs-00);
+  }
+
+  .wa {
+    color: var(--violet-bright);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 700px) {
+    .row-main {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 0.25rem;
+    }
+
+    .col-status {
+      text-align: start;
+    }
+  }
+</style>
+
+<script>
+  const rows = document.querySelectorAll<HTMLElement>('[data-flash-row]');
+  rows.forEach((row) => {
+    const toggle = row.querySelector<HTMLButtonElement>('[data-claim-toggle]');
+    const panel = row.querySelector<HTMLElement>('[data-claim-panel]');
+    if (!toggle || !panel) return;
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') === 'true';
+      // Accordion behavior: opening one claim panel closes any other that's
+      // open, so the register never shows more than one expanded at once.
+      document.querySelectorAll<HTMLButtonElement>('[data-claim-toggle]').forEach((t) => {
+        if (t !== toggle) {
+          t.setAttribute('aria-expanded', 'false');
+          const p = t.closest('[data-flash-row]')?.querySelector<HTMLElement>('[data-claim-panel]');
+          if (p) p.hidden = true;
+        }
+      });
+      toggle.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  });
+</script>

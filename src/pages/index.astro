@@ -1,5 +1,226 @@
 ---
-import HomePage from '../components/pages/HomePage.astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PrecisionGrid from '../components/PrecisionGrid.astro';
+import PieceCard from '../components/PieceCard.astro';
+
+const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
+const flash = (await getCollection('flash')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
+const registerPreview = flash.slice(0, 5);
 ---
 
-<HomePage locale="he" />
+<BaseLayout
+  title="OCD Tattoo — Pixel Art, Held to a Realist's Standard"
+  description="Color pixel art tattoos built on years of black-and-gray realism training. One-of-one flash designs, a growing collection of precision-built pieces, and commissions reviewed personally."
+>
+  <Nav />
+
+  <main>
+    <PrecisionGrid>
+      <section class="hero">
+        <p class="eyebrow">OCD Tattoo</p>
+        <h1>Pixel Art, Held to a <em>Realist's</em> Standard.</h1>
+        <p class="subhead">
+          Every square drawn, stenciled, and placed with the same precision built over years of
+          black-and-gray realism work — now in color, one pixel at a time.
+        </p>
+        <a class="cta data" href="/register/">View the Register →</a>
+      </section>
+    </PrecisionGrid>
+
+    <section class="section pieces">
+      <header class="section-head">
+        <p class="eyebrow">Pieces</p>
+        <p class="intro">A growing collection of pixel art tattoos — precision-built, one at a time.</p>
+      </header>
+
+      <div class="piece-list">
+        {pieces.map((p) => <PieceCard entry={p} />)}
+      </div>
+
+      <a class="more data" href="/pieces/">View all pieces →</a>
+    </section>
+
+    <section class="section register">
+      <header class="section-head">
+        <p class="eyebrow">The Register</p>
+        <p class="intro">
+          One-of-one flash designs. Once a piece is claimed, it's retired from the list — it doesn't come back.
+        </p>
+      </header>
+
+      <ul class="ledger data">
+        {
+          registerPreview.map((f) => (
+            <li class={`row status-${f.data.status}`}>
+              <span class="col-serial">{f.data.serial}</span>
+              <span class="col-title">{f.data.title}</span>
+              <span class="col-placement">{f.data.placement}</span>
+              <span class="col-size">{f.data.size}</span>
+              <span class="col-status">{f.data.status === 'available' ? 'Available' : 'Claimed'}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a class="more data" href="/register/">View the Register →</a>
+    </section>
+
+    <section class="section closing">
+      <h2>Commissions are held to the same standard.</h2>
+      <p class="subhead">Reviewed personally, not queued. Tell me what you want, and I'll tell you if it's a fit.</p>
+      <a class="cta data" href="/contact/">Start a commission →</a>
+    </section>
+  </main>
+
+  <Footer />
+
+  <style>
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--sp-3);
+      padding: var(--sp-7) var(--sp-3) var(--sp-6);
+      max-width: 52rem;
+    }
+
+    .hero h1 {
+      font-size: var(--fs-display-lg);
+    }
+
+    .subhead {
+      max-width: 34rem;
+      color: var(--dust);
+      font-size: var(--fs-2);
+      line-height: 1.5;
+    }
+
+    .cta {
+      color: var(--paper);
+      text-decoration: none;
+      text-transform: uppercase;
+      border-block-end: 1px solid var(--violet);
+      padding-block-end: 2px;
+      transition: color var(--dur-base) var(--ease-precise);
+    }
+
+    .cta:hover {
+      color: var(--violet-bright);
+    }
+
+    .section {
+      max-width: var(--content-max);
+      margin-inline: auto;
+      padding: var(--sp-6) var(--sp-3);
+      border-block-start: var(--border-hairline);
+    }
+
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+      margin-block-end: var(--sp-5);
+    }
+
+    .section-head .eyebrow {
+      text-transform: uppercase;
+    }
+
+    .intro {
+      max-width: 32rem;
+      color: var(--dust);
+      font-size: var(--fs-2);
+    }
+
+    .piece-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-6);
+    }
+
+    .more {
+      display: inline-block;
+      margin-block-start: var(--sp-4);
+      color: var(--dust);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color var(--dur-base) var(--ease-precise);
+    }
+
+    .more:hover {
+      color: var(--violet-bright);
+    }
+
+    .ledger {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 8rem 1fr 8rem 6rem 7rem;
+      gap: var(--sp-2);
+      padding-block: var(--sp-2);
+      border-block-end: var(--border-hairline);
+      align-items: baseline;
+    }
+
+    .col-serial {
+      color: var(--paper);
+    }
+
+    .col-title {
+      color: var(--paper);
+      font-family: var(--font-body);
+      font-size: var(--fs-1);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .col-status {
+      text-align: end;
+    }
+
+    .status-available .col-status {
+      color: var(--violet-bright);
+    }
+
+    .status-claimed .col-status {
+      color: var(--dust);
+    }
+
+    .status-claimed .col-title,
+    .status-claimed .col-placement,
+    .status-claimed .col-size {
+      color: var(--dust);
+    }
+
+    .closing {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+
+    .closing h2 {
+      font-size: var(--fs-display-sm);
+      max-width: 34rem;
+    }
+
+    @media (max-width: 800px) {
+      .row {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 0.25rem;
+      }
+
+      .col-status {
+        text-align: start;
+      }
+    }
+  </style>
+</BaseLayout>
