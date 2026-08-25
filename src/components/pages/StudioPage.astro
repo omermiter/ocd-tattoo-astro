@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../Nav.astro';
+import Footer from '../Footer.astro';
+import { getDict, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDict(locale);
+---
+
+<BaseLayout locale={locale} title={`${t.studio.title} — OCD Tattoo`} description={t.studio.bio}>
+  <Nav locale={locale} active="studio" />
+
+  <main class="studio">
+    <div class="portrait" aria-hidden="true">
+      <span class="mono">PLACEHOLDER · ARTIST PORTRAIT</span>
+    </div>
+
+    <div class="content">
+      <h1>{t.studio.title}</h1>
+      <p class="bio">{t.studio.bio}</p>
+
+      <section>
+        <h2 class="mono section-label">{t.studio.processTitle}</h2>
+        <ol class="process mono">
+          {t.studio.processSteps.map((step) => <li>{step}</li>)}
+        </ol>
+      </section>
+
+      <section>
+        <h2 class="mono section-label">{t.studio.aftercareTitle}</h2>
+        <dl class="aftercare">
+          {
+            t.studio.aftercare.map((a) => (
+              <div>
+                <dt class="mono">{a.period}</dt>
+                <dd>{a.body}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+    </div>
+  </main>
+
+  <Footer locale={locale} />
+
+  <style>
+    .studio {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      gap: var(--sp-5);
+      max-width: var(--content-max);
+      margin-inline: auto;
+      padding: var(--sp-4) var(--sp-3);
+    }
+
+    .portrait {
+      align-self: start;
+      aspect-ratio: 4 / 5;
+      background: var(--carbon);
+      border: var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--sp-3);
+    }
+
+    .portrait span {
+      color: var(--ash);
+      font-size: var(--fs-000);
+    }
+
+    .content h1 {
+      font-size: var(--fs-display-sm);
+      margin-block-end: var(--sp-3);
+    }
+
+    .bio {
+      max-width: 34rem;
+      color: var(--pewter);
+      margin-block-end: var(--sp-6);
+    }
+
+    .section-label {
+      color: var(--ash);
+      font-size: var(--fs-00);
+      margin-block-end: var(--sp-2);
+    }
+
+    .process {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-2);
+      list-style: none;
+      margin: 0 0 var(--sp-6);
+      padding: 0;
+      color: var(--pewter);
+    }
+
+    .process li {
+      border: var(--border-hairline);
+      padding: var(--sp-1) var(--sp-2);
+    }
+
+    .process li:not(:last-child)::after {
+      content: '→';
+      margin-inline-start: var(--sp-2);
+      color: var(--ash);
+    }
+
+    .aftercare {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin: 0;
+    }
+
+    .aftercare div {
+      border-block-start: var(--border-hairline);
+      padding-block-start: var(--sp-2);
+    }
+
+    .aftercare dt {
+      color: var(--transfer);
+      font-size: var(--fs-00);
+      margin-block-end: var(--sp-1);
+    }
+
+    .aftercare dd {
+      margin: 0;
+      color: var(--pewter);
+      max-width: 34rem;
+    }
+
+    @media (max-width: 800px) {
+      .studio {
+        grid-template-columns: 1fr;
+      }
+
+      .portrait {
+        max-width: 16rem;
+      }
+
+      .process li:not(:last-child)::after {
+        content: '';
+        margin: 0;
+      }
+    }
+  </style>
+</BaseLayout>

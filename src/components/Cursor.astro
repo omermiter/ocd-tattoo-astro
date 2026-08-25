@@ -1,0 +1,127 @@
+---
+// Global custom pixel cursor. Renders nothing at all if the artist hasn't
+// dropped in cursor-default.png yet (build-time check — see lib/pixelArt.ts)
+// so there's no empty scaffolding sitting in the DOM while the asset is
+// missing. The hover sprite is independently optional: without it, hover
+// state simply doesn't change the cursor, which is a fine degrade.
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+
+const hasDefault = pixelArtExists('cursor-default.png');
+const hasHover = pixelArtExists('cursor-hover.png');
+---
+
+{
+  hasDefault && (
+    <Fragment>
+      <img
+        class="pixel-cursor pixel-art"
+        data-cursor-default
+        src={pixelArtPath('cursor-default.png')}
+        alt=""
+        aria-hidden="true"
+        width="32"
+        height="32"
+      />
+      {hasHover && (
+        <img
+          class="pixel-cursor pixel-art"
+          data-cursor-hover
+          src={pixelArtPath('cursor-hover.png')}
+          alt=""
+          aria-hidden="true"
+          width="32"
+          height="32"
+        />
+      )}
+      <script is:inline define:vars={{ hasHover }}>
+        (function () {
+          // Touch/coarse-pointer devices keep the system cursor — a custom
+          // cursor has no meaning without a hovering pointer, and hiding the
+          // system one would just make taps feel unresponsive.
+          if (!window.matchMedia('(pointer: fine)').matches) return;
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Position tracking itself isn't motion in the vestibular sense,
+            // but a mouse-locked sprite with no easing is still a moving
+            // element on screen at all times — respect the preference and
+            // skip the custom cursor entirely rather than half-apply it.
+            return;
+          }
+
+          const def = document.querySelector('[data-cursor-default]');
+          const hov = hasHover ? document.querySelector('[data-cursor-hover]') : null;
+          if (!def) return;
+
+          let failed = false;
+          const onError = () => {
+            failed = true;
+            document.documentElement.removeAttribute('data-pixel-cursor');
+            def.style.display = 'none';
+            if (hov) hov.style.display = 'none';
+          };
+          def.addEventListener('error', onError);
+          hov?.addEventListener('error', onError);
+
+          document.documentElement.setAttribute('data-pixel-cursor', 'true');
+
+          const HOVER_SELECTOR =
+            'a, button, [role="button"], input, textarea, select, summary, [tabindex]:not([tabindex="-1"])';
+
+          let targetX = -100;
+          let targetY = -100;
+          let x = -100;
+          let y = -100;
+          let started = false;
+
+          const setVisible = (visible) => {
+            def.dataset.visible = String(visible);
+            if (hov) hov.dataset.visible = String(visible && hovering);
+          };
+
+          let hovering = false;
+
+          window.addEventListener(
+            'pointermove',
+            (e) => {
+              targetX = e.clientX;
+              targetY = e.clientY;
+              if (!started) {
+                started = true;
+                x = targetX;
+                y = targetY;
+                setVisible(true);
+              }
+              const el = document.elementFromPoint(e.clientX, e.clientY);
+              const nowHovering = !!el?.closest(HOVER_SELECTOR);
+              if (nowHovering !== hovering) {
+                hovering = nowHovering;
+                def.dataset.visible = String(!hovering);
+                if (hov) hov.dataset.visible = String(hovering);
+              }
+            },
+            { passive: true },
+          );
+
+          document.addEventListener('mouseleave', () => setVisible(false));
+          document.addEventListener('mouseenter', () => setVisible(started));
+
+          // Soft lerp toward the pointer rather than a 1:1 lock — a small,
+          // fast catch-up reads as considered craft rather than a plain
+          // system-cursor replacement. Kept quick (0.35) so it never feels
+          // laggy; this is a hair of trailing, not a chase.
+          const LERP = 0.35;
+          const tick = () => {
+            if (!failed) {
+              x += (targetX - x) * LERP;
+              y += (targetY - y) * LERP;
+              const t = `translate(${x - 16}px, ${y - 16}px)`;
+              def.style.transform = t;
+              if (hov) hov.style.transform = t;
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        })();
+      </script>
+    </Fragment>
+  )
+}

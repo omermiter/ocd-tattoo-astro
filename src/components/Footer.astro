@@ -1,0 +1,133 @@
+---
+import type { Locale } from '../i18n';
+import { getDict } from '../i18n';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { whatsappLink } from '../lib/whatsapp';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDict(locale);
+
+const hasMark = pixelArtExists('mark.png');
+const hasInstagramIcon = pixelArtExists('icon-instagram.png');
+const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
+
+const INSTAGRAM_URL = 'https://instagram.com/ocd_tattoo';
+const WHATSAPP_URL = whatsappLink();
+---
+
+<footer class="footer mono">
+  <div class="identity">
+    {
+      hasMark && (
+        <img
+          class="mark pixel-art"
+          src={pixelArtPath('mark.png')}
+          alt="OCD Tattoo"
+          width="32"
+          height="32"
+          loading="lazy"
+        />
+      )
+    }
+    <span>{t.footer.handle}</span>
+    <span>{t.footer.location}</span>
+  </div>
+
+  <div class="social">
+    <a class="social-link" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+      {
+        hasInstagramIcon ? (
+          <img
+            class="icon pixel-art"
+            src={pixelArtPath('icon-instagram.png')}
+            alt="Instagram"
+            width="24"
+            height="24"
+            loading="lazy"
+          />
+        ) : (
+          <span class="pixel-fallback-label">Instagram</span>
+        )
+      }
+    </a>
+    <a class="social-link" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+      {
+        hasWhatsappIcon ? (
+          <img
+            class="icon pixel-art"
+            src={pixelArtPath('icon-whatsapp.png')}
+            alt="WhatsApp"
+            width="24"
+            height="24"
+            loading="lazy"
+          />
+        ) : (
+          <span class="pixel-fallback-label">WhatsApp</span>
+        )
+      }
+    </a>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3);
+    border-block-start: var(--border-hairline);
+    color: var(--ash);
+    font-size: var(--fs-000);
+  }
+
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .social {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    color: var(--ash);
+    text-decoration: none;
+    transition: opacity var(--dur-base) var(--ease-house);
+  }
+
+  .social-link:hover {
+    opacity: 0.7;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+</style>
+
+<script>
+  // Runtime safety net on top of the build-time existence check: guards a
+  // stale browser cache pointing at a file that's since been removed. Hides
+  // the element cleanly rather than showing a broken-image glyph.
+  document.querySelectorAll<HTMLImageElement>('.footer img.pixel-art').forEach((img) => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+    });
+  });
+</script>

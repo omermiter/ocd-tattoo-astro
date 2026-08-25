@@ -1,0 +1,53 @@
+---
+interface Props {
+  target: string;
+  label: string;
+}
+
+const { target, label } = Astro.props;
+
+const d = new Date(target);
+const datePart = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getFullYear()).slice(-2)}`;
+const timePart = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+---
+
+<span class="countdown mono" data-countdown={target}>
+  <span>{label}</span>{' '}
+  <bdi class="ltr-num" data-value>{datePart} · {timePart}</bdi>
+</span>
+
+<script>
+  function formatRemaining(target: Date, now: Date): string | null {
+    const diffMs = target.getTime() - now.getTime();
+    if (diffMs <= 0) return null;
+    const days = Math.floor(diffMs / 86_400_000);
+    const hours = Math.floor((diffMs % 86_400_000) / 3_600_000);
+    const minutes = Math.floor((diffMs % 3_600_000) / 60_000);
+    return `${days}d ${hours}h ${minutes}m`;
+  }
+
+  function tick(el: HTMLElement) {
+    const target = new Date(el.dataset.countdown ?? '');
+    const valueEl = el.querySelector<HTMLElement>('[data-value]');
+    const remaining = formatRemaining(target, new Date());
+    if (!remaining || !valueEl) return;
+    valueEl.textContent = `${valueEl.dataset.baseText} — ${remaining}`;
+  }
+
+  const nodes = document.querySelectorAll<HTMLElement>('[data-countdown]');
+  nodes.forEach((el) => {
+    const valueEl = el.querySelector<HTMLElement>('[data-value]');
+    if (valueEl) valueEl.dataset.baseText = valueEl.textContent ?? '';
+    tick(el);
+    setInterval(() => tick(el), 60_000);
+  });
+</script>
+
+<style>
+  .countdown {
+    /* --stencil fails 4.5:1 on --ink at this text size; --transfer passes
+       (6.1:1) and stays inside the locked 8-color palette. */
+    color: var(--transfer);
+    font-size: var(--fs-000);
+  }
+</style>

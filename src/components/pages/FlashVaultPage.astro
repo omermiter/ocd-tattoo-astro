@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../Nav.astro';
+import Footer from '../Footer.astro';
+import FlashCard from '../FlashCard.astro';
+import Countdown from '../Countdown.astro';
+import { getDict, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getDict(locale);
+
+const flash = await getCollection('flash');
+const order = { sealed: 0, available: 1, retired: 2 };
+const sorted = [...flash].sort((a, b) => {
+  const byStatus = order[a.data.status] - order[b.data.status];
+  if (byStatus !== 0) return byStatus;
+  return a.data.serial < b.data.serial ? 1 : -1;
+});
+
+const nextDrop = flash
+  .filter((f) => f.data.status === 'sealed')
+  .map((f) => f.data.releaseAt)
+  .sort()[0];
+---
+
+<BaseLayout locale={locale} title={`${t.flash.title} — OCD Tattoo`} description={t.flash.title}>
+  <Nav locale={locale} active="flash" />
+
+  <main class="vault">
+    <header class="vault-head">
+      <h1>{t.flash.title}</h1>
+      {nextDrop && <Countdown target={nextDrop} label={t.flash.nextDropLabel} />}
+    </header>
+
+    {
+      sorted.length === 0 ? (
+        <p class="empty mono">{t.flash.emptyState}</p>
+      ) : (
+        <ul class="grid">
+          {sorted.map((entry) => <FlashCard locale={locale} entry={entry} />)}
+        </ul>
+      )
+    }
+  </main>
+
+  <Footer locale={locale} />
+
+  <style>
+    .vault {
+      max-width: var(--content-max);
+      margin-inline: auto;
+      padding: var(--sp-4) var(--sp-3);
+    }
+
+    .vault-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-block-end: var(--border-hairline);
+      padding-block-end: var(--sp-3);
+      margin-block-end: var(--sp-4);
+    }
+
+    .vault-head h1 {
+      font-size: var(--fs-display-sm);
+    }
+
+    .grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--sp-3);
+    }
+
+    .empty {
+      color: var(--ash);
+    }
+
+    @media (max-width: 1000px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

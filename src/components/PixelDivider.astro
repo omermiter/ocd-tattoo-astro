@@ -1,0 +1,46 @@
+---
+// Repeatable pixel-art tile between major sections. Purely decorative: if
+// the artist hasn't dropped divider.png in yet, this renders nothing at all
+// rather than an empty strip. When present, it's lazy — the background image
+// is only requested once the divider scrolls near the viewport.
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+
+const hasDivider = pixelArtExists('divider.png');
+const src = hasDivider ? pixelArtPath('divider.png') : '';
+---
+
+{
+  hasDivider && (
+    <div class="pixel-divider" data-pixel-divider data-src={src} role="presentation" />
+  )
+}
+
+<script>
+  const dividers = document.querySelectorAll<HTMLElement>('[data-pixel-divider]');
+  if (dividers.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          const src = el.dataset.src;
+          if (src) {
+            const img = new Image();
+            img.onload = () => {
+              el.style.backgroundImage = `url(${src})`;
+              el.dataset.loaded = 'true';
+            };
+            img.onerror = () => {
+              // Missing/broken tile: leave the layout clean, no decoration.
+              el.remove();
+            };
+            img.src = src;
+          }
+          observer.unobserve(el);
+        });
+      },
+      { rootMargin: '200px' },
+    );
+    dividers.forEach((el) => observer.observe(el));
+  }
+</script>
