@@ -11,7 +11,7 @@ const f = entry.data;
 const wa = whatsappLink(claimMessage(f.serial, f.title));
 ---
 
-<li class={`row status-${f.status}`} data-flash-row>
+<li class={`row status-${f.status}`} data-flash-row data-reveal>
   <div class="row-main">
     <span class="col-serial data">{f.serial}</span>
     <span class="col-title">{f.title}</span>
@@ -35,13 +35,15 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
 
   {
     f.status === 'available' && (
-      <div class="claim-panel" data-claim-panel hidden>
-        <p class="claim-copy">
-          One-of-one. Drawn once, tattooed once. A deposit holds it — credited to the session, non-refundable.
-        </p>
-        <a class="wa data" href={wa} target="_blank" rel="noopener noreferrer">
-          Confirm on WhatsApp →
-        </a>
+      <div class="claim-panel" data-claim-panel>
+        <div class="claim-panel-inner">
+          <p class="claim-copy">
+            One-of-one. Drawn once, tattooed once. A deposit holds it — credited to the session, non-refundable.
+          </p>
+          <a class="wa data underline" href={wa} target="_blank" rel="noopener noreferrer">
+            Confirm on WhatsApp →
+          </a>
+        </div>
       </div>
     )
   }
@@ -100,17 +102,28 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     color: var(--dust);
   }
 
+  /* CSS-grid accordion: animating grid-template-rows (0fr → 1fr) gives a
+     real smooth height transition without measuring pixel heights in JS.
+     The inner wrapper's overflow:hidden clips it to that track size, padding
+     included, so there's no visible sliver at the collapsed state. */
   .claim-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--dur-base) var(--ease-precise);
+  }
+
+  .claim-panel.is-open {
+    grid-template-rows: 1fr;
+  }
+
+  .claim-panel-inner {
+    overflow: hidden;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--sp-2);
     padding: var(--sp-2) 0 var(--sp-3);
-  }
-
-  .claim-panel[hidden] {
-    display: none;
   }
 
   .claim-copy {
@@ -151,11 +164,11 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
         if (t !== toggle) {
           t.setAttribute('aria-expanded', 'false');
           const p = t.closest('[data-flash-row]')?.querySelector<HTMLElement>('[data-claim-panel]');
-          if (p) p.hidden = true;
+          p?.classList.remove('is-open');
         }
       });
       toggle.setAttribute('aria-expanded', String(!open));
-      panel.hidden = open;
+      panel.classList.toggle('is-open', !open);
     });
   });
 </script>

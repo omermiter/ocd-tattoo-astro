@@ -24,7 +24,7 @@ const links = [
       {
         links.map((l) => (
           <li>
-            <a href={l.href} aria-current={active === l.key ? 'page' : undefined}>
+            <a class="underline" href={l.href} aria-current={active === l.key ? 'page' : undefined}>
               {l.label}
             </a>
           </li>

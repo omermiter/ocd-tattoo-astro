@@ -15,7 +15,7 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
   <Nav active="pieces" />
 
   <main class="page">
-    <header class="page-head">
+    <header class="page-head" data-reveal>
       <p class="eyebrow">Pieces</p>
       <h1>A growing collection, built one at a time.</h1>
       <p class="intro">
@@ -25,7 +25,7 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
     </header>
 
     <div class="piece-list">
-      {pieces.map((p) => <PieceCard entry={p} />)}
+      {pieces.map((p) => <div data-reveal><PieceCard entry={p} /></div>)}
     </div>
   </main>
 

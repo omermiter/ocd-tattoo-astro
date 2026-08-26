@@ -22,29 +22,32 @@ const registerPreview = flash.slice(0, 5);
       <section class="hero">
         <p class="eyebrow">OCD Tattoo</p>
         <h1>Pixel Art, Held to a <em>Realist's</em> Standard.</h1>
-        <p class="subhead">
-          Every square drawn, stenciled, and placed with the same precision built over years of
-          black-and-gray realism work — now in color, one pixel at a time.
-        </p>
-        <a class="cta data" href="/register/">View the Register →</a>
       </section>
     </PrecisionGrid>
 
+    <section class="beat" data-reveal>
+      <p class="subhead">
+        Every square drawn, stenciled, and placed with the same precision built over years of
+        black-and-gray realism work — now in color, one pixel at a time.
+      </p>
+      <a class="cta data underline" href="/register/">View the Register →</a>
+    </section>
+
     <section class="section pieces">
-      <header class="section-head">
+      <header class="section-head" data-reveal>
         <p class="eyebrow">Pieces</p>
         <p class="intro">A growing collection of pixel art tattoos — precision-built, one at a time.</p>
       </header>
 
       <div class="piece-list">
-        {pieces.map((p) => <PieceCard entry={p} />)}
+        {pieces.map((p) => <div data-reveal><PieceCard entry={p} /></div>)}
       </div>
 
-      <a class="more data" href="/pieces/">View all pieces →</a>
+      <a class="more data underline" href="/pieces/" data-reveal>View all pieces →</a>
     </section>
 
     <section class="section register">
-      <header class="section-head">
+      <header class="section-head" data-reveal>
         <p class="eyebrow">The Register</p>
         <p class="intro">
           One-of-one flash designs. Once a piece is claimed, it's retired from the list — it doesn't come back.
@@ -54,7 +57,7 @@ const registerPreview = flash.slice(0, 5);
       <ul class="ledger data">
         {
           registerPreview.map((f) => (
-            <li class={`row status-${f.data.status}`}>
+            <li class={`row status-${f.data.status}`} data-reveal>
               <span class="col-serial">{f.data.serial}</span>
               <span class="col-title">{f.data.title}</span>
               <span class="col-placement">{f.data.placement}</span>
@@ -65,13 +68,13 @@ const registerPreview = flash.slice(0, 5);
         }
       </ul>
 
-      <a class="more data" href="/register/">View the Register →</a>
+      <a class="more data underline" href="/register/" data-reveal>View the Register →</a>
     </section>
 
-    <section class="section closing">
+    <section class="section closing" data-reveal>
       <h2>Commissions are held to the same standard.</h2>
       <p class="subhead">Reviewed personally, not queued. Tell me what you want, and I'll tell you if it's a fit.</p>
-      <a class="cta data" href="/contact/">Start a commission →</a>
+      <a class="cta data underline" href="/contact/">Start a commission →</a>
     </section>
   </main>
 
@@ -81,14 +84,27 @@ const registerPreview = flash.slice(0, 5);
     .hero {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      justify-content: center;
       gap: var(--sp-3);
-      padding: var(--sp-7) var(--sp-3) var(--sp-6);
-      max-width: 52rem;
+      min-block-size: 88vh;
+      padding: var(--sp-3);
+      max-width: 60rem;
     }
 
     .hero h1 {
       font-size: var(--fs-display-lg);
+    }
+
+    .beat {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sp-3);
+      max-width: var(--content-max);
+      margin-inline: auto;
+      padding: var(--sp-5) var(--sp-3);
+      border-block-start: var(--border-hairline);
     }
 
     .subhead {
@@ -99,12 +115,9 @@ const registerPreview = flash.slice(0, 5);
     }
 
     .cta {
+      flex-shrink: 0;
       color: var(--paper);
-      text-decoration: none;
       text-transform: uppercase;
-      border-block-end: 1px solid var(--violet);
-      padding-block-end: 2px;
-      transition: color var(--dur-base) var(--ease-precise);
     }
 
     .cta:hover {
@@ -145,7 +158,6 @@ const registerPreview = flash.slice(0, 5);
       display: inline-block;
       margin-block-start: var(--sp-4);
       color: var(--dust);
-      text-decoration: none;
       text-transform: uppercase;
       transition: color var(--dur-base) var(--ease-precise);
     }

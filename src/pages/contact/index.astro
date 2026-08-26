@@ -12,7 +12,7 @@ import { whatsappLink, CONTACT_ENDPOINT } from '../../lib/contact';
   <Nav active="contact" />
 
   <main class="page">
-    <header class="page-head">
+    <header class="page-head" data-reveal>
       <p class="eyebrow">Contact</p>
       <h1>Tell me what you want.</h1>
       <p class="intro">
@@ -21,7 +21,7 @@ import { whatsappLink, CONTACT_ENDPOINT } from '../../lib/contact';
       </p>
     </header>
 
-    <form class="form" data-contact-form novalidate>
+    <form class="form" data-contact-form novalidate data-reveal>
       <div class="field">
         <label class="data" for="name">Name</label>
         <input id="name" name="name" type="text" autocomplete="name" required />
@@ -142,8 +142,7 @@ import { whatsappLink, CONTACT_ENDPOINT } from '../../lib/contact';
     }
 
     .status a {
-      color: inherit;
-      text-decoration: underline;
+      color: var(--violet-bright);
     }
   </style>
 
@@ -179,7 +178,7 @@ import { whatsappLink, CONTACT_ENDPOINT } from '../../lib/contact';
         form.reset();
       } catch {
         status.dataset.state = 'error';
-        status.innerHTML = `Something went wrong. Message me directly on <a href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a> instead.`;
+        status.innerHTML = `Something went wrong. Message me directly on <a class="underline" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a> instead.`;
         submitBtn.disabled = false;
       }
     });

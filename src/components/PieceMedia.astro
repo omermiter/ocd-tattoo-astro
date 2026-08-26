@@ -36,6 +36,11 @@ const available = photo ? hasPhoto(photo) : false;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease-precise);
+  }
+
+  .piece-media:hover img {
+    transform: scale(1.035);
   }
 
   /* A missing photo is treated as a deliberate specimen card, not an empty

@@ -103,6 +103,48 @@ select {
   background-size: var(--grid-unit) var(--grid-unit);
 }
 
+/* Scroll-reveal: elements fade/rise in once, the moment they cross into
+   view — see the observer script in BaseLayout.astro. Every section on
+   every page opts in via data-reveal so entrances feel considered rather
+   than everything just appearing on load. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity var(--dur-slow) var(--ease-precise),
+    transform var(--dur-slow) var(--ease-precise);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animated underline — a hairline that grows on hover/focus rather than a
+   static border, used for every text link in the system (nav, footer,
+   CTAs, ledger actions) so the whole site shares one hover language. */
+.underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-precise);
+}
+
+.underline:hover::after,
+.underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
 :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 3px;
