@@ -20,11 +20,20 @@
   Sprite-strip stepping. A sprite is a single row of N equal square frames;
   --frames is set inline per-instance from the real frame count (read from
   the file at build time — see spriteFrameCount() in lib/pixelArt.ts).
+
+  The animation steps on --frame-steps (= frames - 1), not --frames itself:
+  background-position-x runs 0%→100% over the animation, and with N frames
+  each occupying an equal share of the strip, frame k sits at k/(N-1)*100%
+  (percentage background-position is relative to the size DIFFERENCE, not
+  the strip's own width). steps(N) instead of steps(N-1) lands on N
+  fractional in-between positions — every frame after the first shows two
+  adjacent frames' pixels blended together. Callers set both custom
+  properties from the same frame count (--frame-steps: N - 1).
 */
 .pixel-sprite {
   background-repeat: no-repeat;
   background-size: calc(var(--frames, 1) * 100%) 100%;
-  animation: pixel-sprite-step var(--sprite-duration, 800ms) steps(var(--frames, 1)) infinite;
+  animation: pixel-sprite-step var(--sprite-duration, 800ms) steps(var(--frame-steps, 1)) infinite;
 }
 
 @keyframes pixel-sprite-step {

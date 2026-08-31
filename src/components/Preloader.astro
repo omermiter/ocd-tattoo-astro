@@ -16,7 +16,7 @@ const hasMark = !frames && pixelArtExists('mark.png');
       {frames ? (
         <div
           class="preloader-sprite pixel-sprite pixel-art"
-          style={`--frames:${frames}; --sprite-duration:${frames * 90}ms; background-image:url(${pixelArtPath('preloader.png')})`}
+          style={`--frames:${frames}; --frame-steps:${frames - 1}; --sprite-duration:${frames * 90}ms; background-image:url(${pixelArtPath('preloader.png')})`}
         />
       ) : (
         <img

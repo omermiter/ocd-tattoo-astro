@@ -29,7 +29,7 @@ const hoverBurstSrc = hoverBurstFrames ? pixelArtPath('hover-burst.png') : null;
             class="hover-burst pixel-sprite pixel-art"
             data-hover-burst
             data-src={hoverBurstSrc}
-            style={`--frames:${hoverBurstFrames}`}
+            style={`--frames:${hoverBurstFrames}; --frame-steps:${hoverBurstFrames - 1}`}
             aria-hidden="true"
           />
         )}
@@ -84,13 +84,25 @@ const hoverBurstSrc = hoverBurstFrames ? pixelArtPath('hover-burst.png') : null;
     transition: transform var(--dur-slow) var(--ease-precise);
   }
 
-  .piece-media:hover img {
-    transform: scale(1.035);
+  /* The photo lifts up within its own frame on hover, uncovering a strip of
+     the frame's own background at the bottom where the burst plays — both
+     effects stay inside the existing bordered box, nothing resizes. */
+  .piece-media:hover img,
+  .piece-media:focus-within img {
+    transform: translateY(-64px);
   }
 
+  /* Fixed square size, anchored to the bottom of the frame (the space the
+     lifted photo just uncovered). background-size on .pixel-sprite is
+     relative to this element's own box, so it must stay square itself or
+     the frames stretch instead of scaling up cleanly. */
   .hover-burst {
     position: absolute;
-    inset: 0;
+    inset-block-end: var(--sp-1);
+    inset-inline-start: 50%;
+    width: 56px;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
     opacity: 0;
     animation-play-state: paused;
     transition: opacity var(--dur-base) var(--ease-precise);
