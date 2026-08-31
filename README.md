@@ -84,12 +84,13 @@ through the contact form.
 ## Contact form → Resend
 
 The form on `/contact/` posts to a Cloudflare Worker (`worker/`), which is
-the one non-static piece of this project — see `worker/README.md` for the
-one-time deploy steps (Resend API key, `wrangler deploy`). Once deployed,
-set the Worker's URL in `src/lib/contact.ts` → `CONTACT_ENDPOINT`.
+the one non-static piece of this project. **It's deployed and working** —
+see `worker/README.md` for status and the one remaining step (updating
+`ALLOWED_ORIGIN` from `localhost` to the real domain once it's live).
 
-Until that's set up, the form will fail closed: it shows an error with a
-WhatsApp fallback link rather than pretending to have sent anything.
+If the Worker were ever undeployed or unreachable, the form fails closed: it
+shows an error with a WhatsApp fallback link rather than pretending to have
+sent anything.
 
 ## Deploying
 
@@ -119,8 +120,5 @@ ask and it'll get handed over or redone directly if you need new weights.
 ## Known scope boundaries
 
 - No analytics, no cookie banner, no third-party scripts on the main site.
-- `CONTACT_ENDPOINT` in `src/lib/contact.ts` is still a placeholder Worker URL
-  until the Worker is actually deployed (see above) — the contact form fails
-  closed with a WhatsApp fallback until then.
 - No deposit/payment collection happens on-site — the Register's claim flow
   and the flash booking both end in a WhatsApp handoff for that, by design.
