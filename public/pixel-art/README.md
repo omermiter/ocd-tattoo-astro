@@ -14,7 +14,7 @@ take effect — asset presence is checked at build time, not at runtime.
 | `favicon.png` | 32×32 (also works at 16×16) | Browser tab icon | Existing `favicon.svg` stays as the tab icon |
 | `icon-instagram.png` | 24×24 | Footer Instagram link | Footer shows the existing plain "Instagram" text link |
 | `icon-whatsapp.png` | 24×24 | Footer WhatsApp link | Footer shows the existing plain "WhatsApp" text link |
-| `hover-burst.png` ✅ done | 11-frame horizontal strip, 80×80 each | `/pieces` and homepage thumbnail hover: the photo lifts within its frame, uncovering this playing underneath (photographed pieces only) | No hover animation, thumbnail is static |
+| `hover-burst.png` ✅ done | 11-frame horizontal strip, 80×80 each, displayed at 96×96 | `/pieces` and homepage thumbnail hover: the photo (or placeholder panel) lifts within its frame, uncovering this playing underneath once per hover — not a loop | No hover animation, thumbnail is static |
 | `preloader.png` | 6–10 frame horizontal strip, square frames | Homepage initial load animation | Falls through to `mark.png` (static hold) or is skipped entirely |
 | `stamp-available.png` | 96×48 | Register row, available flash designs | No stamp graphic (status still shown as text) |
 | `stamp-claimed.png` | 96×48 | Register row, claimed flash designs | No stamp graphic (status still shown as text) |
