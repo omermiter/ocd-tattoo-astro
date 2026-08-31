@@ -1,17 +1,126 @@
 ---
-// Global custom pixel cursor. Renders nothing at all if the artist hasn't
-// dropped in cursor-default.png yet (build-time check — see lib/pixelArt.ts)
-// so there's no empty scaffolding sitting in the DOM while the asset is
-// missing. The hover sprite is independently optional: without it, hover
-// state simply doesn't change the cursor, which is a fine degrade.
-import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+// Global custom cursor. Three tiers, each degrading to the next:
+//  1. cursor.png (sprite strip) — animated scrub from idle to hover and
+//     back, driven by pointer state rather than looping on a timer.
+//  2. cursor-default.png (+ optional cursor-hover.png) — instant crossfade
+//     between two static states.
+//  3. nothing — system cursor throughout.
+import { pixelArtExists, pixelArtPath, spriteFrameCount } from '../lib/pixelArt';
 
-const hasDefault = pixelArtExists('cursor-default.png');
-const hasHover = pixelArtExists('cursor-hover.png');
+const spriteFrames = await spriteFrameCount('cursor.png');
+const hasStaticDefault = !spriteFrames && pixelArtExists('cursor-default.png');
+const hasStaticHover = hasStaticDefault && pixelArtExists('cursor-hover.png');
 ---
 
 {
-  hasDefault && (
+  spriteFrames && (
+    <Fragment>
+      <div
+        class="pixel-cursor pixel-art cursor-sprite"
+        data-cursor-sprite
+        data-src={pixelArtPath('cursor.png')}
+        style={`--frames:${spriteFrames}`}
+        role="presentation"
+      />
+      <script is:inline define:vars={{ frames: spriteFrames }}>
+        (function () {
+          if (!window.matchMedia('(pointer: fine)').matches) return;
+
+          const el = document.querySelector('[data-cursor-sprite]');
+          if (!el) return;
+
+          const src = el.dataset.src;
+          const probe = new Image();
+          probe.onerror = () => el.remove();
+          probe.onload = () => {
+            el.style.backgroundImage = `url(${src})`;
+          };
+          probe.src = src;
+
+          document.documentElement.setAttribute('data-pixel-cursor', 'true');
+
+          const HOVER_SELECTOR =
+            'a, button, [role="button"], input, textarea, select, summary, [tabindex]:not([tabindex="-1"])';
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          let targetX = -100;
+          let targetY = -100;
+          let x = -100;
+          let y = -100;
+          let started = false;
+          let hovering = false;
+
+          // Frame scrub: steps discretely toward `target` (flip-book, not a
+          // smooth blend between frames) — plays forward into the hover
+          // shape and reverses back out, from wherever it currently is if
+          // the pointer changes direction mid-transition.
+          let frame = 0;
+          let target = 0;
+          let lastStep = 0;
+          const STEP_MS = reduced ? 0 : 30;
+
+          const renderFrame = () => {
+            const pct = frames > 1 ? (frame / (frames - 1)) * 100 : 0;
+            el.style.backgroundPosition = `${pct}% 0`;
+          };
+          renderFrame();
+
+          window.addEventListener(
+            'pointermove',
+            (e) => {
+              targetX = e.clientX;
+              targetY = e.clientY;
+              if (!started) {
+                started = true;
+                x = targetX;
+                y = targetY;
+                el.dataset.visible = 'true';
+              }
+              const hit = document.elementFromPoint(e.clientX, e.clientY);
+              const nowHovering = !!hit?.closest(HOVER_SELECTOR);
+              if (nowHovering !== hovering) {
+                hovering = nowHovering;
+                target = hovering ? frames - 1 : 0;
+                if (STEP_MS === 0) {
+                  frame = target;
+                  renderFrame();
+                }
+              }
+            },
+            { passive: true },
+          );
+
+          document.addEventListener('mouseleave', () => (el.dataset.visible = 'false'));
+          document.addEventListener('mouseenter', () => (el.dataset.visible = String(started)));
+
+          const LERP = 0.35;
+          const tick = (ts) => {
+            x += (targetX - x) * LERP;
+            y += (targetY - y) * LERP;
+            el.style.transform = `translate(${x - 24}px, ${y - 24}px)`;
+
+            if (frame !== target && STEP_MS > 0) {
+              if (!lastStep) lastStep = ts;
+              if (ts - lastStep >= STEP_MS) {
+                frame += frame < target ? 1 : -1;
+                lastStep = ts;
+                renderFrame();
+              }
+            } else {
+              lastStep = 0;
+            }
+
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        })();
+      </script>
+    </Fragment>
+  )
+}
+
+{
+  hasStaticDefault && (
     <Fragment>
       <img
         class="pixel-cursor pixel-art"
@@ -22,25 +131,24 @@ const hasHover = pixelArtExists('cursor-hover.png');
         width="48"
         height="48"
       />
-      {hasHover && (
+      {hasStaticHover && (
         <img
           class="pixel-cursor pixel-art"
           data-cursor-hover
           src={pixelArtPath('cursor-hover.png')}
           alt=""
           aria-hidden="true"
-          width="32"
-          height="32"
+          width="48"
+          height="48"
         />
       )}
-      <script is:inline define:vars={{ hasHover }}>
+      <script is:inline define:vars={{ hasStaticHover }}>
         (function () {
-          // Touch/coarse-pointer devices keep the system cursor.
           if (!window.matchMedia('(pointer: fine)').matches) return;
           if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
           const def = document.querySelector('[data-cursor-default]');
-          const hov = hasHover ? document.querySelector('[data-cursor-hover]') : null;
+          const hov = hasStaticHover ? document.querySelector('[data-cursor-hover]') : null;
           if (!def) return;
 
           let failed = false;
@@ -95,9 +203,6 @@ const hasHover = pixelArtExists('cursor-hover.png');
           document.addEventListener('mouseleave', () => setVisible(false));
           document.addEventListener('mouseenter', () => setVisible(started));
 
-          // Soft lerp toward the pointer rather than a 1:1 lock — a small,
-          // fast catch-up reads as considered craft rather than a plain
-          // system-cursor replacement.
           const LERP = 0.35;
           const tick = () => {
             if (!failed) {

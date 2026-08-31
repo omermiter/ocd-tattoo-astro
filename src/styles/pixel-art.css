@@ -54,16 +54,28 @@
   opacity: 1;
 }
 
-/* Text-entry fields keep the system I-beam — a branded cursor over a text
-   field fights legibility of the caret. Deliberate carve-out from "global". */
-html[data-pixel-cursor='true'] {
-  cursor: none;
+/* The sprite-strip cursor scrubs background-position frame by frame (driven
+   by JS on hover state, not a looping CSS animation — see Cursor.astro). */
+.cursor-sprite {
+  background-repeat: no-repeat;
+  background-size: calc(var(--frames, 1) * 100%) 100%;
+}
+
+/* Every element hides the system cursor, including buttons/links that set
+   their own `cursor: pointer` elsewhere in the site (those declarations
+   have higher specificity than a plain html-level rule, so this needs
+   !important to actually win — a deliberate, cross-cutting override, not
+   a lazy escape hatch). Text-entry fields keep the system I-beam — a
+   branded cursor over a text field fights legibility of the caret. */
+html[data-pixel-cursor='true'],
+html[data-pixel-cursor='true'] * {
+  cursor: none !important;
 }
 
 html[data-pixel-cursor='true'] input,
 html[data-pixel-cursor='true'] textarea,
 html[data-pixel-cursor='true'] select {
-  cursor: auto;
+  cursor: auto !important;
 }
 
 /* ---- Ledger stamps (Register) ---- */

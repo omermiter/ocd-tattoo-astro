@@ -8,8 +8,8 @@ take effect — asset presence is checked at build time, not at runtime.
 
 | Filename | Size | Used for | If missing |
 |---|---|---|---|
-| `cursor-default.png` | 48×48 ✅ done | Global custom cursor | System cursor throughout the site |
-| `cursor-hover.png` | 48×48 ✅ done | Cursor over interactive elements | Default cursor sprite doesn't swap on hover (or system cursor, if `cursor-default.png` is also missing) |
+| `cursor.png` ✅ done | 7-frame horizontal strip, 48×48 each | Global custom cursor — scrubs forward into the hover shape and reverses back out, driven by pointer position, not a timed loop | Falls back to `cursor-default.png`/`cursor-hover.png` (instant swap) if present, else system cursor |
+| `cursor-default.png` / `cursor-hover.png` | 48×48 | Fallback static cursor if `cursor.png` isn't present | System cursor throughout the site |
 | `mark.png` | 64×64 | Footer mark, homepage preloader fallback | Footer shows text only; preloader falls through to `preloader.png` or is skipped |
 | `favicon.png` | 32×32 (also works at 16×16) | Browser tab icon | Existing `favicon.svg` stays as the tab icon |
 | `icon-instagram.png` | 24×24 | Footer Instagram link | Footer shows the existing plain "Instagram" text link |
