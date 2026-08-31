@@ -4,20 +4,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import FlashRow from '../../components/FlashRow.astro';
+import { GRID_SIZES } from '../../content.config';
 
 const flash = await getCollection('flash');
 const order = { available: 0, claimed: 1 };
-const sorted = [...flash].sort((a, b) => {
+const byAvailability = (a: (typeof flash)[number], b: (typeof flash)[number]) => {
   const byStatus = order[a.data.status] - order[b.data.status];
   if (byStatus !== 0) return byStatus;
   return a.data.serial < b.data.serial ? -1 : 1;
-});
+};
+
 const availableCount = flash.filter((f) => f.data.status === 'available').length;
+
+// Real pixel-art sections, not a filter — each resolution is its own canvas
+// size, so grouping by it is the honest way to browse flash here. Empty
+// tiers don't render at all.
+const sections = GRID_SIZES.map((gridSize) => ({
+  gridSize,
+  entries: flash.filter((f) => f.data.gridSize === gridSize).sort(byAvailability),
+})).filter((s) => s.entries.length > 0);
 ---
 
 <BaseLayout
   title="The Register — OCD Tattoo"
-  description="One-of-one flash designs. Once a piece is claimed, it's retired from the list permanently — it doesn't come back."
+  description="One-of-one flash designs, grouped by pixel grid. Once a piece is claimed, it's retired from the list permanently — it doesn't come back."
 >
   <Nav active="register" />
 
@@ -27,14 +37,26 @@ const availableCount = flash.filter((f) => f.data.status === 'available').length
       <h1>One-of-one, always.</h1>
       <p class="intro">
         Every flash design here is drawn once and tattooed once. Claim one and it's retired from
-        the list permanently — the record stays, the design doesn't come back.
+        the list permanently — the record stays, the design doesn't come back. Grouped by canvas:
+        the grid a design is actually built on.
       </p>
       <p class="data count">{availableCount} of {flash.length} available</p>
     </header>
 
-    <ul class="ledger">
-      {sorted.map((f) => <FlashRow entry={f} />)}
-    </ul>
+    {
+      sections.map(({ gridSize, entries }) => (
+        <section class="size-section">
+          <h2 class="data size-head" data-reveal>
+            {gridSize} <span class="size-count">({entries.length})</span>
+          </h2>
+          <ul class="ledger">
+            {entries.map((f) => (
+              <FlashRow entry={f} />
+            ))}
+          </ul>
+        </section>
+      ))
+    }
 
     <section class="closing" data-reveal>
       <h2>Don't see what you want?</h2>
@@ -57,7 +79,7 @@ const availableCount = flash.filter((f) => f.data.status === 'available').length
       flex-direction: column;
       gap: var(--sp-2);
       max-width: 40rem;
-      margin-block-end: var(--sp-5);
+      margin-block-end: var(--sp-6);
     }
 
     .page-head .eyebrow {
@@ -78,6 +100,23 @@ const availableCount = flash.filter((f) => f.data.status === 'available').length
       color: var(--violet-bright);
       text-transform: uppercase;
       margin-block-start: var(--sp-1);
+    }
+
+    .size-section + .size-section {
+      margin-block-start: var(--sp-5);
+    }
+
+    .size-head {
+      font-size: var(--fs-3);
+      color: var(--paper);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-block-end: var(--sp-1);
+    }
+
+    .size-count {
+      color: var(--dust);
+      font-size: var(--fs-00);
     }
 
     .ledger {

@@ -17,12 +17,13 @@ const stampFile = f.status === 'available' ? 'stamp-available.png' : 'stamp-clai
 const hasStamp = pixelArtExists(stampFile);
 ---
 
-<li class={`row status-${f.status}`} data-flash-row data-reveal>
+<li class={`row status-${f.status}`} data-flash-row data-reveal data-grid-size={f.gridSize}>
   <div class="row-main">
     <span class="col-serial data">{f.serial}</span>
     <span class="col-title">{f.title}</span>
     <span class="col-placement data">{f.placement}</span>
     <span class="col-size data">{f.size}</span>
+    <span class="col-gridsize data">{f.gridSize}</span>
     <span class="col-status">
       {
         hasStamp && (
@@ -72,7 +73,7 @@ const hasStamp = pixelArtExists(stampFile);
 
   .row-main {
     display: grid;
-    grid-template-columns: 8rem 1fr 8rem 6rem 9rem;
+    grid-template-columns: 8rem 1fr 7rem 4.5rem 4.5rem 9rem;
     gap: var(--sp-2);
     padding-block: var(--sp-2);
     align-items: baseline;
@@ -89,7 +90,8 @@ const hasStamp = pixelArtExists(stampFile);
   }
 
   .col-placement,
-  .col-size {
+  .col-size,
+  .col-gridsize {
     color: var(--dust);
   }
 
@@ -114,7 +116,8 @@ const hasStamp = pixelArtExists(stampFile);
 
   .status-claimed .col-title,
   .status-claimed .col-placement,
-  .status-claimed .col-size {
+  .status-claimed .col-size,
+  .status-claimed .col-gridsize {
     color: var(--dust);
   }
 
