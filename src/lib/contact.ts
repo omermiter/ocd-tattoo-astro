@@ -1,6 +1,4 @@
-// TODO(client): replace with the real WhatsApp Business number, international
-// format, digits only (e.g. "9725XXXXXXXX").
-export const WHATSAPP_NUMBER = '9725XXXXXXXX';
+export const WHATSAPP_NUMBER = '972544409502';
 
 export const INSTAGRAM_HANDLE = '@ocd_tattoo';
 export const INSTAGRAM_URL = 'https://instagram.com/ocd_tattoo';

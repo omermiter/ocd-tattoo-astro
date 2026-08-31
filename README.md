@@ -119,11 +119,8 @@ ask and it'll get handed over or redone directly if you need new weights.
 ## Known scope boundaries
 
 - No analytics, no cookie banner, no third-party scripts on the main site.
-- `WHATSAPP_NUMBER` in `src/lib/contact.ts` is still a placeholder
-  (`9725XXXXXXXX`) — set the real WhatsApp Business number before launch.
-- `CONTACT_ENDPOINT` in the same file is a placeholder Worker URL until the
-  Worker is actually deployed (see above).
-- The Instagram handle/URL are assumed as `@ocd_tattoo` — confirm or correct
-  in `src/lib/contact.ts`.
+- `CONTACT_ENDPOINT` in `src/lib/contact.ts` is still a placeholder Worker URL
+  until the Worker is actually deployed (see above) — the contact form fails
+  closed with a WhatsApp fallback until then.
 - No deposit/payment collection happens on-site — the Register's claim flow
   and the flash booking both end in a WhatsApp handoff for that, by design.
