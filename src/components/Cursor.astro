@@ -19,8 +19,8 @@ const hasHover = pixelArtExists('cursor-hover.png');
         src={pixelArtPath('cursor-default.png')}
         alt=""
         aria-hidden="true"
-        width="32"
-        height="32"
+        width="48"
+        height="48"
       />
       {hasHover && (
         <img
@@ -103,7 +103,7 @@ const hasHover = pixelArtExists('cursor-hover.png');
             if (!failed) {
               x += (targetX - x) * LERP;
               y += (targetY - y) * LERP;
-              const t = `translate(${x - 16}px, ${y - 16}px)`;
+              const t = `translate(${x - 24}px, ${y - 24}px)`;
               def.style.transform = t;
               if (hov) hov.style.transform = t;
             }
