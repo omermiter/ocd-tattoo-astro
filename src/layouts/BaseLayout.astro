@@ -2,6 +2,9 @@
 import '../styles/tokens.css';
 import '../styles/fonts.css';
 import '../styles/global.css';
+import '../styles/pixel-art.css';
+import Cursor from '../components/Cursor.astro';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 
 interface Props {
   title: string;
@@ -9,6 +12,11 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+// The pixel-art favicon is additive, not a replacement: favicon.svg stays as
+// the permanent fallback so the tab icon is never missing, and the
+// hand-drawn one appears automatically once dropped in and rebuilt.
+const hasPixelFavicon = pixelArtExists('favicon.png');
 ---
 
 <!doctype html>
@@ -17,6 +25,7 @@ const { title, description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    {hasPixelFavicon && <link rel="icon" href={pixelArtPath('favicon.png')} sizes="32x32" />}
     <meta name="description" content={description} />
     <title>{title}</title>
     <meta name="color-scheme" content="dark" />
@@ -25,6 +34,7 @@ const { title, description } = Astro.props;
     <meta property="og:type" content="website" />
   </head>
   <body>
+    <Cursor />
     <slot />
   </body>
 

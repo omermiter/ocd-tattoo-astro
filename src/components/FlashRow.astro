@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { whatsappLink, claimMessage } from '../lib/contact';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 
 interface Props {
   entry: CollectionEntry<'flash'>;
@@ -9,6 +10,11 @@ interface Props {
 const { entry } = Astro.props;
 const f = entry.data;
 const wa = whatsappLink(claimMessage(f.serial, f.title));
+
+// Decorative reinforcement of the status already spelled out in the text
+// next to it — empty alt so screen readers don't announce it twice.
+const stampFile = f.status === 'available' ? 'stamp-available.png' : 'stamp-claimed.png';
+const hasStamp = pixelArtExists(stampFile);
 ---
 
 <li class={`row status-${f.status}`} data-flash-row data-reveal>
@@ -17,20 +23,30 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     <span class="col-title">{f.title}</span>
     <span class="col-placement data">{f.placement}</span>
     <span class="col-size data">{f.size}</span>
-    {
-      f.status === 'available' ? (
-        <button
-          class="col-status data claim-toggle"
-          type="button"
-          data-claim-toggle
-          aria-expanded="false"
-        >
-          Available →
-        </button>
-      ) : (
-        <span class="col-status data claimed-label">Claimed · {f.claimedDate}</span>
-      )
-    }
+    <span class="col-status">
+      {
+        hasStamp && (
+          <img
+            class="pixel-stamp pixel-art"
+            src={pixelArtPath(stampFile)}
+            alt=""
+            width="64"
+            height="32"
+            loading="lazy"
+            onerror="this.remove()"
+          />
+        )
+      }
+      {
+        f.status === 'available' ? (
+          <button class="data claim-toggle" type="button" data-claim-toggle aria-expanded="false">
+            Available →
+          </button>
+        ) : (
+          <span class="data claimed-label">Claimed · {f.claimedDate}</span>
+        )
+      }
+    </span>
   </div>
 
   {
@@ -78,6 +94,10 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
   }
 
   .col-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--sp-1);
     text-align: end;
   }
 
@@ -102,18 +122,13 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     color: var(--dust);
   }
 
-  /* CSS-grid accordion: animating grid-template-rows (0fr → 1fr) gives a
-     real smooth height transition without measuring pixel heights in JS.
-     The inner wrapper's overflow:hidden clips it to that track size, padding
-     included, so there's no visible sliver at the collapsed state. */
+  /* Height is set explicitly in JS (measured from scrollHeight) rather than
+     relying on a CSS-only max-height/grid-rows trick — neither reliably
+     collapses to true 0 across browsers for content with padding. */
   .claim-panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--dur-base) var(--ease-precise);
-  }
-
-  .claim-panel.is-open {
-    grid-template-rows: 1fr;
+    height: 0;
+    overflow: hidden;
+    transition: height var(--dur-base) var(--ease-precise);
   }
 
   .claim-panel-inner {
@@ -145,6 +160,7 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     }
 
     .col-status {
+      justify-content: flex-start;
       text-align: start;
     }
   }
@@ -156,19 +172,27 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     const toggle = row.querySelector<HTMLButtonElement>('[data-claim-toggle]');
     const panel = row.querySelector<HTMLElement>('[data-claim-panel]');
     if (!toggle || !panel) return;
+    const close = (p: HTMLElement) => {
+      p.style.height = '0px';
+    };
+    const open = (p: HTMLElement) => {
+      p.style.height = `${p.scrollHeight}px`;
+    };
+
     toggle.addEventListener('click', () => {
-      const open = toggle.getAttribute('aria-expanded') === 'true';
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
       // Accordion behavior: opening one claim panel closes any other that's
       // open, so the register never shows more than one expanded at once.
       document.querySelectorAll<HTMLButtonElement>('[data-claim-toggle]').forEach((t) => {
         if (t !== toggle) {
           t.setAttribute('aria-expanded', 'false');
           const p = t.closest('[data-flash-row]')?.querySelector<HTMLElement>('[data-claim-panel]');
-          p?.classList.remove('is-open');
+          if (p) close(p);
         }
       });
-      toggle.setAttribute('aria-expanded', String(!open));
-      panel.classList.toggle('is-open', !open);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      if (isOpen) close(panel);
+      else open(panel);
     });
   });
 </script>

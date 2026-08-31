@@ -5,6 +5,8 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import PrecisionGrid from '../components/PrecisionGrid.astro';
 import PieceCard from '../components/PieceCard.astro';
+import Preloader from '../components/Preloader.astro';
+import PixelDivider from '../components/PixelDivider.astro';
 
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
 const flash = (await getCollection('flash')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
@@ -15,6 +17,7 @@ const registerPreview = flash.slice(0, 5);
   title="OCD Tattoo — Pixel Art, Held to a Realist's Standard"
   description="Color pixel art tattoos built on years of black-and-gray realism training. One-of-one flash designs, a growing collection of precision-built pieces, and commissions reviewed personally."
 >
+  <Preloader />
   <Nav />
 
   <main>
@@ -33,6 +36,8 @@ const registerPreview = flash.slice(0, 5);
       <a class="cta data underline" href="/register/">View the Register →</a>
     </section>
 
+    <PixelDivider />
+
     <section class="section pieces">
       <header class="section-head" data-reveal>
         <p class="eyebrow">Pieces</p>
@@ -45,6 +50,8 @@ const registerPreview = flash.slice(0, 5);
 
       <a class="more data underline" href="/pieces/" data-reveal>View all pieces →</a>
     </section>
+
+    <PixelDivider />
 
     <section class="section register">
       <header class="section-head" data-reveal>

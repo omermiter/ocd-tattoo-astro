@@ -1,5 +1,6 @@
 ---
 import { hasPhoto } from '../lib/media';
+import { pixelArtPath, spriteFrameCount } from '../lib/pixelArt';
 
 interface Props {
   photo?: string;
@@ -10,12 +11,29 @@ interface Props {
 
 const { photo, serial, alt, ratio = '4 / 5' } = Astro.props;
 const available = photo ? hasPhoto(photo) : false;
+
+// Hover-burst sprite only makes sense over real photography — only loads
+// its bytes once the thumbnail scrolls into view (see the observer below),
+// and only plays on hover/focus. Skipped entirely if the sheet isn't ready.
+const hoverBurstFrames = available ? await spriteFrameCount('hover-burst.png') : null;
+const hoverBurstSrc = hoverBurstFrames ? pixelArtPath('hover-burst.png') : null;
 ---
 
 <div class="piece-media" class:list={[{ pending: !available }]} style={available ? `aspect-ratio: ${ratio}` : undefined}>
   {
     available && photo ? (
-      <img src={photo} alt={alt} loading="lazy" />
+      <Fragment>
+        <img src={photo} alt={alt} loading="lazy" />
+        {hoverBurstFrames && hoverBurstSrc && (
+          <span
+            class="hover-burst pixel-sprite pixel-art"
+            data-hover-burst
+            data-src={hoverBurstSrc}
+            style={`--frames:${hoverBurstFrames}`}
+            aria-hidden="true"
+          />
+        )}
+      </Fragment>
     ) : (
       <div class="pending-panel grid-texture" role="img" aria-label={`${alt} — not yet photographed`}>
         <span class="serial">{serial}</span>
@@ -25,8 +43,35 @@ const available = photo ? hasPhoto(photo) : false;
   }
 </div>
 
+<script>
+  const bursts = document.querySelectorAll<HTMLElement>('[data-hover-burst]');
+  if (bursts.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          const src = el.dataset.src;
+          if (src) {
+            const img = new Image();
+            img.onload = () => {
+              el.style.backgroundImage = `url(${src})`;
+            };
+            img.onerror = () => el.remove();
+            img.src = src;
+          }
+          observer.unobserve(el);
+        });
+      },
+      { rootMargin: '300px' },
+    );
+    bursts.forEach((el) => observer.observe(el));
+  }
+</script>
+
 <style>
   .piece-media {
+    position: relative;
     overflow: hidden;
     background: var(--surface);
     border: var(--border-hairline);
@@ -41,6 +86,21 @@ const available = photo ? hasPhoto(photo) : false;
 
   .piece-media:hover img {
     transform: scale(1.035);
+  }
+
+  .hover-burst {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation-play-state: paused;
+    transition: opacity var(--dur-base) var(--ease-precise);
+    pointer-events: none;
+  }
+
+  .piece-media:hover .hover-burst,
+  .piece-media:focus-within .hover-burst {
+    opacity: 1;
+    animation-play-state: running;
   }
 
   /* A missing photo is treated as a deliberate specimen card, not an empty

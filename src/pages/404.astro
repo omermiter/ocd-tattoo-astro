@@ -2,13 +2,28 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+
+const hasIllustration = pixelArtExists('404.png');
 ---
 
 <BaseLayout title="Page not found — OCD Tattoo" description="This page doesn't exist, or the piece moved.">
   <Nav />
 
   <main class="not-found grid-texture" data-reveal>
-    <p class="data code">404</p>
+    {
+      hasIllustration ? (
+        <img
+          class="illustration pixel-art"
+          src={pixelArtPath('404.png')}
+          alt="Page not found"
+          loading="lazy"
+          onerror="this.remove()"
+        />
+      ) : (
+        <p class="data code">404</p>
+      )
+    }
     <h1>Page not found.</h1>
     <p class="intro">This page doesn't exist, or the piece moved.</p>
     <a class="back data underline" href="/pieces/">← Back to Pieces</a>
@@ -28,6 +43,12 @@ import Footer from '../components/Footer.astro';
       padding: var(--sp-6) var(--sp-3);
     }
 
+    .illustration {
+      max-width: 16rem;
+      height: auto;
+      margin-block-end: var(--sp-2);
+    }
+
     .code {
       color: var(--dust);
       font-size: var(--fs-3);
@@ -44,7 +65,6 @@ import Footer from '../components/Footer.astro';
     .back {
       margin-block-start: var(--sp-2);
       color: var(--violet-bright);
-      text-decoration: none;
       text-transform: uppercase;
     }
   </style>

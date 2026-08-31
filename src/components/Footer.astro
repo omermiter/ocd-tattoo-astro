@@ -1,12 +1,42 @@
 ---
 import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../lib/contact';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+
+const hasMark = pixelArtExists('mark.png');
+const hasInstagramIcon = pixelArtExists('icon-instagram.png');
+const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
 ---
 
 <footer class="footer">
-  <span class="data">{INSTAGRAM_HANDLE} · Israel</span>
+  <div class="identity">
+    {
+      hasMark && (
+        <img
+          class="mark pixel-art"
+          src={pixelArtPath('mark.png')}
+          alt="OCD Tattoo"
+          width="24"
+          height="24"
+          loading="lazy"
+        />
+      )
+    }
+    <span class="data">{INSTAGRAM_HANDLE} · Israel</span>
+  </div>
+
   <div class="links data">
-    <a class="underline" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">Instagram</a>
-    <a class="underline" href={whatsappLink()} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    <a class="underline" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+      {hasInstagramIcon && (
+        <img class="icon pixel-art" src={pixelArtPath('icon-instagram.png')} alt="" width="16" height="16" loading="lazy" />
+      )}
+      Instagram
+    </a>
+    <a class="underline" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
+      {hasWhatsappIcon && (
+        <img class="icon pixel-art" src={pixelArtPath('icon-whatsapp.png')} alt="" width="16" height="16" loading="lazy" />
+      )}
+      WhatsApp
+    </a>
   </div>
 </footer>
 
@@ -21,6 +51,17 @@ import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../lib/contact';
     border-block-start: var(--border-hairline);
   }
 
+  .identity {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .mark {
+    width: 24px;
+    height: 24px;
+  }
+
   .links {
     display: flex;
     gap: var(--sp-3);
@@ -28,6 +69,9 @@ import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../lib/contact';
   }
 
   .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
     text-decoration: none;
     color: var(--dust);
     transition: color var(--dur-base) var(--ease-precise);
@@ -36,4 +80,19 @@ import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../lib/contact';
   .links a:hover {
     color: var(--violet-bright);
   }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
 </style>
+
+<script>
+  // Runtime safety net on top of the build-time existence check: guards a
+  // stale browser cache pointing at a file that's since been removed.
+  document.querySelectorAll<HTMLImageElement>('.footer img.pixel-art').forEach((img) => {
+    img.addEventListener('error', () => {
+      img.style.display = 'none';
+    });
+  });
+</script>

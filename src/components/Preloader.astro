@@ -1,0 +1,95 @@
+---
+// Homepage-only initial load animation. Plays the sprite sheet if it's been
+// dropped in, falls back to a static hold on the signature mark if only
+// that exists, or renders nothing at all (straight to the page, no overlay)
+// if neither is ready. Session-gated to once per visit and skippable on any
+// input, same as the rest of the site's motion.
+import { pixelArtExists, pixelArtPath, spriteFrameCount } from '../lib/pixelArt';
+
+const frames = await spriteFrameCount('preloader.png');
+const hasMark = !frames && pixelArtExists('mark.png');
+---
+
+{
+  (frames || hasMark) && (
+    <div class="preloader" data-preloader aria-hidden="true">
+      {frames ? (
+        <div
+          class="preloader-sprite pixel-sprite pixel-art"
+          style={`--frames:${frames}; --sprite-duration:${frames * 90}ms; background-image:url(${pixelArtPath('preloader.png')})`}
+        />
+      ) : (
+        <img
+          class="preloader-mark pixel-art"
+          src={pixelArtPath('mark.png')}
+          alt=""
+          width="64"
+          height="64"
+          onerror="this.closest('[data-preloader]')?.remove()"
+        />
+      )}
+    </div>
+  )
+}
+
+<script>
+  const preloader = document.querySelector<HTMLElement>('[data-preloader]');
+  if (preloader) {
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem('ocd-preloader-seen') === '1';
+    } catch {
+      /* ignore */
+    }
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const markSeen = () => {
+      try {
+        sessionStorage.setItem('ocd-preloader-seen', '1');
+      } catch {
+        /* ignore */
+      }
+    };
+
+    if (seen || reduced) {
+      preloader.remove();
+      markSeen();
+    } else {
+      let dismissed = false;
+      const dismiss = () => {
+        if (dismissed) return;
+        dismissed = true;
+        clearTimeout(holdTimer);
+        preloader.classList.add('fade-out');
+        markSeen();
+        setTimeout(() => preloader.remove(), 220);
+      };
+      const holdTimer = setTimeout(dismiss, 650);
+      const events: (keyof WindowEventMap)[] = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
+      events.forEach((ev) => window.addEventListener(ev, dismiss, { once: true, passive: true }));
+    }
+  }
+</script>
+
+<style>
+  .preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    opacity: 1;
+    transition: opacity var(--dur-base) var(--ease-precise);
+  }
+
+  .preloader.fade-out {
+    opacity: 0;
+  }
+
+  .preloader-sprite,
+  .preloader-mark {
+    width: 64px;
+    height: 64px;
+  }
+</style>
