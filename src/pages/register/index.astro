@@ -35,6 +35,12 @@ const availableCount = flash.filter((f) => f.data.status === 'available').length
     <ul class="ledger">
       {sorted.map((f) => <FlashRow entry={f} />)}
     </ul>
+
+    <section class="closing" data-reveal>
+      <h2>Don't see what you want?</h2>
+      <p class="subhead">Flash is first-come; a commission is built around your idea instead.</p>
+      <a class="cta data underline" href="/contact/">Start a commission →</a>
+    </section>
   </main>
 
   <Footer />
@@ -79,6 +85,36 @@ const availableCount = flash.filter((f) => f.data.status === 'available').length
       margin: 0;
       padding: 0;
       border-block-start: var(--border-hairline);
+    }
+
+    .closing {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-block-start: var(--sp-6);
+      padding-block: var(--sp-6);
+      border-block-start: var(--border-hairline);
+    }
+
+    .closing h2 {
+      font-size: var(--fs-display-sm);
+    }
+
+    .subhead {
+      max-width: 30rem;
+      color: var(--dust);
+      font-size: var(--fs-2);
+    }
+
+    .cta {
+      color: var(--paper);
+      text-transform: uppercase;
+    }
+
+    .cta:hover {
+      color: var(--violet-bright);
     }
   </style>
 </BaseLayout>

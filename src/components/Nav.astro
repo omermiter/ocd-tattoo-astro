@@ -24,7 +24,11 @@ const links = [
       {
         links.map((l) => (
           <li>
-            <a class="underline" href={l.href} aria-current={active === l.key ? 'page' : undefined}>
+            <a
+              class:list={['underline', { contact: l.key === 'contact' }]}
+              href={l.href}
+              aria-current={active === l.key ? 'page' : undefined}
+            >
               {l.label}
             </a>
           </li>
@@ -126,7 +130,22 @@ const links = [
   }
 
   .links a[aria-current='page'] {
+    color: var(--paper);
+  }
+
+  /* Contact is the one action every other page funnels toward — violet is
+     reserved for it alone (current-page uses plain white above), so it
+     reads as the site's standing CTA rather than a third equal nav item. */
+  .links a.contact {
     color: var(--violet-bright);
+  }
+
+  .links a.contact:hover {
+    color: var(--paper);
+  }
+
+  .links a.contact[aria-current='page'] {
+    color: var(--paper);
   }
 
   @media (max-width: 640px) {
