@@ -5,7 +5,9 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import FlashRow from '../../components/FlashRow.astro';
 import { GRID_SIZES } from '../../content.config';
+import site from '../../data/site.json';
 
+const { intro, closingText } = site.registerPage;
 const flash = await getCollection('flash');
 const order = { available: 0, claimed: 1 };
 const byAvailability = (a: (typeof flash)[number], b: (typeof flash)[number]) => {
@@ -36,9 +38,7 @@ const sections = GRID_SIZES.map((gridSize) => ({
       <p class="eyebrow">The Register</p>
       <h1>One-of-one, always.</h1>
       <p class="intro">
-        Every flash design here is drawn once and tattooed once. Claim one and it's retired from
-        the list permanently — the record stays, the design doesn't come back. Grouped by canvas:
-        the grid a design is actually built on.
+        {intro}
       </p>
       <p class="data count">{availableCount} of {flash.length} available</p>
     </header>
@@ -60,7 +60,7 @@ const sections = GRID_SIZES.map((gridSize) => ({
 
     <section class="closing" data-reveal>
       <h2>Don't see what you want?</h2>
-      <p class="subhead">Flash is first-come; a commission is built around your idea instead.</p>
+      <p class="subhead">{closingText}</p>
       <a class="cta data underline" href="/contact/">Start a commission →</a>
     </section>
   </main>

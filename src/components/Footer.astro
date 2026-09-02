@@ -1,5 +1,5 @@
 ---
-import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE } from '../lib/contact';
+import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE, LOCATION } from '../lib/contact';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 
 const hasMark = pixelArtExists('mark.png');
@@ -21,7 +21,7 @@ const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
         />
       )
     }
-    <span class="data">{INSTAGRAM_HANDLE} · Israel</span>
+    <span class="data">{INSTAGRAM_HANDLE} · {LOCATION}</span>
   </div>
 
   <div class="links data">

@@ -21,9 +21,12 @@ src/
     pieces/<slug>.md   — the growing "Pieces" collection (see below)
     flash/<slug>.md    — one-of-one flash designs shown on the Register
   content.config.ts    — Zod schemas for both collections
+  data/
+    site.json          — editable site copy + contact info (see Admin panel)
   lib/
     contact.ts         — WhatsApp/Instagram links, Resend Worker endpoint
     media.ts           — build-time "does this photo exist yet" check
+    text.ts            — *emphasis* markup helper for site.json copy
   layouts/BaseLayout.astro
   components/
     Nav.astro, Footer.astro
@@ -36,13 +39,18 @@ src/
     global.css   — resets + shared utilities (.data, .eyebrow, .grid-texture)
     fonts.css    — generated @font-face rules, self-hosted latin/latin-ext
 public/
+  admin/     — Decap CMS admin panel (see Admin panel, below)
   fonts/     — the actual .woff2 files fonts.css points to
   pieces/    — real piece photography drops in here (see below)
   flash/     — real flash-design photography drops in here
+  uploads/   — images uploaded through the admin panel that aren't a piece/flash photo
   CNAME      — the custom domain GitHub Pages serves this repo on
 worker/
   — a small separate Cloudflare Worker that relays the contact form to
     Resend (GitHub Pages can't run server code — see worker/README.md)
+cms-auth/
+  — a small separate Cloudflare Worker that backs GitHub login for the
+    admin panel (see Admin panel, below, and cms-auth/README.md)
 ```
 
 ## Adding a piece
@@ -92,6 +100,44 @@ If the Worker were ever undeployed or unreachable, the form fails closed: it
 shows an error with a WhatsApp fallback link rather than pretending to have
 sent anything.
 
+## Admin panel
+
+`/admin/` runs [Decap CMS](https://decapcms.org) — a browser-based editor
+for everything content-shaped in this repo:
+
+- **Pieces** and **Flash (Register)** — add/edit/delete entries, upload or
+  replace photos, mark flash as claimed. Same fields as the frontmatter
+  described above, just as a form.
+- **Site Text & Settings** — the homepage hero, section intros, closing
+  CTAs, the contact/register page intros, and the WhatsApp/Instagram/
+  location shown in the footer. Backed by `src/data/site.json`.
+
+Saving in the CMS commits directly to `main` on GitHub, which triggers the
+same `deploy.yml` workflow a manual push does — no separate publish step.
+
+It authenticates via GitHub OAuth, proxied through `cms-auth/` (a Worker,
+same reason `worker/` exists for the contact form — see `cms-auth/README.md`
+for one-time setup). Anyone who can push to this repo on GitHub can save
+through `/admin/`; there's no separate admin password.
+
+**Not yet wired up** — needs the one-time setup in `cms-auth/README.md`
+(GitHub OAuth App + deploying that Worker) before `/admin/` will work.
+
+## Analytics
+
+[Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) is
+wired into `BaseLayout.astro` (privacy-friendly: no cookies, no personal
+data collected, no cookie banner needed). **Not yet active** — the beacon
+script currently has a placeholder token. To turn it on:
+
+1. In the Cloudflare dashboard: Analytics & Logs → Web Analytics → Add a site.
+2. Copy the token it gives you into `src/layouts/BaseLayout.astro`, replacing
+   `REPLACE_WITH_CF_BEACON_TOKEN`.
+3. Commit (or edit+save through `/admin/`, though this one file isn't
+   exposed there — it's plain site code, not content).
+4. Stats show up on that same Cloudflare dashboard page — the site itself
+   has no analytics UI of its own.
+
 ## Deploying
 
 The included workflow (`.github/workflows/deploy.yml`) builds and deploys to
@@ -119,6 +165,8 @@ ask and it'll get handed over or redone directly if you need new weights.
 
 ## Known scope boundaries
 
-- No analytics, no cookie banner, no third-party scripts on the main site.
+- Analytics is Cloudflare Web Analytics only (see above) — no cookie banner
+  needed since it doesn't use cookies or collect personal data; nothing
+  heavier (GA, Meta Pixel, etc.) is wired in.
 - No deposit/payment collection happens on-site — the Register's claim flow
   and the flash booking both end in a WhatsApp handoff for that, by design.

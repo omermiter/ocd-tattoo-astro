@@ -1,7 +1,10 @@
-export const WHATSAPP_NUMBER = '972544409502';
+import site from '../data/site.json';
 
-export const INSTAGRAM_HANDLE = '@ocd_tattoo';
-export const INSTAGRAM_URL = 'https://instagram.com/ocd_tattoo';
+export const WHATSAPP_NUMBER = site.contact.whatsappNumber;
+
+export const INSTAGRAM_HANDLE = site.contact.instagramHandle;
+export const INSTAGRAM_URL = site.contact.instagramUrl;
+export const LOCATION = site.contact.location;
 
 export const CONTACT_ENDPOINT = 'https://ocd-tattoo-contact.omer3107.workers.dev';
 

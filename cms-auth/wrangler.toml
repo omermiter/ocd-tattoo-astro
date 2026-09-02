@@ -1,0 +1,9 @@
+name = "ocd-tattoo-cms-auth"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+# Not secret — it's embedded in the public GitHub authorize URL anyway.
+# GITHUB_CLIENT_SECRET is set separately via `wrangler secret put`.
+[vars]
+GITHUB_CLIENT_ID = "Ov23liHc7vRuugOWO2ql"

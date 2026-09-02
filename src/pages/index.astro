@@ -7,10 +7,13 @@ import PrecisionGrid from '../components/PrecisionGrid.astro';
 import PieceCard from '../components/PieceCard.astro';
 import Preloader from '../components/Preloader.astro';
 import PixelDivider from '../components/PixelDivider.astro';
+import { renderEmphasis } from '../lib/text';
+import site from '../data/site.json';
 
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
 const flash = (await getCollection('flash')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
 const registerPreview = flash.slice(0, 5);
+const { home } = site;
 ---
 
 <BaseLayout
@@ -23,15 +26,16 @@ const registerPreview = flash.slice(0, 5);
   <main>
     <PrecisionGrid>
       <section class="hero">
-        <p class="eyebrow">OCD Tattoo</p>
-        <h1>Pixel Art, Held to a <em>Realist's</em> Standard.</h1>
+        <div class="hero-content">
+          <p class="eyebrow">{home.heroEyebrow}</p>
+          <h1 set:html={renderEmphasis(home.heroTitle)} />
+        </div>
       </section>
     </PrecisionGrid>
 
     <section class="beat" data-reveal>
       <p class="subhead">
-        Every square drawn, stenciled, and placed with the same precision built over years of
-        black-and-gray realism work — now in color, one pixel at a time.
+        {home.beatText}
       </p>
       <a class="cta data underline" href="/register/">View the Register →</a>
     </section>
@@ -41,7 +45,7 @@ const registerPreview = flash.slice(0, 5);
     <section class="section pieces">
       <header class="section-head" data-reveal>
         <p class="eyebrow">Pieces</p>
-        <p class="intro">A growing collection of pixel art tattoos — precision-built, one at a time.</p>
+        <p class="intro">{home.piecesIntro}</p>
       </header>
 
       <div class="piece-list">
@@ -57,7 +61,7 @@ const registerPreview = flash.slice(0, 5);
       <header class="section-head" data-reveal>
         <p class="eyebrow">The Register</p>
         <p class="intro">
-          One-of-one flash designs. Once a piece is claimed, it's retired from the list — it doesn't come back.
+          {home.registerIntro}
         </p>
       </header>
 
@@ -79,22 +83,35 @@ const registerPreview = flash.slice(0, 5);
     </section>
 
     <section class="section closing" data-reveal>
-      <h2>Commissions are held to the same standard.</h2>
-      <p class="subhead">Reviewed personally, not queued. Tell me what you want, and I'll tell you if it's a fit.</p>
+      <h2>{home.closingTitle}</h2>
+      <p class="subhead">{home.closingText}</p>
       <a class="cta data underline" href="/contact/">Start a commission →</a>
     </section>
   </main>
 
   <Footer />
 
-  <style>
+  <style define:vars={{ heroBg: `url(${home.heroBackground})` }}>
     .hero {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: var(--sp-3);
       min-block-size: 88vh;
       padding: var(--sp-3);
+      /* Background image is CMS-editable — see home.heroBackground in
+         src/data/site.json. Dark gradient on top exists purely so the title
+         stays readable against the photo underneath. Full-bleed across the
+         whole section; the text itself stays width-constrained via
+         .hero-content below. */
+      background-image: linear-gradient(180deg, rgba(8, 8, 10, 0.6), rgba(8, 8, 10, 0.82)), var(--heroBg);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-3);
       max-width: 60rem;
     }
 

@@ -1,0 +1,25 @@
+{
+  "contact": {
+    "whatsappNumber": "972544409502",
+    "instagramHandle": "@ocd_tattoo",
+    "instagramUrl": "https://instagram.com/ocd_tattoo",
+    "location": "Israel"
+  },
+  "home": {
+    "heroEyebrow": "OCD Tattoo",
+    "heroTitle": "Pixel Art, Held to a *Realist's* Standard.",
+    "heroBackground": "/scratch-hero-bg.jpg",
+    "beatText": "Every square drawn, stenciled, and placed with the same precision built over years of black-and-gray realism work — now in color, one pixel at a time.",
+    "piecesIntro": "A growing collection of pixel art tattoos — precision-built, one at a time.",
+    "registerIntro": "One-of-one flash designs. Once a piece is claimed, it's retired from the list — it doesn't come back.",
+    "closingTitle": "Commissions are held to the same standard.",
+    "closingText": "Reviewed personally, not queued. Tell me what you want, and I'll tell you if it's a fit."
+  },
+  "contactPage": {
+    "intro": "I read every message myself. If it's a fit, I'll ask for a reference and a placement; if it isn't, I'll say so directly instead of leaving you waiting."
+  },
+  "registerPage": {
+    "intro": "Every flash design here is drawn once and tattooed once. Claim one and it's retired from the list permanently — the record stays, the design doesn't come back. Grouped by canvas: the grid a design is actually built on.",
+    "closingText": "Flash is first-come; a commission is built around your idea instead."
+  }
+}

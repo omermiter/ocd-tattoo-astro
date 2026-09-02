@@ -1,0 +1,116 @@
+backend:
+  name: github
+  repo: omermiter/OCD-TAttoo
+  branch: main
+  base_url: https://ocd-tattoo-cms-auth.omer3107.workers.dev
+  auth_endpoint: auth
+
+# Anything dropped in through an image field that isn't inside a collection's
+# own media_folder (below) lands here.
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "pieces"
+    label: "Pieces"
+    label_singular: "Piece"
+    folder: "src/content/pieces"
+    create: true
+    delete: true
+    slug: "{{fields.serial}}"
+    format: "frontmatter"
+    summary: "{{serial}} — {{title}}"
+    fields:
+      - { label: "Serial", name: "serial", widget: "string", hint: "e.g. OCD·03" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Placement", name: "placement", widget: "string" }
+      - { label: "Size", name: "size", widget: "string", hint: "e.g. 9cm" }
+      - { label: "Sessions", name: "sessions", widget: "number", value_type: "int", min: 1 }
+      - { label: "Hours", name: "hours", widget: "number", min: 0 }
+      - { label: "Date", name: "date", widget: "string", hint: "e.g. 2026.05" }
+      - { label: "Note", name: "note", widget: "text", hint: "The artist's own words on this piece." }
+      - label: "Photo"
+        name: "photo"
+        widget: "image"
+        required: false
+        media_folder: "/public/pieces"
+        public_folder: "/pieces"
+        hint: "Leave empty to show the 'Photography pending' placeholder."
+
+  - name: "flash"
+    label: "Flash (Register)"
+    label_singular: "Flash design"
+    folder: "src/content/flash"
+    create: true
+    delete: true
+    slug: "{{fields.serial}}"
+    format: "frontmatter"
+    summary: "{{serial}} — {{title}} ({{status}})"
+    fields:
+      - { label: "Serial", name: "serial", widget: "string", hint: "e.g. OCD-F07" }
+      - { label: "Title", name: "title", widget: "string" }
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        options: ["available", "claimed"]
+      - { label: "Size", name: "size", widget: "string", hint: "e.g. 8cm" }
+      - label: "Grid Size"
+        name: "gridSize"
+        widget: "select"
+        options: ["8×8", "16×16", "24×24", "32×32"]
+      - { label: "Placement", name: "placement", widget: "string" }
+      - label: "Claimed Date"
+        name: "claimedDate"
+        widget: "string"
+        required: false
+        hint: "Format YYYY.MM.DD — leave empty until claimed."
+      - label: "Photo"
+        name: "photo"
+        widget: "image"
+        required: false
+        media_folder: "/public/flash"
+        public_folder: "/flash"
+        hint: "Leave empty to show the 'Photography pending' placeholder."
+
+  - name: "site"
+    label: "Site Text & Settings"
+    files:
+      - name: "settings"
+        label: "Site Settings"
+        file: "src/data/site.json"
+        fields:
+          - label: "Contact"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "WhatsApp Number", name: "whatsappNumber", widget: "string", hint: "International format, digits only, no + (e.g. 972501234567)" }
+              - { label: "Instagram Handle", name: "instagramHandle", widget: "string" }
+              - { label: "Instagram URL", name: "instagramUrl", widget: "string" }
+              - { label: "Location", name: "location", widget: "string" }
+          - label: "Home Page"
+            name: "home"
+            widget: "object"
+            fields:
+              - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
+              - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
+              - label: "Hero Background Image"
+                name: "heroBackground"
+                widget: "image"
+                media_folder: "/public/uploads"
+                public_folder: "/uploads"
+              - { label: "Beat Text", name: "beatText", widget: "text" }
+              - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
+              - { label: "Register Section Intro", name: "registerIntro", widget: "text" }
+              - { label: "Closing Title", name: "closingTitle", widget: "string" }
+              - { label: "Closing Text", name: "closingText", widget: "text" }
+          - label: "Contact Page"
+            name: "contactPage"
+            widget: "object"
+            fields:
+              - { label: "Intro", name: "intro", widget: "text" }
+          - label: "Register Page"
+            name: "registerPage"
+            widget: "object"
+            fields:
+              - { label: "Intro", name: "intro", widget: "text" }
+              - { label: "Closing Text", name: "closingText", widget: "text" }
