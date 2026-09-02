@@ -1,10 +1,11 @@
 ---
-serial: "OCD·01"
-title: "Grid Portrait, Forearm"
-placement: "Forearm"
-size: "9cm"
-sessions: 2
-hours: 6
+serial: OCD·01
+title: Steelix
+placement: Ribs
+size: 7cm
+sessions: 1
+hours: 4
 date: "2026.05"
-note: "Every pixel is a full needle pass, not a shortcut — the same layering discipline from years of realism work, just constrained to a grid instead of a gradient. No drift across the piece; check the edges against the reference."
+note: Steelix Pokémon in pixel art style
+photo: /pieces/img_9248.jpeg
 ---
