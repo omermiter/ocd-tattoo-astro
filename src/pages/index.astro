@@ -25,7 +25,7 @@ const { home } = site;
 
   <main>
     <PrecisionGrid>
-      <section class="hero">
+      <section class="hero" style={`--heroBg: url(${home.heroBackground})`}>
         <div class="hero-content">
           <p class="eyebrow">{home.heroEyebrow}</p>
           <h1 set:html={renderEmphasis(home.heroTitle)} />
@@ -91,7 +91,7 @@ const { home } = site;
 
   <Footer />
 
-  <style define:vars={{ heroBg: `url(${home.heroBackground})` }}>
+  <style>
     .hero {
       display: flex;
       flex-direction: column;
