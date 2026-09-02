@@ -15,7 +15,7 @@ const pieces = defineCollection({
     placement: z.string(),
     size: z.string(),
     sessions: z.number().int().positive(),
-    hours: z.number().positive(),
+    hours: z.number().nonnegative(),
     date: z.string(),
     note: z.string(),
     photo: z.string().optional(),
