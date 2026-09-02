@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: omermiter/OCD-TAttoo
+  repo: omermiter/ocd-tattoo-astro
   branch: main
   base_url: https://ocd-tattoo-cms-auth.omer3107.workers.dev
   auth_endpoint: auth

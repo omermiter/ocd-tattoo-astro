@@ -31,7 +31,7 @@ Nothing is deployed yet. One-time setup:
    `https://ocd-tattoo-cms-auth.omer3107.workers.dev`); update both the
    OAuth App's callback URL and `config.yml` if the actual subdomain differs.
 
-6. Push the site to GitHub (`config.yml` points at `omermiter/OCD-TAttoo`,
+6. Push the site to GitHub (`config.yml` points at `omermiter/ocd-tattoo-astro`,
    branch `main`) so `/admin` has a repo to authenticate against.
 
 7. Visit `https://ocdtattoo.com/admin/` (or `http://localhost:4321/admin/`
@@ -53,5 +53,5 @@ Point the OAuth App's callback URL and `config.yml`'s `base_url` at
 This Worker only proxies the OAuth handshake — it doesn't gate access
 itself. Once someone has a GitHub token, Decap uses it to call GitHub's API
 directly, so the real permission boundary is GitHub's own: only accounts
-with write/push access to `omermiter/OCD-TAttoo` can save changes through
+with write/push access to `omermiter/ocd-tattoo-astro` can save changes through
 `/admin`, same as they could with `git push` directly.
