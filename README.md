@@ -127,16 +127,11 @@ through `/admin/`; there's no separate admin password.
 
 [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) is
 wired into `BaseLayout.astro` (privacy-friendly: no cookies, no personal
-data collected, no cookie banner needed). **Not yet active** — the beacon
-script currently has a placeholder token. To turn it on:
-
-1. In the Cloudflare dashboard: Analytics & Logs → Web Analytics → Add a site.
-2. Copy the token it gives you into `src/layouts/BaseLayout.astro`, replacing
-   `REPLACE_WITH_CF_BEACON_TOKEN`.
-3. Commit (or edit+save through `/admin/`, though this one file isn't
-   exposed there — it's plain site code, not content).
-4. Stats show up on that same Cloudflare dashboard page — the site itself
-   has no analytics UI of its own.
+data collected, no cookie banner needed) and live on every page. Stats show
+up at dash.cloudflare.com → Analytics & Logs → Web Analytics — the site
+itself has no analytics UI of its own. The beacon token in
+`BaseLayout.astro` isn't secret (it's public in the page source anyway), so
+no special handling needed if it ever has to change — just edit and commit.
 
 ## Deploying
 
