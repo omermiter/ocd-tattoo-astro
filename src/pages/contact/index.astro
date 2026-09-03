@@ -106,7 +106,7 @@ const { intro } = site.contactPage;
 
     .field input:focus,
     .field textarea:focus {
-      border-color: var(--violet-bright);
+      border-color: var(--claim);
     }
 
     .actions {
@@ -116,17 +116,20 @@ const { intro } = site.contactPage;
       margin-block-start: var(--sp-2);
     }
 
+    /* This is the site's highest-intent action — --claim at rest, same
+       color family as every other CTA, not discovered on hover. See
+       REDESIGN-PLAN.md §2. */
     .submit {
       cursor: pointer;
-      color: var(--paper);
+      color: var(--claim);
       text-transform: uppercase;
-      border-block-end: 1px solid var(--violet);
+      border-block-end: 1px solid var(--claim);
       padding-block-end: 2px;
-      transition: color var(--dur-base) var(--ease-precise);
+      transition: border-color var(--dur-base) var(--ease-precise);
     }
 
     .submit:hover {
-      color: var(--violet-bright);
+      border-color: var(--paper);
     }
 
     .submit:disabled {
@@ -140,12 +143,15 @@ const { intro } = site.contactPage;
     }
 
     .status[data-state='ok'] {
-      color: var(--violet-bright);
+      color: var(--claim);
     }
 
-    .status a {
-      color: var(--violet-bright);
-    }
+    /* NOTE: the error state's WhatsApp link is injected via innerHTML at
+       runtime (see the script below), so it never receives Astro's
+       scoped-style attribute and a rule here would silently never match —
+       confirmed by testing it live, not assumed. Its color is set as an
+       inline style directly in the generated markup instead. Keeps its
+       own brand green, not --claim — see REDESIGN-PLAN.md §2. */
   </style>
 
   <script is:inline define:vars={{ wa: whatsappLink(), ENDPOINT: CONTACT_ENDPOINT }}>
@@ -180,7 +186,7 @@ const { intro } = site.contactPage;
         form.reset();
       } catch {
         status.dataset.state = 'error';
-        status.innerHTML = `Something went wrong. Message me directly on <a class="underline" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a> instead.`;
+        status.innerHTML = `Something went wrong. Message me directly on <a class="underline" style="color:var(--whatsapp)" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a> instead.`;
         submitBtn.disabled = false;
       }
     });
