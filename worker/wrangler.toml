@@ -3,11 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2025-01-01"
 workers_dev = true
 
-# TODO(client): set to the real site origin once the custom domain is live
-# (e.g. "https://ocdtattoo.com"). Keeping this specific (not "*") stops other
-# sites from using your Resend relay/API key.
+# Kept specific (not "*") so other sites can't use this Resend relay/API key.
+# Live domain went live 2026-09-02 — this now matches it. For local Worker
+# testing against `npm run dev` (Astro on :4321), override with
+# `wrangler dev --var ALLOWED_ORIGIN:http://localhost:4321` rather than
+# editing this file, so production stays correct by default.
 [vars]
-# Temporarily localhost for local testing — MUST be changed to the real
-# production origin (e.g. "https://ocdtattoo.com") before/when going live,
-# then redeploy with `npm run deploy`.
-ALLOWED_ORIGIN = "http://localhost:4321"
+ALLOWED_ORIGIN = "https://ocdtattoo.com"
