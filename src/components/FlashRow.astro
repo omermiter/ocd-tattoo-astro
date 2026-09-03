@@ -1,7 +1,9 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { whatsappLink, claimMessage } from '../lib/contact';
-import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { pixelArtExists, pixelArtPath, spriteFrameCount } from '../lib/pixelArt';
+import { isAssetMissing, getAsset } from '../lib/placeholders';
+import PixelPlaceholder from './PixelPlaceholder.astro';
 
 interface Props {
   entry: CollectionEntry<'flash'>;
@@ -11,10 +13,15 @@ const { entry } = Astro.props;
 const f = entry.data;
 const wa = whatsappLink(claimMessage(f.serial, f.title));
 
-// Decorative reinforcement of the status already spelled out in the text
-// next to it — empty alt so screen readers don't announce it twice.
-const stampFile = f.status === 'available' ? 'stamp-available.png' : 'stamp-claimed.png';
-const hasStamp = pixelArtExists(stampFile);
+// The claim stamp — REDESIGN-PLAN.md §1/§6, the site's one orchestrated
+// motion moment. Claimed rows get the animated sprite (plays once when the
+// row scrolls into view, holds on its final frame — see the script below);
+// available rows get the static "not stamped yet" counterpart. Both fall
+// back to a loud placeholder until the real art exists (ASSETS-TO-DRAW.md).
+const claimedFrames = f.status === 'claimed' ? await spriteFrameCount('stamp-claimed.png') : null;
+const claimedAsset = getAsset('stamp-claimed');
+const availableAsset = getAsset('stamp-available');
+const hasAvailableStamp = f.status === 'available' && pixelArtExists('stamp-available.png');
 ---
 
 <li class={`row status-${f.status}`} data-flash-row data-reveal data-grid-size={f.gridSize}>
@@ -26,25 +33,34 @@ const hasStamp = pixelArtExists(stampFile);
     <span class="col-gridsize data">{f.gridSize}</span>
     <span class="col-status">
       {
-        hasStamp && (
-          <img
-            class="pixel-stamp pixel-art"
-            src={pixelArtPath(stampFile)}
-            alt=""
-            width="64"
-            height="32"
-            loading="lazy"
-            onerror="this.remove()"
-          />
-        )
-      }
-      {
         f.status === 'available' ? (
-          <button class="data claim-toggle" type="button" data-claim-toggle aria-expanded="false">
-            Available →
-          </button>
+          <Fragment>
+            {hasAvailableStamp ? (
+              <img class="stamp pixel-art" src={pixelArtPath('stamp-available.png')} alt="" width={availableAsset.width} height={availableAsset.height} loading="lazy" onerror="this.remove()" />
+            ) : (
+              isAssetMissing('stamp-available') && <PixelPlaceholder id="stamp-available" width={availableAsset.width} height={availableAsset.height} label="avail. stamp" />
+            )}
+            <button class="data claim-toggle" type="button" data-claim-toggle aria-expanded="false">
+              Available →
+            </button>
+          </Fragment>
+        ) : claimedFrames ? (
+          <Fragment>
+            <span
+              class="stamp stamp-claimed-sprite pixel-art"
+              data-claim-stamp
+              data-src={pixelArtPath('stamp-claimed.png')}
+              data-frames={claimedFrames}
+              style={`--frames:${claimedFrames}; width:${claimedAsset.width}px; height:${claimedAsset.height}px;`}
+              aria-hidden="true"
+            />
+            <span class="data claimed-label">Claimed · {f.claimedDate}</span>
+          </Fragment>
         ) : (
-          <span class="data claimed-label">Claimed · {f.claimedDate}</span>
+          <Fragment>
+            {isAssetMissing('stamp-claimed') && <PixelPlaceholder id="stamp-claimed" width={claimedAsset.width} height={claimedAsset.height} label="claim stamp" />}
+            <span class="data claimed-label">Claimed · {f.claimedDate}</span>
+          </Fragment>
         )
       }
     </span>
@@ -73,10 +89,12 @@ const hasStamp = pixelArtExists(stampFile);
 
   .row-main {
     display: grid;
-    grid-template-columns: 8rem 1fr 7rem 4.5rem 4.5rem 9rem;
+    /* Last column widened from 9rem to fit the claim stamp (40px) + label
+       on one line — it used to be text-only. */
+    grid-template-columns: 8rem 1fr 7rem 4.5rem 4.5rem 12rem;
     gap: var(--sp-2);
     padding-block: var(--sp-2);
-    align-items: baseline;
+    align-items: center;
   }
 
   .col-serial {
@@ -103,9 +121,16 @@ const hasStamp = pixelArtExists(stampFile);
     text-align: end;
   }
 
+  .stamp {
+    flex-shrink: 0;
+  }
+
+  /* Claim is the on-page action this row exists to drive — --claim, same
+     color family as every other CTA on the site (Send, Start a
+     commission). See REDESIGN-PLAN.md §2. */
   .claim-toggle {
     cursor: pointer;
-    color: var(--violet-bright);
+    color: var(--claim);
     text-transform: uppercase;
     transition: color var(--dur-base) var(--ease-precise);
   }
@@ -150,8 +175,11 @@ const hasStamp = pixelArtExists(stampFile);
     font-size: var(--fs-00);
   }
 
+  /* WhatsApp keeps its own brand green, deliberately not --claim — this
+     link always leaves the site for a different app, a different kind of
+     moment than an on-page action. See REDESIGN-PLAN.md §2. */
   .wa {
-    color: var(--violet-bright);
+    color: var(--whatsapp);
     text-decoration: none;
     text-transform: uppercase;
   }
@@ -169,7 +197,22 @@ const hasStamp = pixelArtExists(stampFile);
   }
 </style>
 
+<style is:global>
+  /* Sprite-strip stepping for the claim stamp, following the same
+     background-position math already established in pixel-art.css's
+     .pixel-sprite (steps() looping animation) — this one plays once,
+     driven by JS, not CSS animation, since it needs to start on
+     scroll-into-view rather than on page load. */
+  .stamp-claimed-sprite {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: calc(var(--frames, 1) * 100%) 100%;
+    background-position: 0 0;
+  }
+</style>
+
 <script>
+  // Accordion claim toggle — unchanged behavior from before the redesign.
   const rows = document.querySelectorAll<HTMLElement>('[data-flash-row]');
   rows.forEach((row) => {
     const toggle = row.querySelector<HTMLButtonElement>('[data-claim-toggle]');
@@ -198,4 +241,62 @@ const hasStamp = pixelArtExists(stampFile);
       else open(panel);
     });
   });
+
+  // The claim stamp — the site's one orchestrated motion moment. Plays once
+  // per row, the first time it scrolls into view; holds on the final
+  // frame; never loops, never replays. prefers-reduced-motion skips
+  // straight to the final frame — the *result* (claimed) is never
+  // motion-gated, only the flourish is. See REDESIGN-PLAN.md §6.
+  const stamps = document.querySelectorAll<HTMLElement>('[data-claim-stamp]');
+  if (stamps.length) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          const src = el.dataset.src;
+          const frames = Number(el.dataset.frames ?? '1');
+          if (!src) return;
+
+          const render = (frame: number) => {
+            const pct = frames > 1 ? (frame / (frames - 1)) * 100 : 0;
+            el.style.backgroundPosition = `${pct}% 0`;
+          };
+
+          const img = new Image();
+          img.onerror = () => el.remove();
+          img.onload = () => {
+            el.style.backgroundImage = `url(${src})`;
+
+            if (reduced) {
+              render(frames - 1);
+              return;
+            }
+
+            let frame = 0;
+            let lastStep = 0;
+            const STEP_MS = 1000 / 12; // ~12fps, per ASSETS-TO-DRAW.md
+
+            const step = (ts: number) => {
+              if (!lastStep) lastStep = ts;
+              if (ts - lastStep >= STEP_MS) {
+                frame++;
+                lastStep = ts;
+                render(frame);
+                if (frame >= frames - 1) return; // holds here — no loop, no replay
+              }
+              requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+          };
+          img.src = src;
+          observer.unobserve(el);
+        });
+      },
+      { threshold: 0.4 },
+    );
+    stamps.forEach((el) => observer.observe(el));
+  }
 </script>
