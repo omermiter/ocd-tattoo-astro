@@ -23,8 +23,8 @@ const hasMark = !frames && pixelArtExists('mark.png');
           class="preloader-mark pixel-art"
           src={pixelArtPath('mark.png')}
           alt=""
-          width="64"
-          height="64"
+          width="40"
+          height="80"
           onerror="this.closest('[data-preloader]')?.remove()"
         />
       )}
@@ -87,9 +87,15 @@ const hasMark = !frames && pixelArtExists('mark.png');
     opacity: 0;
   }
 
-  .preloader-sprite,
-  .preloader-mark {
+  .preloader-sprite {
     width: 64px;
     height: 64px;
+  }
+
+  /* 40x80 = 2x mark.png's 20x40 source canvas — integer scale, per
+     ASSETS-TO-DRAW.md (matches Nav/Footer's 1x usage at 20x40). */
+  .preloader-mark {
+    width: 40px;
+    height: 80px;
   }
 </style>

@@ -95,16 +95,16 @@ const hasMark = pixelArtExists('mark.png');
     color: var(--paper);
   }
 
-  /* 32px = 1x the mark's 32x32 source canvas — integer scale, per
+  /* 20x40 = 1x mark.png's actual source canvas — integer scale, per
      ASSETS-TO-DRAW.md. Never display this smaller/larger at a fraction. */
   .brand-mark {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 40px;
   }
 
   .brand :global([data-placeholder]) {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 40px;
   }
 
   .menu-toggle {

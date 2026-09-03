@@ -6,37 +6,26 @@ Production spec for every hand-drawn pixel-art asset the redesign in `REDESIGN-P
 
 ---
 
-## P0 — blocks launch (4 assets)
+## P0 — blocks launch (2 remaining of 4)
 
-### `mark.png`
+### `mark.png` — ✅ done
 
-| Field | Spec |
-|---|---|
-| Purpose & placement | The site's glyph mark — Nav brand link (next to or replacing "OCD·TATTOO" text, your call which reads better once drawn), Footer identity row, Preloader's static fallback, and the source art `favicon.png` is derived from |
-| Canvas size | **32×32 source** — corrects a sizing conflict in the old manifest, where the same file was called for at both 24px (footer) and 64px (preloader) from a 64×64 source, which can't both be clean integer scales. 32×32 source fixes this: |
-| Display scaling | **1× → 32px** in Nav + Footer (a 32px mark instead of today's 24px — small, deliberate layout change, noted in the plan). **2× → 64px** in Preloader. Both integer. |
-| Max color count | 6 including transparent |
-| Palette | Draw from the house ink palette slots (`REDESIGN-PLAN.md` §2) — likely `--ink-provisional-dark-1`/`dark-2` for line work, one accent for a single color hit if the mark wants one. Your call on how literal ("OCD" lettering, a pixel-tattoo-needle glyph, an abstract grid mark) — this spec covers production constraints, not the concept itself. |
-| Animation | Static |
-| Transparency | Required |
-| Readability floor | Must read as a coherent mark at 32×32 on a 375px viewport — it never displays smaller than that |
-| Delivery | PNG, nearest-neighbor, no anti-aliasing, no premultiplied edges |
-| Notes | This is the site's actual logo — the one asset that shows up in three unrelated places, so silhouette clarity matters more than detail. Avoid isolated 1px outline pixels; they disappear at 1× scale on some displays. |
+Delivered from Omer's own hand-drawn "OCD" mark (a circle/C-shape/D-shape composition) — processed (trimmed, stroke-weight boosted so the thin line survives downsampling, recolored to `--violet` `#6E3F5E`, background dropped for transparency), not redrawn or generated. Actual canvas ended up **20×40**, not the originally-guessed 32×32 square: the source art is a tall vertical composition (true aspect ≈ 0.45), and forcing that into a square would have either squeezed it thin or left it swimming in empty padding. Displayed at 1× (20×40) in Nav + Footer, 2× (40×80) in the Preloader — `src/lib/placeholders.ts`, `astro.config.mjs`, and the three consuming components were all updated to match. Original spec (kept below, struck through in spirit, not literally) assumed a 32×32 square; noting the deviation here rather than silently rewriting history.
 
-### `favicon.png`
+<details>
+<summary>Original pre-art spec (superseded)</summary>
 
 | Field | Spec |
 |---|---|
-| Purpose & placement | Browser tab icon — additive to the existing `favicon.svg` fallback, doesn't replace it |
-| Canvas size | 32×32 source (also confirm it holds up shrunk to 16×16 — most browser tabs render at that size) |
-| Display scaling | N/A — browser chrome renders this natively, not subject to our page's `image-rendering: pixelated` rule |
-| Max color count | 6 including transparent |
-| Palette | Same as `mark.png` — this can be a simplified/higher-contrast crop of the mark rather than a fully separate drawing, if that reads better at 16px |
-| Animation | Static |
-| Transparency | Required |
-| Readability floor | Must read as *something*, not noise, at 16×16 — full detail from `mark.png` will likely need to simplify further |
-| Delivery | PNG |
-| Notes | Test it in an actual browser tab before calling it done — favicon legibility at real size is easy to overestimate looking at a zoomed-in canvas. |
+| Purpose & placement | The site's glyph mark — Nav brand link, Footer identity row, Preloader's static fallback, and the source art `favicon.png` is derived from |
+| Canvas size | 32×32 source (guessed, before real art existed) |
+| Display scaling | 1× → 32px in Nav + Footer, 2× → 64px in Preloader |
+
+</details>
+
+### `favicon.png` — ✅ done
+
+Cropped from the same drawing — just the "O" circle, since the full tall mark doesn't fit a square favicon at 16–32px legibly. Same processing treatment (thickened stroke, violet, transparent). Delivered at 32×32 as originally spec'd. Verified served correctly (`<link rel="icon" href="/pixel-art/favicon.png" sizes="32x32">`, `200 image/png`) and visually checked at native size before shipping — a small natural gap where the original stroke had a stray tangent line reads as an intentional break, not a rendering error.
 
 ### `stamp-claimed.png` — the redesign's one orchestrated moment
 

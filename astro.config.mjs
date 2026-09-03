@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 // resolve a .ts module the way the site's own components can. Keep the two
 // lists in sync by hand if the asset roster changes.
 const REDESIGN_ASSETS = [
-  { id: 'mark', filename: 'mark.png', width: 32, height: 32, priority: 'P0' },
+  { id: 'mark', filename: 'mark.png', width: 20, height: 40, priority: 'P0' },
   { id: 'favicon', filename: 'favicon.png', width: 32, height: 32, priority: 'P0' },
   { id: 'stamp-claimed', filename: 'stamp-claimed.png', width: 40, height: 40, priority: 'P0' },
   { id: 'stamp-available', filename: 'stamp-available.png', width: 40, height: 40, priority: 'P0' },
