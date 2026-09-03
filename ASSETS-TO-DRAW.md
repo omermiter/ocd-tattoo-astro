@@ -89,6 +89,8 @@ Production spec for every hand-drawn pixel-art asset the redesign in `REDESIGN-P
 
 ### `pending-mark.png`
 
+**Build note (Phase 2):** this one deliberately does *not* use the loud magenta-checkerboard placeholder system the other P0/P1 assets use. A screaming "MISSING ASSET" graphic stacked on a panel whose whole job is to calmly say "not photographed yet" sends two contradictory messages at once. It stays on the old graceful-fallback pattern instead: shows automatically once the file exists, renders nothing (not a placeholder) until then — same as it works today, just with an icon added on top once drawn.
+
 | Field | Spec |
 |---|---|
 | Purpose & placement | Small glyph shown on `PieceMedia`'s "Photography pending" placeholder panel, alongside the existing serial + text — currently text-only |

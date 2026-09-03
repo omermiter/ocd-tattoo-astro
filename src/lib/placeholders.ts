@@ -27,8 +27,11 @@ export const PLACEHOLDER_ASSETS: PlaceholderAsset[] = [
   { id: 'stamp-available', filename: 'stamp-available.png', width: 40, height: 40, priority: 'P0' },
   { id: 'icon-instagram', filename: 'icon-instagram.png', width: 16, height: 16, priority: 'P1' },
   { id: 'icon-whatsapp', filename: 'icon-whatsapp.png', width: 16, height: 16, priority: 'P1' },
-  { id: 'pending-mark', filename: 'pending-mark.png', width: 32, height: 32, priority: 'P1' },
   { id: '404', filename: '404.png', width: 128, height: 128, priority: 'P1' },
+  // pending-mark.png deliberately NOT here — see PieceMedia.astro. A loud
+  // magenta placeholder stacked on the "Photography pending" panel would
+  // contradict the panel's own calm "not done yet" message. It stays a
+  // quiet, optional asset (old-style graceful fallback) instead.
 ];
 
 export function missingPlaceholderAssets(): PlaceholderAsset[] {
