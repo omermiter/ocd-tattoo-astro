@@ -1,4 +1,8 @@
 ---
+import { isAssetMissing, getAsset } from '../lib/placeholders';
+import PixelPlaceholder from './PixelPlaceholder.astro';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+
 interface Props {
   active?: 'pieces' | 'register' | 'contact';
 }
@@ -10,10 +14,23 @@ const links = [
   { key: 'register', label: 'Register', href: '/register/' },
   { key: 'contact', label: 'Contact', href: '/contact/' },
 ] as const;
+
+const markMissing = isAssetMissing('mark');
+const markAsset = getAsset('mark');
+const hasMark = pixelArtExists('mark.png');
 ---
 
 <nav class="nav">
-  <a class="brand data" href="/">OCD·TATTOO</a>
+  <a class="brand" href="/">
+    {
+      hasMark ? (
+        <img class="brand-mark pixel-art" src={pixelArtPath('mark.png')} alt="" width={markAsset.width} height={markAsset.height} />
+      ) : (
+        markMissing && <PixelPlaceholder id="mark" width={markAsset.width} height={markAsset.height} label="mark" />
+      )
+    }
+    <span class="data">OCD·TATTOO</span>
+  </a>
 
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu">
     <span></span>
@@ -70,9 +87,24 @@ const links = [
   }
 
   .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
     text-decoration: none;
     letter-spacing: 0.1em;
     color: var(--paper);
+  }
+
+  /* 32px = 1x the mark's 32x32 source canvas — integer scale, per
+     ASSETS-TO-DRAW.md. Never display this smaller/larger at a fraction. */
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand :global([data-placeholder]) {
+    width: 32px;
+    height: 32px;
   }
 
   .menu-toggle {
@@ -133,11 +165,13 @@ const links = [
     color: var(--paper);
   }
 
-  /* Contact is the one action every other page funnels toward — violet is
+  /* Contact is the one action every other page funnels toward — --claim is
      reserved for it alone (current-page uses plain white above), so it
-     reads as the site's standing CTA rather than a third equal nav item. */
+     reads as the site's standing CTA rather than a third equal nav item.
+     Same color family as every other CTA on the site — see
+     REDESIGN-PLAN.md §2. */
   .links a.contact {
-    color: var(--violet-bright);
+    color: var(--claim);
   }
 
   .links a.contact:hover {

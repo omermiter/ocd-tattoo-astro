@@ -1,0 +1,64 @@
+---
+// Loud, unmistakable stand-in for a redesign asset that hasn't been drawn
+// yet — magenta/black checkerboard, exact final dimensions, asset ID
+// printed on it. See ASSETS-TO-DRAW.md and REDESIGN-PLAN.md §7.
+// Never a soft gray box, never mistakable for finished work. Greppable via
+// data-placeholder. Purely presentational — swap the real file into
+// public/pixel-art/ and this stops rendering automatically (see
+// pixelArtExists() in the consuming component).
+interface Props {
+  id: string;
+  width: number;
+  height: number;
+  label?: string;
+}
+
+const { id, width, height, label } = Astro.props;
+---
+
+<div
+  class="pixel-placeholder"
+  data-placeholder={id}
+  role="img"
+  aria-label={`Placeholder — ${label ?? id} not yet drawn`}
+  style={`width:${width}px; height:${height}px; --tile: ${Math.max(4, Math.round(width / 8))}px;`}
+>
+  <span class="pixel-placeholder-label">{label ?? id}</span>
+</div>
+
+<style>
+  .pixel-placeholder {
+    position: relative;
+    display: inline-block;
+    background-image:
+      linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000),
+      linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000);
+    background-size: calc(var(--tile) * 2) calc(var(--tile) * 2);
+    background-position:
+      0 0,
+      var(--tile) var(--tile);
+    background-color: #ff00ff;
+    image-rendering: pixelated;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .pixel-placeholder-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2px;
+    font-family: var(--font-data);
+    font-size: 8px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+  }
+</style>

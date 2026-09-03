@@ -138,14 +138,14 @@ const { home } = site;
       line-height: 1.5;
     }
 
+    /* Primary CTA — --claim by default, not just on hover: this is the
+       site's one action color and should read as actionable at rest, not
+       be discovered on hover. The shared .underline class already
+       provides hover/focus feedback. See REDESIGN-PLAN.md §2. */
     .cta {
       flex-shrink: 0;
-      color: var(--paper);
+      color: var(--claim);
       text-transform: uppercase;
-    }
-
-    .cta:hover {
-      color: var(--violet-bright);
     }
 
     .section {
@@ -187,7 +187,7 @@ const { home } = site;
     }
 
     .more:hover {
-      color: var(--violet-bright);
+      color: var(--violet-ui);
     }
 
     .ledger {
@@ -222,7 +222,7 @@ const { home } = site;
     }
 
     .status-available .col-status {
-      color: var(--violet-bright);
+      color: var(--claim);
     }
 
     .status-claimed .col-status {

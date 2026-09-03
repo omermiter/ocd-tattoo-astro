@@ -35,7 +35,7 @@ h3 {
 
 em {
   font-style: italic;
-  color: var(--violet-bright);
+  color: var(--violet-display);
 }
 
 p {
@@ -106,13 +106,16 @@ select {
 /* Scroll-reveal: elements fade/rise in once, the moment they cross into
    view — see the observer script in BaseLayout.astro. Every section on
    every page opts in via data-reveal so entrances feel considered rather
-   than everything just appearing on load. */
+   than everything just appearing on load. Deliberately quiet (short
+   distance, --dur-reveal not --dur-slow): this is plumbing, not the
+   site's one orchestrated moment — see REDESIGN-PLAN.md §6. The claim
+   stamp on the Register is the only thing allowed to be loud. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(10px);
   transition:
-    opacity var(--dur-slow) var(--ease-precise),
-    transform var(--dur-slow) var(--ease-precise);
+    opacity var(--dur-reveal) var(--ease-precise),
+    transform var(--dur-reveal) var(--ease-precise);
 }
 
 [data-reveal].is-visible {

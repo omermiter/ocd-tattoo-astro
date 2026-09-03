@@ -1,40 +1,60 @@
 ---
 import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE, LOCATION } from '../lib/contact';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { isAssetMissing, getAsset } from '../lib/placeholders';
+import PixelPlaceholder from './PixelPlaceholder.astro';
 
 const hasMark = pixelArtExists('mark.png');
 const hasInstagramIcon = pixelArtExists('icon-instagram.png');
 const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
+
+const markAsset = getAsset('mark');
+const instagramAsset = getAsset('icon-instagram');
+const whatsappAsset = getAsset('icon-whatsapp');
 ---
 
 <footer class="footer">
   <div class="identity">
     {
-      hasMark && (
+      hasMark ? (
         <img
           class="mark pixel-art"
           src={pixelArtPath('mark.png')}
           alt="OCD Tattoo"
-          width="24"
-          height="24"
+          width={markAsset.width}
+          height={markAsset.height}
           loading="lazy"
         />
+      ) : (
+        isAssetMissing('mark') && <PixelPlaceholder id="mark" width={markAsset.width} height={markAsset.height} label="mark" />
       )
     }
     <span class="data">{INSTAGRAM_HANDLE} · {LOCATION}</span>
   </div>
 
   <div class="links data">
-    <a class="underline" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-      {hasInstagramIcon && (
-        <img class="icon pixel-art" src={pixelArtPath('icon-instagram.png')} alt="" width="16" height="16" loading="lazy" />
-      )}
+    <a class="underline instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+      {
+        hasInstagramIcon ? (
+          <img class="icon pixel-art" src={pixelArtPath('icon-instagram.png')} alt="" width={instagramAsset.width} height={instagramAsset.height} loading="lazy" />
+        ) : (
+          isAssetMissing('icon-instagram') && (
+            <PixelPlaceholder id="icon-instagram" width={instagramAsset.width} height={instagramAsset.height} label="ig" />
+          )
+        )
+      }
       Instagram
     </a>
-    <a class="underline" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
-      {hasWhatsappIcon && (
-        <img class="icon pixel-art" src={pixelArtPath('icon-whatsapp.png')} alt="" width="16" height="16" loading="lazy" />
-      )}
+    <a class="underline whatsapp" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
+      {
+        hasWhatsappIcon ? (
+          <img class="icon pixel-art" src={pixelArtPath('icon-whatsapp.png')} alt="" width={whatsappAsset.width} height={whatsappAsset.height} loading="lazy" />
+        ) : (
+          isAssetMissing('icon-whatsapp') && (
+            <PixelPlaceholder id="icon-whatsapp" width={whatsappAsset.width} height={whatsappAsset.height} label="wa" />
+          )
+        )
+      }
       WhatsApp
     </a>
   </div>
@@ -57,9 +77,11 @@ const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
     gap: var(--sp-2);
   }
 
+  /* 32px = 1x the mark's 32x32 source canvas — matches Nav.astro, integer
+     scale, per ASSETS-TO-DRAW.md. */
   .mark {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
 
   .links {
@@ -77,8 +99,17 @@ const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
     transition: color var(--dur-base) var(--ease-precise);
   }
 
-  .links a:hover {
-    color: var(--violet-bright);
+  /* Instagram stays in the violet family (small UI text, see
+     REDESIGN-PLAN.md §2's --violet-ui). WhatsApp is deliberately its own
+     brand green, not --claim: this link always means "you're leaving the
+     site for a different app," a different kind of moment than an
+     on-page action — see REDESIGN-PLAN.md §2 for the full defense. */
+  .links a.instagram:hover {
+    color: var(--violet-ui);
+  }
+
+  .links a.whatsapp:hover {
+    color: var(--whatsapp);
   }
 
   .icon {

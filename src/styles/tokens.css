@@ -2,17 +2,57 @@
   OCD Tattoo — design tokens.
   Every color, size, and motion value used anywhere in the codebase traces
   back to a variable defined here.
+
+  Redesign (see REDESIGN-PLAN.md §2): the environment moved from tinted
+  near-black to a measured violet-black — real color now lives almost
+  entirely in the artwork, not the chrome. Stencil violet keeps its job as
+  brand/structure (grid, focus rings, small UI text) but no longer touches
+  a single button. --claim is new and is the only color that ever means
+  "tap this" — reserved exclusively for CTAs, never decorative. WhatsApp
+  links use --whatsapp, deliberately not --claim (external handoff vs.
+  on-page action — see REDESIGN-PLAN.md §2 for the full defense).
 */
 
 :root {
-  /* ---- Color ---- */
-  --ink: #08080a; /* base ground — true near-black, not warm */
-  --surface: #131215; /* raised panel fill */
-  --line: #242229; /* hairline borders */
-  --paper: #ede9e2; /* primary text — warm off-white, the one warm note */
-  --dust: #86828c; /* secondary/metadata text */
-  --violet: #6e3f5e; /* the one accent — muted, dusty magenta-violet */
-  --violet-bright: #9a6485; /* accent on hover/active, same family */
+  /* ---- Color: environment ---- */
+  --ink: #120e17; /* base ground — violet-black, not neutral */
+  --surface: #1c1620; /* raised panel fill */
+  --line: #332a3b; /* hairline borders — decorative, exempt from text-contrast rules */
+  --paper: #ede9e2; /* primary text — warm off-white, unchanged */
+  --dust: #8f8796; /* secondary/metadata text — 5.52:1 on --ink */
+
+  /* ---- Color: brand accent (violet) — structure only, never an action ---- */
+  --violet: #6e3f5e; /* structural fills only: PrecisionGrid spotlight, stencil-draw motif, low-emphasis backgrounds. Not text-bearing. */
+  --violet-display: #9a6485; /* large display text only (>=24px) — 4.12:1, passes AA-large (3:1), fails AA-normal. Hero emphasis word only. */
+  --violet-ui: #a876a0; /* small UI text — nav hover/current, inline links, focus rings — 5.24:1, passes AA-normal */
+
+  /* ---- Color: the one action color ---- */
+  --claim: #e3a23c; /* every primary CTA, the claim toggle, the claim stamp. Nowhere else. 8.63:1 on --ink both directions. */
+
+  /* ---- Color: WhatsApp — real brand green, kept deliberately (see REDESIGN-PLAN.md §2) ---- */
+  --whatsapp: #25d366; /* 9.62:1 on --ink */
+
+  /* ---- Color: house ink palette — PROVISIONAL, BLOCKING ----
+     Slot proposal only. Real values come from Omer's actual ink
+     (Eternal/Fusion) — see REDESIGN-PLAN.md §2. Every --ink-provisional-*
+     variable below is a placeholder and must be replaced before this
+     palette is considered final. Not yet consumed by any component;
+     lives here so the token source of truth is ready the moment real
+     values land. */
+  --ink-provisional-dark-1: #1a1220;
+  --ink-provisional-dark-2: #2e1d2e;
+  --ink-provisional-dark-3: #4a2e3f;
+  --ink-provisional-mid-1: #c9a98c;
+  --ink-provisional-mid-2: #8c6f5c;
+  --ink-provisional-light-1: #f2e2c8;
+  --ink-provisional-light-2: #ffffff;
+  --ink-provisional-red: #c43b3b;
+  --ink-provisional-orange: #d97b3f;
+  --ink-provisional-gold: #e3a23c;
+  --ink-provisional-green: #4c9b6e;
+  --ink-provisional-blue: #3e7fb0;
+  --ink-provisional-violet: #6e3f5e;
+  --ink-provisional-pink: #c25b84;
 
   /* ---- Type families ---- */
   --font-display: 'Fraunces', serif;
@@ -48,13 +88,14 @@
   --dur-slow: 900ms;
   --dur-base: 240ms;
   --dur-fast: 130ms;
+  --dur-reveal: 260ms; /* scroll-reveal is plumbing, not the moment — short on purpose, see REDESIGN-PLAN.md §6 */
   --ease-precise: cubic-bezier(0.19, 1, 0.22, 1);
 
   /* ---- Layout ---- */
   --content-max: 84rem;
-  --focus-ring: 2px solid var(--violet-bright);
+  --focus-ring: 2px solid var(--violet-ui);
 
-  /* ---- Grid unit — the literal "every square" backdrop ---- */
+  /* ---- Grid unit — the literal "every square" backdrop (visual motif, distinct from the sprite construction unit — see REDESIGN-PLAN.md §4) ---- */
   --grid-unit: 28px;
 }
 
@@ -63,5 +104,6 @@
     --dur-slow: 0.01ms;
     --dur-base: 0.01ms;
     --dur-fast: 0.01ms;
+    --dur-reveal: 0.01ms;
   }
 }
