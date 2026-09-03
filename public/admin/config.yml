@@ -114,3 +114,10 @@ collections:
             fields:
               - { label: "Intro", name: "intro", widget: "text" }
               - { label: "Closing Text", name: "closingText", widget: "text" }
+          - label: "404 Page"
+            name: "notFoundPage"
+            widget: "object"
+            fields:
+              - { label: "Code", name: "code", widget: "string", hint: "The small label above the heading — usually just \"404\"" }
+              - { label: "Heading", name: "heading", widget: "string" }
+              - { label: "Intro", name: "intro", widget: "text" }

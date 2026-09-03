@@ -21,5 +21,10 @@
   "registerPage": {
     "intro": "Every flash design here is drawn once and tattooed once. Claim one and it's retired from the list permanently — the record stays, the design doesn't come back. Grouped by canvas: the grid a design is actually built on.",
     "closingText": "Flash is first-come; a commission is built around your idea instead."
+  },
+  "notFoundPage": {
+    "code": "404",
+    "heading": "Page not found.",
+    "intro": "This page doesn't exist, or the piece moved."
   }
 }

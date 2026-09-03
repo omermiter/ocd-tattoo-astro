@@ -5,13 +5,15 @@ import Footer from '../components/Footer.astro';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from '../components/PixelPlaceholder.astro';
+import site from '../data/site.json';
 
 const hasIllustration = pixelArtExists('404.png');
 const illustrationAsset = getAsset('404');
 const illustrationMissing = isAssetMissing('404');
+const { code, heading, intro } = site.notFoundPage;
 ---
 
-<BaseLayout title="Page not found — OCD Tattoo" description="This page doesn't exist, or the piece moved.">
+<BaseLayout title="Page not found — OCD Tattoo" description={intro}>
   <Nav />
 
   <main class="not-found" data-reveal>
@@ -27,9 +29,9 @@ const illustrationMissing = isAssetMissing('404');
     <div class="scrim" aria-hidden="true" />
 
     <div class="content">
-      <p class="data code">404</p>
-      <h1>Page not found.</h1>
-      <p class="intro">This page doesn't exist, or the piece moved.</p>
+      <p class="data code">{code}</p>
+      <h1>{heading}</h1>
+      <p class="intro">{intro}</p>
       <a class="back data underline" href="/pieces/">← Back to Pieces</a>
     </div>
   </main>
