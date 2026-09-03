@@ -6,22 +6,30 @@
 // data-placeholder. Purely presentational — swap the real file into
 // public/pixel-art/ and this stops rendering automatically (see
 // pixelArtExists() in the consuming component).
+//
+// `fill`: for full-bleed background use (e.g. a fullscreen illustration)
+// instead of a fixed-size inline element — sizes to 100%/100% of its
+// positioned ancestor with a fixed checkerboard tile, ignoring width/height
+// (which stop being meaningful pixel counts once the asset scales to an
+// arbitrary viewport instead of displaying at a fixed size).
 interface Props {
   id: string;
   width: number;
   height: number;
   label?: string;
+  fill?: boolean;
 }
 
-const { id, width, height, label } = Astro.props;
+const { id, width, height, label, fill = false } = Astro.props;
 ---
 
 <div
   class="pixel-placeholder"
+  class:list={[{ fill }]}
   data-placeholder={id}
   role="img"
   aria-label={`Placeholder — ${label ?? id} not yet drawn`}
-  style={`width:${width}px; height:${height}px; --tile: ${Math.max(4, Math.round(width / 8))}px;`}
+  style={fill ? `--tile: 16px;` : `width:${width}px; height:${height}px; --tile: ${Math.max(4, Math.round(width / 8))}px;`}
 >
   <span class="pixel-placeholder-label">{label ?? id}</span>
 </div>
@@ -41,6 +49,13 @@ const { id, width, height, label } = Astro.props;
     image-rendering: pixelated;
     overflow: hidden;
     flex-shrink: 0;
+  }
+
+  .pixel-placeholder.fill {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
   }
 
   .pixel-placeholder-label {

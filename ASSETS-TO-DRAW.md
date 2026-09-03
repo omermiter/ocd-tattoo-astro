@@ -86,20 +86,24 @@ Provided by Omer as a pixelated rendering of WhatsApp's actual mark (not hand-dr
 | Delivery | PNG, nearest-neighbor |
 | Notes | A camera-with-a-question-mark, a "coming soon" grid-fragment, or similar — reinforces the site's craft identity even on pieces that don't have a photo yet, rather than leaving that state as plain type only. |
 
-### `404.png`
+### `404.png` — now a fullscreen background, not a small icon
+
+**Changed after the first pass:** originally spec'd as a small 256px icon above the heading. Now a full-bleed background behind the whole page (`main.not-found` is `min-block-size: 100vh`, a dark scrim sits over it for text legibility, same technique as the homepage hero).
+
+**This breaks the "integer scaling only" rule, on purpose.** Every other pixel-art asset on this site displays at a fixed size, so a source canvas can always divide evenly into it. A fullscreen background can't do that — viewport widths run anywhere from ~375px to 1440px+ with nothing dividing cleanly into all of them. So this one asset is treated like the hero photo instead: `object-fit: cover`, smooth-scaled, **not** `image-rendering: pixelated`. It'll still read as pixel art because it's *drawn* as pixel art (a visible grid, flat color blocks) — it just won't be crisp-edge-perfect at every viewport size, the same tradeoff the hero photo already makes.
 
 | Field | Spec |
 |---|---|
-| Purpose & placement | 404 page illustration — currently falls back to plain "404" mono text, which already reads intentional |
-| Canvas size | Your call — existing CSS caps display at `max-width: 16rem` (256px), so a source in the 64–128px range scaled by a clean integer factor fits cleanly |
-| Display scaling | Integer only — pick a source size that divides cleanly into something ≤256px |
-| Max color count | 10 including transparent |
+| Purpose & placement | Fullscreen background on the 404 page, behind a dark scrim and the "Page not found" text |
+| Canvas size | **192×108 (16:9)** — wide enough to read as a real scene rather than an icon, standard enough a ratio to crop sensibly via `cover` on both portrait mobile and landscape desktop |
+| Display scaling | **Not integer** — `object-fit: cover`, fills `100vh` at whatever the actual viewport is. Deliberate exception, see above. |
+| Max color count | 10, including transparent (transparency here just means "no forced opacity" — the image can be fully opaque art since the scrim handles text contrast, but keep the format capable of transparency for flexibility) |
 | Palette | House ink palette |
-| Animation | Static, or a small static-hold sprite if you want a subtle idle animation — optional |
-| Transparency | Required |
-| Readability floor | Must read clearly at whatever final display size is chosen |
-| Delivery | PNG, nearest-neighbor |
-| Notes | Not urgent — the text fallback already works and reads fine. Only worth doing if there's a genuinely fun idea for it (a "piece that moved" visual gag fits the collectible-drop tone well, if one comes to mind). |
+| Animation | Static |
+| Transparency | Optional (the scrim, not the art, carries the contrast job) |
+| Readability floor | Must still read as a coherent scene when cropped tighter than its own aspect ratio (a tall mobile viewport will show a cropped slice of the middle, not the full width) — keep the important part of the composition centered |
+| Delivery | PNG. Since this one isn't nearest-neighbor/pixelated at display time, mild built-in anti-aliasing in the source won't hurt the way it would on an icon — but keep it drawn as flat pixel-grid color blocks, not a painterly illustration, so it still reads as *this site's* pixel art and not a different medium entirely |
+| Notes | Not urgent — the grid-texture fallback (same motif as the hero/placeholder panels) already reads intentional. Only worth doing if there's a genuinely fun scene in mind (a "piece that moved" gag fits the collectible-drop tone well). |
 
 ### `divider.png`
 

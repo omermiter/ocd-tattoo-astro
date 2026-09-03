@@ -8,50 +8,79 @@ import PixelPlaceholder from '../components/PixelPlaceholder.astro';
 
 const hasIllustration = pixelArtExists('404.png');
 const illustrationAsset = getAsset('404');
+const illustrationMissing = isAssetMissing('404');
 ---
 
 <BaseLayout title="Page not found — OCD Tattoo" description="This page doesn't exist, or the piece moved.">
   <Nav />
 
-  <main class="not-found grid-texture" data-reveal>
+  <main class="not-found" data-reveal>
     {
       hasIllustration ? (
-        <img
-          class="illustration pixel-art"
-          src={pixelArtPath('404.png')}
-          alt="Page not found"
-          loading="lazy"
-          onerror="this.remove()"
-        />
-      ) : isAssetMissing('404') ? (
-        <PixelPlaceholder id="404" width={illustrationAsset.width} height={illustrationAsset.height} label="404 illustration" />
+        <img class="illustration pixel-art" src={pixelArtPath('404.png')} alt="" loading="lazy" onerror="this.remove()" />
+      ) : illustrationMissing ? (
+        <PixelPlaceholder id="404" width={illustrationAsset.width} height={illustrationAsset.height} label="404 illustration (fullscreen bg)" fill />
       ) : (
-        <p class="data code">404</p>
+        <div class="grid-texture illustration-fallback" aria-hidden="true" />
       )
     }
-    <h1>Page not found.</h1>
-    <p class="intro">This page doesn't exist, or the piece moved.</p>
-    <a class="back data underline" href="/pieces/">← Back to Pieces</a>
+    <div class="scrim" aria-hidden="true" />
+
+    <div class="content">
+      <p class="data code">404</p>
+      <h1>Page not found.</h1>
+      <p class="intro">This page doesn't exist, or the piece moved.</p>
+      <a class="back data underline" href="/pieces/">← Back to Pieces</a>
+    </div>
   </main>
 
   <Footer />
 
   <style>
     .not-found {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: var(--sp-2);
-      min-block-size: 60vh;
+      min-block-size: 100vh;
       padding: var(--sp-6) var(--sp-3);
+      overflow: hidden;
     }
 
-    .illustration {
-      max-width: 16rem;
-      height: auto;
-      margin-block-end: var(--sp-2);
+    /* Fullscreen background layer — the real illustration, the loud
+       placeholder standing in for it, or (if the asset is deliberately
+       skipped rather than just not-yet-drawn) the site's grid-texture
+       motif as a quiet fallback. All three fill the same box. */
+    .illustration,
+    .illustration-fallback {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Deliberate exception to "integer scaling only": this is a
+         full-bleed scene behind text, not a detail-critical icon, and no
+         single source resolution divides cleanly into every viewport
+         width. Smooth-scaled like the hero photo, not pixelated — see
+         ASSETS-TO-DRAW.md's 404.png entry. */
+    }
+
+    /* Dark gradient so the heading stays readable over whatever's behind
+       it — same technique as the homepage hero. */
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(180deg, rgba(18, 14, 23, 0.55), rgba(18, 14, 23, 0.88));
+    }
+
+    .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--sp-2);
     }
 
     .code {

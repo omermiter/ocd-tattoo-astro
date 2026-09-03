@@ -19,7 +19,7 @@ const REDESIGN_ASSETS = [
   { id: 'stamp-available', filename: 'stamp-available.png', width: 40, height: 40, priority: 'P0' },
   { id: 'icon-instagram', filename: 'icon-instagram.png', width: 16, height: 16, priority: 'P1' },
   { id: 'icon-whatsapp', filename: 'icon-whatsapp.png', width: 16, height: 16, priority: 'P1' },
-  { id: '404', filename: '404.png', width: 128, height: 128, priority: 'P1' },
+  { id: '404', filename: '404.png', width: 192, height: 108, priority: 'P1' },
   // pending-mark.png intentionally excluded — see src/lib/placeholders.ts
 ];
 
