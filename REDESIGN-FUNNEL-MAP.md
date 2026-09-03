@@ -85,8 +85,16 @@ There are three distinct conversion actions on this site, and every page routes 
 
 ---
 
-## Stop point
+## Phase 3 verification (2026-09-03) — every path re-walked, including fallbacks
 
-Both `REDESIGN-INVENTORY.md` and `REDESIGN-FUNNEL-MAP.md` are complete. Per §3 of the brief: **stopping here for go-ahead before touching design or code.**
+- **Path A, success:** re-tested live on `ocdtattoo.com/contact/` after the CORS fix (shipped between checkpoints 1 and 2, ahead of the redesign build) — real submission, "Sent." status, email received. Confirmed again structurally intact after the Phase 2 color/token changes: `CONTACT_ENDPOINT` in `src/lib/contact.ts` untouched, submit handler logic untouched, only the button/focus-ring color changed.
+- **Path A, fallback:** re-tested live on the dev server (which now correctly fails CORS against `localhost`, since `ALLOWED_ORIGIN` is `ocdtattoo.com`) — error status renders, WhatsApp link present and correctly colored (`--whatsapp`, fixed this session — see the inventory's Phase 3 notes on the `innerHTML`-scoping bug).
+- **Path B:** re-verified the claim toggle still expands via click and via keyboard `Enter`, `aria-expanded` flips correctly, the WhatsApp confirm link still carries the real prefilled message and the real number (`wa.me/972544409502`, confirmed via the live production HTML, not just the source). Colors changed (claim toggle → `--claim`, confirm link → `--whatsapp`); nothing about the mechanism did. The claim-stamp addition (§1/§6 of the plan) sits next to this path, doesn't sit in front of it — the "Available →" toggle is still the first thing a keyboard/screen-reader user reaches, same as before.
+- **Path C:** re-verified both footer links against the live production HTML — real handle (`instagram.com/ocd_tattoo`), real number. Hover colors now diverge deliberately (Instagram → `--violet-ui`, WhatsApp → `--whatsapp`) — confirmed via `getComputedStyle`, not just visual inspection, after visual inspection alone looked ambiguous at one point.
+- **Click counts:** unchanged from the original map — this redesign never touched funnel structure, only its visual/motion layer, per the brief's own constraint (§4) and this plan's explicit choice not to propose funnel changes unilaterally.
 
-One thing worth deciding before Phase 1 starts, since it affects how Phase 1's "section-by-section mapping" gets written: do you want the Pokémon-piece question (and the CORS bug) handled as this-week fixes now, in parallel with the redesign planning, or folded into the redesign's Phase 2 build? Either works — flagging because the brief's checkpoint structure assumes Phase 0's open items wait for direction, and these two are different in kind (one's a content/legal call only you can make, the other's a one-line infra fix with no design implications at all).
+### Open items status
+
+- **Contact Worker CORS mismatch** — ✅ fixed and verified, ahead of the Phase 1 design plan (see the inventory).
+- **Resend sender address, no event-level tracking, flash designs have no photo rendering, homepage register-preview not clickable, no studio address/map** — all still open, exactly as flagged at checkpoint 1. None were in scope for this redesign (visual/motion system only, funnel structure explicitly frozen per §4) and none were silently dropped — they're listed again here so they don't quietly disappear between documents.
+- **All three live "Pieces" are Pokémon designs** — per your explicit instruction ("ignore 2"), left untouched. Still true, still flagged, still not fixed. Restating rather than silently carrying forward: this means the portfolio's "proof precedes ask" job is currently being done by content that can't ship long-term under the brief's own §0.2 — worth revisiting whenever you're ready, not urgent today.
