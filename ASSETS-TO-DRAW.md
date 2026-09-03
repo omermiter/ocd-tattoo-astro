@@ -61,20 +61,9 @@ Cropped from the same drawing — just the "O" circle, since the full tall mark 
 
 ## P1 — improves the page (not launch-blocking)
 
-### `icon-instagram.png` — still needed
+### `icon-instagram.png` — ✅ done
 
-| Field | Spec |
-|---|---|
-| Purpose & placement | Footer Instagram link icon — currently absent, link works fine as plain text today |
-| Canvas size | 16×16 |
-| Display scaling | 1× (16px) |
-| Max color count | 4, including transparent |
-| Palette | Doesn't need to match house palette exactly — it's a third-party mark being referenced, not house art |
-| Animation | Static |
-| Transparency | Required |
-| Readability floor | Must read at 16×16 — this is its only display size |
-| Delivery | PNG, nearest-neighbor |
-| Notes | A simple glyph (a camera-ish mark) rather than a literal logo reproduction — "a pixel-art icon in this site's hand," not a redrawn brand mark. |
+Provided by Omer: the classic retro-camera Instagram mark (pre-2016 icon style), already pixelated and already in almost exactly the site's `--violet` hex (sampled source: `#6E3F5F`, one bit off `--violet`'s `#6E3F5E`) — snapped to the precise token value, cropped, downsampled to 16×16, background dropped for transparency. Same reasoning as `icon-whatsapp.png` on referencing the real platform mark for a "links to Instagram" icon rather than an original glyph. Verified legible at true native 16×16.
 
 ### `icon-whatsapp.png` — ✅ done
 
