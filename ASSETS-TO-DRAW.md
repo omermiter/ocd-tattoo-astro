@@ -61,20 +61,24 @@ Cropped from the same drawing — just the "O" circle, since the full tall mark 
 
 ## P1 — improves the page (not launch-blocking)
 
-### `icon-instagram.png` / `icon-whatsapp.png`
+### `icon-instagram.png` — still needed
 
 | Field | Spec |
 |---|---|
-| Purpose & placement | Footer link icons — currently absent, links work fine as plain text today |
-| Canvas size | 16×16 each |
+| Purpose & placement | Footer Instagram link icon — currently absent, link works fine as plain text today |
+| Canvas size | 16×16 |
 | Display scaling | 1× (16px) |
-| Max color count | 4 each, including transparent |
-| Palette | Keep these recognizable — Instagram doesn't need to match house palette exactly (it's a third-party mark being referenced, not house art), WhatsApp icon should read in the WhatsApp-green family per `REDESIGN-PLAN.md` §2's WhatsApp decision |
+| Max color count | 4, including transparent |
+| Palette | Doesn't need to match house palette exactly — it's a third-party mark being referenced, not house art |
 | Animation | Static |
 | Transparency | Required |
-| Readability floor | Must read at 16×16 on a 375px viewport — this is their only display size |
+| Readability floor | Must read at 16×16 — this is its only display size |
 | Delivery | PNG, nearest-neighbor |
-| Notes | Simple glyph versions (a camera-ish mark, a speech-bubble mark) rather than literal logo reproductions — keep it as "a pixel-art icon in this site's hand," not a redrawn brand mark. |
+| Notes | A simple glyph (a camera-ish mark) rather than a literal logo reproduction — "a pixel-art icon in this site's hand," not a redrawn brand mark. |
+
+### `icon-whatsapp.png` — ✅ done
+
+Provided by Omer as a pixelated rendering of WhatsApp's actual mark (not hand-drawn freehand the way the site mark was) — recolored to the site's exact `--whatsapp` token (`#25D366`, sampled source was a slightly different green) so it matches every other WhatsApp mention site-wide, background dropped for transparency, cropped/centered to a clean 16×16. Using the real WhatsApp mark here is standard, accepted practice for a "click to open WhatsApp" icon (functional/nominative reference to the service being linked to, the same way any site's social-icon row works) — different in kind from the "no copyrighted characters" concern that applies to portfolio/product content. Verified legible at true native 16×16, not just zoomed.
 
 ### `pending-mark.png`
 
