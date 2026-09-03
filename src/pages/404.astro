@@ -3,8 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { isAssetMissing, getAsset } from '../lib/placeholders';
+import PixelPlaceholder from '../components/PixelPlaceholder.astro';
 
 const hasIllustration = pixelArtExists('404.png');
+const illustrationAsset = getAsset('404');
 ---
 
 <BaseLayout title="Page not found — OCD Tattoo" description="This page doesn't exist, or the piece moved.">
@@ -20,6 +23,8 @@ const hasIllustration = pixelArtExists('404.png');
           loading="lazy"
           onerror="this.remove()"
         />
+      ) : isAssetMissing('404') ? (
+        <PixelPlaceholder id="404" width={illustrationAsset.width} height={illustrationAsset.height} label="404 illustration" />
       ) : (
         <p class="data code">404</p>
       )
@@ -64,7 +69,7 @@ const hasIllustration = pixelArtExists('404.png');
 
     .back {
       margin-block-start: var(--sp-2);
-      color: var(--violet-bright);
+      color: var(--violet-ui);
       text-transform: uppercase;
     }
   </style>
