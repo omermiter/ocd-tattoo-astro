@@ -4,8 +4,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import PieceCard from '../../components/PieceCard.astro';
+import { hasPhoto } from '../../lib/media';
 
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
+// Only entries with a real photo on disk render — same graceful-absence
+// convention as PieceMedia, but simpler: a gallery entry with no photo yet
+// has nothing else worth showing, so it's skipped rather than placeheld.
+const restOfWorks = (await getCollection('gallery')).filter((g) => hasPhoto(g.data.photo));
 ---
 
 <BaseLayout
@@ -27,6 +32,22 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
     <div class="piece-list">
       {pieces.map((p) => <div data-reveal><PieceCard entry={p} /></div>)}
     </div>
+
+    {
+      restOfWorks.length > 0 && (
+        <section class="rest-of-works" data-reveal>
+          <h2>Rest of the works</h2>
+          <div class="rest-grid">
+            {restOfWorks.map((g) => (
+              <figure class="rest-item">
+                <img src={g.data.photo} alt={g.data.title} loading="lazy" />
+                <figcaption class="data">{g.data.title}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     <section class="closing" data-reveal>
       <h2>Want something like this?</h2>
@@ -70,6 +91,38 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
       display: flex;
       flex-direction: column;
       gap: var(--sp-7);
+    }
+
+    .rest-of-works {
+      margin-block-start: var(--sp-7);
+      padding-block-start: var(--sp-6);
+      border-block-start: var(--border-hairline);
+    }
+
+    .rest-of-works h2 {
+      font-size: var(--fs-display-sm);
+      margin-block-end: var(--sp-3);
+    }
+
+    .rest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+      gap: var(--sp-2);
+    }
+
+    .rest-item img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--surface);
+      border: var(--border-hairline);
+    }
+
+    .rest-item figcaption {
+      margin-block-start: var(--sp-1);
+      color: var(--dust);
+      font-size: var(--fs-00);
     }
 
     .closing {

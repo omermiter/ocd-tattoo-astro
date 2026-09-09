@@ -72,6 +72,23 @@ collections:
         public_folder: "/flash"
         hint: "Leave empty to show the 'Photography pending' placeholder."
 
+  - name: "gallery"
+    label: "Rest of the Works"
+    label_singular: "Photo"
+    folder: "src/content/gallery"
+    create: true
+    delete: true
+    slug: "{{fields.title}}"
+    format: "frontmatter"
+    summary: "{{title}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string", hint: "Short caption shown under the photo." }
+      - label: "Photo"
+        name: "photo"
+        widget: "image"
+        media_folder: "/public/gallery"
+        public_folder: "/gallery"
+
   - name: "site"
     label: "Site Text & Settings"
     files:

@@ -43,4 +43,15 @@ const flash = defineCollection({
   }),
 });
 
-export const collections = { pieces, flash };
+// Rest of the Works — a lighter-weight companion to `pieces`: just a photo
+// and a short caption, no placement/sessions/hours/note fields. For work
+// that's worth showing but not worth the full documentation treatment.
+const gallery = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/gallery' }),
+  schema: z.object({
+    title: z.string(),
+    photo: z.string(),
+  }),
+});
+
+export const collections = { pieces, flash, gallery };
