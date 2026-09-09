@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { whatsappLink, claimMessage } from '../lib/contact';
+import { hasPhoto } from '../lib/media';
 
 interface Props {
   entry: CollectionEntry<'flash'>;
@@ -9,26 +10,36 @@ interface Props {
 const { entry } = Astro.props;
 const f = entry.data;
 const wa = whatsappLink(claimMessage(f.serial, f.title));
+const showPhoto = f.photo ? hasPhoto(f.photo) : false;
 ---
 
 <li class={`row status-${f.status}`} data-flash-row data-reveal data-grid-size={f.gridSize}>
-  <div class="row-main">
-    <span class="col-serial data">{f.serial}</span>
-    <span class="col-title">{f.title}</span>
-    <span class="col-placement data">{f.placement}</span>
-    <span class="col-size data">{f.size}</span>
-    <span class="col-gridsize data">{f.gridSize}</span>
-    <span class="col-status">
-      {
-        f.status === 'available' ? (
-          <button class="data claim-toggle" type="button" data-claim-toggle aria-expanded="false">
-            Available →
-          </button>
-        ) : (
-          <span class="data claimed-label">Claimed · {f.claimedDate}</span>
-        )
-      }
-    </span>
+  <div class="row-body">
+    {
+      showPhoto ? (
+        <img class="thumb" src={f.photo} alt={f.title} loading="lazy" />
+      ) : (
+        <span class="thumb thumb-pending grid-texture" aria-hidden="true" />
+      )
+    }
+    <div class="row-main">
+      <span class="col-serial data">{f.serial}</span>
+      <span class="col-title">{f.title}</span>
+      <span class="col-placement data">{f.placement}</span>
+      <span class="col-size data">{f.size}</span>
+      <span class="col-gridsize data">{f.gridSize}</span>
+      <span class="col-status">
+        {
+          f.status === 'available' ? (
+            <button class="data claim-toggle" type="button" data-claim-toggle aria-expanded="false">
+              Available →
+            </button>
+          ) : (
+            <span class="data claimed-label">Claimed · {f.claimedDate}</span>
+          )
+        }
+      </span>
+    </div>
   </div>
 
   {
@@ -52,7 +63,27 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
     border-block-end: var(--border-hairline);
   }
 
+  .row-body {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .thumb {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    object-fit: cover;
+    border: var(--border-hairline);
+  }
+
+  .thumb-pending {
+    display: block;
+  }
+
   .row-main {
+    flex: 1;
+    min-width: 0;
     display: grid;
     grid-template-columns: 8rem 1fr 7rem 4.5rem 4.5rem 9rem;
     gap: var(--sp-2);
@@ -144,6 +175,11 @@ const wa = whatsappLink(claimMessage(f.serial, f.title));
   }
 
   @media (max-width: 700px) {
+    .thumb {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
     .row-main {
       grid-template-columns: 1fr 1fr;
       row-gap: 0.25rem;
