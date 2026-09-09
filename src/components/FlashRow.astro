@@ -75,6 +75,13 @@ const showPhoto = f.photo ? hasPhoto(f.photo) : false;
     height: 3.5rem;
     object-fit: cover;
     border: var(--border-hairline);
+    transition: transform var(--dur-fast) var(--ease-precise);
+  }
+
+  .thumb:hover {
+    transform: scale(1.15);
+    position: relative;
+    z-index: 1;
   }
 
   .thumb-pending {
