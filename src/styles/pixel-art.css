@@ -87,13 +87,6 @@ html[data-pixel-cursor='true'] select {
   cursor: auto !important;
 }
 
-/* ---- Ledger stamps (Register) ---- */
-.pixel-stamp {
-  width: 64px;
-  height: 32px;
-  flex-shrink: 0;
-}
-
 /* ---- Section divider tile ---- */
 .pixel-divider {
   height: 16px;

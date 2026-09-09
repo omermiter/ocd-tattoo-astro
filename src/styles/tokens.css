@@ -27,7 +27,7 @@
   --violet-ui: #a876a0; /* small UI text — nav hover/current, inline links, focus rings — 5.24:1, passes AA-normal */
 
   /* ---- Color: the one action color ---- */
-  --claim: #e3a23c; /* every primary CTA, the claim toggle, the claim stamp. Nowhere else. 8.63:1 on --ink both directions. */
+  --claim: #e3a23c; /* every primary CTA, the claim toggle. Nowhere else. 8.63:1 on --ink both directions. */
 
   /* ---- Color: WhatsApp — real brand green, kept deliberately (see REDESIGN-PLAN.md §2) ---- */
   --whatsapp: #25d366; /* 9.62:1 on --ink */

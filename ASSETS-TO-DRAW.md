@@ -2,11 +2,11 @@
 
 Production spec for every hand-drawn pixel-art asset the redesign in `REDESIGN-PLAN.md` needs. Every asset here is drawn by Omer — nothing in this list is generated, approximated in code, or sourced from anywhere else (see the brief's hard rule §0.1). Every unfilled asset renders as a loud magenta/black checkerboard placeholder at the exact final dimensions, printed with the asset ID, until it's dropped in (see "Placeholder system" at the end of this doc).
 
-**P0 is 4 assets.** That's deliberate, not an oversight — see `REDESIGN-PLAN.md` §1 for why the redesign spends its one bold moment on the claim stamp and stays quiet everywhere else. A long P0 list would be the tell that the plan didn't actually decide anything.
+**P0 is 2 assets.** That's deliberate, not an oversight — see `REDESIGN-PLAN.md` §1 for why the redesign stays quiet and text-first on the Register rather than adding a graphic claim/status mark. A long P0 list would be the tell that the plan didn't actually decide anything.
 
 ---
 
-## P0 — blocks launch (2 remaining of 4)
+## P0 — blocks launch (0 remaining of 2)
 
 ### `mark.png` — ✅ done
 
@@ -26,36 +26,6 @@ Delivered from Omer's own hand-drawn "OCD" mark (a circle/C-shape/D-shape compos
 ### `favicon.png` — ✅ done
 
 Cropped from the same drawing — just the "O" circle, since the full tall mark doesn't fit a square favicon at 16–32px legibly. Same processing treatment (thickened stroke, violet, transparent). Delivered at 32×32 as originally spec'd. Verified served correctly (`<link rel="icon" href="/pixel-art/favicon.png" sizes="32x32">`, `200 image/png`) and visually checked at native size before shipping — a small natural gap where the original stroke had a stray tangent line reads as an intentional break, not a rendering error.
-
-### `stamp-claimed.png` — the redesign's one orchestrated moment
-
-| Field | Spec |
-|---|---|
-| Purpose & placement | Register, per claimed flash row — replaces the plain-text-only claimed state with a hard-edged stamp animation that plays once when the row first scrolls into view. **This is the asset `REDESIGN-PLAN.md` §1 and §6 are built around.** The existing "Claimed · `{date}`" text stays as real HTML (Martian Mono) next to this graphic — draw a **mark/seal, not lettering**; legible pixel-drawn words at this size is a losing bet, a bold graphic symbol isn't. |
-| Canvas size | 40×40 per frame, sprite strip = 40×`{frames}` total width, single row (matches the existing sprite-sheet convention already in the codebase — frame count is read automatically from width÷height at build time, nothing to configure) |
-| Display scaling | Integer only — spec'd for 1× (40px) inline in the ledger row's status column on both mobile and desktop; if the built layout wants it larger, scale by a clean 2× (80px) rather than anything fractional |
-| Max color count | 4 including transparent — this should read as a bold, simple mark, not an illustration |
-| Palette | `--claim` (`#E3A23C`) as the primary stamp color, `--ink-provisional-dark-1` (`#1A1220`) for outline/shadow weight, `--ink-provisional-light-2` (`#FFFFFF`) for one small highlight/impact fleck, transparent ground |
-| Animation | 5 frames, ~12fps (≈400ms total), **plays once, holds on the final frame — no loop.** Suggested beat: frame 1 approaching/raised, 2–3 impact (the stamp lands, maybe a slight radial "thud" cue built from hard pixel edges, never a blur), 4–5 settle to the final resting mark. |
-| Transparency | Required |
-| Readability floor | Must read clearly as "a stamp/seal has landed" at its native 40×40 on a 375px viewport, including mid-animation — a sneaker-drop "SOLD OUT" overlay reads instantly, aim for that same immediacy, not a detail you have to squint at to parse |
-| Delivery | PNG, nearest-neighbor, no anti-aliasing, no premultiplied edges |
-| Notes | Concept options to consider (your call): a circular official-stamp shape, a bold impact/burst mark, or something that visually reads as "permanently set" (a locked/sealed motif) — tying back to the site's actual thesis that a placed tattoo pixel can't be undone. Whatever the shape, it should feel like the *same object* as `stamp-available.png` below, just in its "after" state. |
-
-### `stamp-available.png` — the claimed stamp's "before" state
-
-| Field | Spec |
-|---|---|
-| Purpose & placement | Register, per available flash row, alongside the existing "Available →" claim toggle (doesn't replace the toggle — sits next to it as the numbered-edition/scarcity cue) |
-| Canvas size | 40×40, single frame — same canvas as `stamp-claimed.png` on purpose |
-| Display scaling | 1× (40px), same rule as above |
-| Max color count | 4 including transparent |
-| Palette | Same seal silhouette as `stamp-claimed.png`, but **hollow/outline treatment** in `--violet-ui` (`#A876A0`) or `--dust` (`#8F8796`) rather than filled gold — reads as "not stamped yet," the clear visual predecessor to the claimed state |
-| Animation | Static |
-| Transparency | Required |
-| Readability floor | Same 40×40-at-375px floor as above |
-| Delivery | PNG, nearest-neighbor, no anti-aliasing, no premultiplied edges |
-| Notes | Draw this and `stamp-claimed.png` as a pair — same base shape, two conditions (hollow/hollow-violet vs. filled/gold-and-impact) — so a visitor scanning the Register feels the before/after relationship even without reading the "Available"/"Claimed" text next to it. |
 
 ---
 
@@ -79,7 +49,7 @@ Provided by Omer as a pixelated rendering of WhatsApp's actual mark (not hand-dr
 | Canvas size | 32×32 |
 | Display scaling | 1× or 2× depending on the placeholder panel's built size — confirm against layout once built |
 | Max color count | 4 including transparent |
-| Palette | `--dust`-family tones — this should read as quiet/in-progress, not as attention-grabbing as the claim stamp |
+| Palette | `--dust`-family tones — this should read as quiet/in-progress, not attention-grabbing |
 | Animation | Static |
 | Transparency | Required |
 | Readability floor | 32×32 at 375px |
@@ -113,7 +83,7 @@ Provided by Omer as a pixelated rendering of WhatsApp's actual mark (not hand-dr
 | Canvas size | Any width, 16px tall (repeatable horizontal tile) |
 | Display scaling | 1× |
 | Max color count | 4 including transparent |
-| Palette | `--line`-adjacent, very quiet — this should not compete with the claim stamp for attention, see `REDESIGN-PLAN.md` §6 |
+| Palette | `--line`-adjacent, very quiet — see `REDESIGN-PLAN.md` §6 |
 | Animation | Static |
 | Transparency | Optional |
 | Readability floor | N/A — decorative texture, not a readable element |
@@ -122,7 +92,7 @@ Provided by Omer as a pixelated rendering of WhatsApp's actual mark (not hand-dr
 
 ### Cursor — reconsider, don't necessarily redraw
 
-`cursor.png` (and its `cursor-default.png`/`cursor-hover.png` fallback tier) already exists and works. No spec table here because nothing is being newly commissioned — flagging instead: the existing cursor was drawn under the site's previous "austere luxury" direction (a crosshair shape — precise, a little clinical). Worth a quick look once the rest of the redesign is up to see whether it still fits the new "confident and fun" tone or reads mismatched next to the claim stamp and the warmer palette. If it still feels right, keep it exactly as-is — this is a "look again," not a redraw request.
+`cursor.png` (and its `cursor-default.png`/`cursor-hover.png` fallback tier) already exists and works. No spec table here because nothing is being newly commissioned — flagging instead: the existing cursor was drawn under the site's previous "austere luxury" direction (a crosshair shape — precise, a little clinical). Worth a quick look once the rest of the redesign is up to see whether it still fits the new "confident and fun" tone or reads mismatched next to the warmer palette. If it still feels right, keep it exactly as-is — this is a "look again," not a redraw request.
 
 ---
 

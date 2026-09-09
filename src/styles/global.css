@@ -107,9 +107,7 @@ select {
    view — see the observer script in BaseLayout.astro. Every section on
    every page opts in via data-reveal so entrances feel considered rather
    than everything just appearing on load. Deliberately quiet (short
-   distance, --dur-reveal not --dur-slow): this is plumbing, not the
-   site's one orchestrated moment — see REDESIGN-PLAN.md §6. The claim
-   stamp on the Register is the only thing allowed to be loud. */
+   distance, --dur-reveal not --dur-slow) — see REDESIGN-PLAN.md §6. */
 [data-reveal] {
   opacity: 0;
   transform: translateY(10px);
