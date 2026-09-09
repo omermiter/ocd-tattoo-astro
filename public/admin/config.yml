@@ -57,7 +57,7 @@ collections:
       - label: "Grid Size"
         name: "gridSize"
         widget: "select"
-        options: ["8×8", "16×16", "24×24", "32×32"]
+        options: ["8×8", "16×16", "24×24", "32×32", "80×80"]
       - { label: "Placement", name: "placement", widget: "string" }
       - label: "Claimed Date"
         name: "claimedDate"
