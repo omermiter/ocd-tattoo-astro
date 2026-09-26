@@ -82,7 +82,37 @@ collections:
             widget: "image"
             media_folder: "/public/uploads"
             public_folder: "/uploads"
-            hint: "The full-bleed hero photo behind the headline. Shared by both languages."
+            hint: "The full-bleed hero photo behind the headline. Shared by both languages. Also used as the video's poster frame and as the fallback for anyone who never gets the video (reduced-motion, data saver, slow connection)."
+          - label: "Banner Video (optional)"
+            name: "bannerVideo"
+            widget: "file"
+            media_folder: "/public/uploads"
+            public_folder: "/uploads"
+            required: false
+            hint: "MP4, muted, looping. Vertical/portrait footage is fine — see Video Fit below for how it's shown. Leave empty to just show the Banner Image."
+          - label: "Video Fit"
+            name: "bannerVideoFit"
+            widget: "select"
+            default: "contain"
+            options:
+              - { label: "Smart fill — shows the whole video, nothing cropped (blurred fill on the sides)", value: "contain" }
+              - { label: "Crop to fill — the video fills the banner edge to edge; choose what stays visible below", value: "cover" }
+            hint: "Only matters if a Banner Video is set above."
+          - label: "Video Position"
+            name: "bannerVideoPosition"
+            widget: "select"
+            default: "center"
+            options:
+              - { label: "Center", value: "center" }
+              - { label: "Top", value: "top" }
+              - { label: "Bottom", value: "bottom" }
+              - { label: "Left", value: "left" }
+              - { label: "Right", value: "right" }
+              - { label: "Top left", value: "top left" }
+              - { label: "Top right", value: "top right" }
+              - { label: "Bottom left", value: "bottom left" }
+              - { label: "Bottom right", value: "bottom right" }
+            hint: "With \"Crop to fill\": which part of the video stays on-screen once the sides are cropped away. With \"Smart fill\": nudges the uncropped video toward that side instead of centering it. No effect with no Banner Video set."
           - label: "Feature Strip (English)"
             name: "featureStrip.en"
             widget: "list"
