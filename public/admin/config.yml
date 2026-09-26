@@ -89,7 +89,7 @@ collections:
             media_folder: "/public/uploads"
             public_folder: "/uploads"
             required: false
-            hint: "MP4, muted, looping. Vertical/portrait footage is fine — see Video Fit below for how it's shown. Leave empty to just show the Banner Image."
+            hint: "Must be an actual video file (.mp4) — not a photo. This field accepts any file type, so nothing stops you from picking an image by mistake; if you do, the site just quietly keeps showing the Banner Image instead (a browser can't play a photo as a video). Vertical/portrait footage is fine — see Video Fit below for how it's shown. Leave empty to just show the Banner Image."
           - label: "Video Fit"
             name: "bannerVideoFit"
             widget: "select"
@@ -113,6 +113,12 @@ collections:
               - { label: "Bottom left", value: "bottom left" }
               - { label: "Bottom right", value: "bottom right" }
             hint: "With \"Crop to fill\": which part of the video stays on-screen once the sides are cropped away. With \"Smart fill\": nudges the uncropped video toward that side instead of centering it. No effect with no Banner Video set."
+          - label: "Middle Banner Image"
+            name: "middleBannerImage"
+            widget: "image"
+            media_folder: "/public/uploads"
+            public_folder: "/uploads"
+            hint: "The full-bleed photo further down the homepage, between Pieces and More Work — a separate image from the hero banner above (that one's controlled by Banner Image/Video higher up this page)."
           - label: "Feature Strip"
             name: "featureStrip"
             widget: "object"
