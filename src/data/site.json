@@ -8,14 +8,7 @@
     "address": "Weizmann St 42, Kefar Sava, Israel",
     "mapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJPUDpyvk5HRURiQFLQf2maVU"
   },
-  "googleReviews": {
-    "placeId": "ChIJPUDpyvk5HRURiQFLQf2maVU"
-  },
-  "bannerImage": "/uploads/hero-banner-poster.png",
-  "bannerVideo": "/uploads/hero-banner.mp4",
   "bannerVideoFit": "cover",
-  "bannerVideoPosition": "center",
-  "middleBannerImage": "/pieces/img_9248.jpeg",
   "featureStrip": {
     "en": [
       {
@@ -46,6 +39,12 @@
       }
     ]
   },
+  "googleReviews": {
+    "placeId": "ChIJPUDpyvk5HRURiQFLQf2maVU"
+  },
+  "bannerVideo": "/uploads/hero-banner.mp4",
+  "bannerImage": "/uploads/hero-banner-poster.png",
+  "bannerVideoPosition": "center",
   "locales": {
     "en": {
       "home": {
@@ -81,5 +80,6 @@
         "intro": "העמוד הזה לא קיים, או שהעבודה זזה."
       }
     }
-  }
+  },
+  "middleBannerImage": "/uploads/סרטון-8-תדמית.00_00_20_35.still001.jpg"
 }
