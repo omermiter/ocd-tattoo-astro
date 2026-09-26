@@ -199,7 +199,22 @@ function dragScroll() {
       { passive: false },
     );
 
-    el.addEventListener('scroll', dismissHint, { passive: true, once: true });
+    // A bare 'scroll' listener here was too eager: browsers sometimes fire
+    // one on this element for incidental reasons that aren't the visitor
+    // actually using it — landing directly on a #gallery-anchored URL was
+    // enough to trigger it, dismissing the hint before anyone had touched
+    // anything. Only counts as real once scrollLeft has moved a real
+    // distance, which still correctly covers native touch swipe, dragging
+    // the scrollbar, and keyboard arrow-key scroll on the focused region.
+    let lastScrollLeft = el.scrollLeft;
+    const onNativeScroll = () => {
+      if (Math.abs(el.scrollLeft - lastScrollLeft) > 4) {
+        dismissHint();
+        el.removeEventListener('scroll', onNativeScroll);
+      }
+      lastScrollLeft = el.scrollLeft;
+    };
+    el.addEventListener('scroll', onNativeScroll, { passive: true });
   });
 }
 
