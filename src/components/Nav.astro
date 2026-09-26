@@ -11,14 +11,15 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const ui = t(locale);
 const otherLocale: Locale = locale === 'en' ? 'he' : 'en';
+const home = localePath(locale);
 
-// Split into two clusters, matching the reference nav's structure: the
-// section links pipe-divided in the center, Contact + the language switch
-// set apart on the far end with extra space — not just another link in the
-// row.
+// Modeled on kameralnie.com/polanki: a framed box with the brand sitting on
+// its top edge, section links pipe-divided in the middle, Contact + the
+// language switch set apart at the end. Hrefs carry the locale root so the
+// links also work from the 404 page, not just the homepage.
 const mainLinks = [
-  { key: 'pieces', label: ui.nav.pieces, href: '#pieces' },
-  { key: 'reviews', label: ui.nav.reviews, href: '#reviews' },
+  { key: 'pieces', label: ui.nav.pieces, href: `${home}#pieces` },
+  { key: 'reviews', label: ui.nav.reviews, href: `${home}#reviews` },
 ] as const;
 
 const markMissing = isAssetMissing('mark');
@@ -26,61 +27,68 @@ const markAsset = getAsset('mark');
 const hasMark = pixelArtExists('mark.png');
 ---
 
-<nav class="nav">
-  <a class="brand" href={localePath(locale)}>
-    {
-      hasMark ? (
-        <img class="brand-mark pixel-art" src={pixelArtPath('mark.png')} alt="" width={markAsset.width} height={markAsset.height} />
-      ) : (
-        markMissing && <PixelPlaceholder id="mark" width={markAsset.width} height={markAsset.height} label="mark" />
-      )
-    }
-    <span class="data">OCD·TATTOO</span>
-  </a>
+<nav class="nav" data-nav>
+  <div class="frame">
+    <div class="frame-top">
+      <span class="frame-edge" aria-hidden="true"></span>
+      <a class="brand" href={home}>
+        {
+          hasMark ? (
+            <img class="brand-mark pixel-art" src={pixelArtPath('mark.png')} alt="" width={markAsset.width} height={markAsset.height} />
+          ) : (
+            markMissing && <PixelPlaceholder id="mark" width={markAsset.width} height={markAsset.height} label="mark" />
+          )
+        }
+        <span class="data">OCD·TATTOO</span>
+      </a>
+      <span class="frame-edge frame-edge--fill" aria-hidden="true"></span>
+    </div>
 
-  <span class="connector" aria-hidden="true"></span>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label={ui.nav.menu}>
+      <span></span>
+    </button>
 
-  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label={ui.nav.menu}>
-    <span></span>
-  </button>
-
-  <div class="panel" id="nav-panel">
-    <ul class="links data">
-      {
-        mainLinks.map((l) => (
-          <li>
-            <a class="underline" href={l.href}>
-              {l.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-    <ul class="links links-end data">
-      <li>
-        <a class="underline contact" href="#contact">
-          {ui.nav.contact}
-        </a>
-      </li>
-      <li>
-        <a class="underline lang-switch" href={localePath(otherLocale)} hreflang={otherLocale} lang={otherLocale} dir={otherLocale === 'he' ? 'rtl' : 'ltr'}>
-          {ui.nav.switchTo}
-        </a>
-      </li>
-    </ul>
+    <div class="panel" id="nav-panel">
+      <ul class="links links-main data">
+        {
+          mainLinks.map((l) => (
+            <li>
+              <a class="underline" href={l.href} data-section={l.key}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="links links-end data">
+        <li>
+          <a class="underline contact" href={`${home}#contact`} data-section="contact">
+            {ui.nav.contact}
+          </a>
+        </li>
+        <li>
+          <a class="underline lang-switch" href={localePath(otherLocale)} hreflang={otherLocale} lang={otherLocale} dir={otherLocale === 'he' ? 'rtl' : 'ltr'}>
+            {ui.nav.switchTo}
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
 <script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const panel = document.querySelector<HTMLElement>('#nav-panel');
-  if (toggle && panel) {
+
+  if (nav && toggle && panel) {
+    const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
     const close = () => {
       toggle.setAttribute('aria-expanded', 'false');
       panel.removeAttribute('data-open');
     };
     toggle.addEventListener('click', () => {
-      const open = toggle.getAttribute('aria-expanded') === 'true';
+      const open = isOpen();
       toggle.setAttribute('aria-expanded', String(!open));
       if (open) panel.removeAttribute('data-open');
       else panel.setAttribute('data-open', 'true');
@@ -89,23 +97,119 @@ const hasMark = pixelArtExists('mark.png');
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') close();
     });
+
+    // Transparent over the hero, solid once scrolled; slides away while
+    // scrolling down and returns on any scroll up. Keyboard focus inside the
+    // nav always brings it back so it's never tabbed into while hidden.
+    let lastY = window.scrollY;
+    let ticking = false;
+    const update = () => {
+      const y = window.scrollY;
+      nav.classList.toggle('is-solid', y > 8);
+      const goingDown = y > lastY;
+      const hide = goingDown && y > nav.offsetHeight && !isOpen() && !nav.contains(document.activeElement);
+      nav.classList.toggle('is-hidden', hide);
+      lastY = y;
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    nav.addEventListener('focusin', () => nav.classList.remove('is-hidden'));
+    update();
+
+    // Current-section highlight — the one-page equivalent of the
+    // reference's bold current-page item.
+    const links = new Map<string, HTMLElement>();
+    nav.querySelectorAll<HTMLElement>('[data-section]').forEach((a) => links.set(a.dataset.section!, a));
+    const sections = [...links.keys()].map((id) => document.getElementById(id)).filter((s): s is HTMLElement => !!s);
+    if (sections.length) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const link = links.get(entry.target.id);
+            if (!link) return;
+            if (entry.isIntersecting) {
+              links.forEach((l) => l.removeAttribute('aria-current'));
+              link.setAttribute('aria-current', 'location');
+            } else if (link.getAttribute('aria-current')) {
+              link.removeAttribute('aria-current');
+            }
+          });
+        },
+        { rootMargin: '-45% 0px -50% 0px' },
+      );
+      sections.forEach((s) => observer.observe(s));
+    }
   }
 </script>
 
 <style>
   .nav {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 30;
+    padding: var(--sp-3) var(--sp-4) var(--sp-2);
+    background: transparent;
+    transition:
+      transform var(--dur-base) var(--ease-precise),
+      background-color var(--dur-base) var(--ease-precise);
+  }
+
+  .nav.is-solid {
+    background: var(--ink);
+  }
+
+  .nav.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  /* The box: three sides are a plain border; the top edge is drawn as
+     line segments either side of the brand, so the brand breaks the line
+     without needing a background knockout (the nav is transparent over
+     the hero photo). */
+  .frame {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: var(--sp-2) var(--sp-3);
-    border-block-end: var(--border-hairline);
+    min-block-size: 3.5rem;
+    padding-inline: var(--sp-3);
+    border: 1px solid var(--line-light);
+    border-block-start: none;
+  }
+
+  .frame-top {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: -1px;
+    display: flex;
+    align-items: center;
+    transform: translateY(-50%);
+  }
+
+  .frame-edge {
+    block-size: 1px;
+    inline-size: var(--sp-4);
+    background: var(--line-light);
+  }
+
+  .frame-edge--fill {
+    flex: 1;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
     gap: var(--sp-1);
+    padding-inline: var(--sp-2);
     text-decoration: none;
     letter-spacing: 0.1em;
     color: var(--paper);
@@ -123,22 +227,13 @@ const hasMark = pixelArtExists('mark.png');
     height: 40px;
   }
 
-  /* Thin rule connecting the brand mark to the links, borrowed from the
-     reference nav's logo-to-links divider. Desktop only — on mobile the
-     links move into the dropdown panel and this would just be dead space. */
-  .connector {
-    flex: 1;
-    height: 1px;
-    background: var(--line);
-    margin-inline: var(--sp-3);
-  }
-
   .menu-toggle {
     display: none;
     width: 20px;
     height: 14px;
     position: relative;
     cursor: pointer;
+    margin-inline-start: auto;
   }
 
   .menu-toggle span,
@@ -146,7 +241,7 @@ const hasMark = pixelArtExists('mark.png');
   .menu-toggle span::after {
     content: '';
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: 1px;
     background: var(--paper);
@@ -176,9 +271,12 @@ const hasMark = pixelArtExists('mark.png');
     text-transform: uppercase;
   }
 
-  /* Pipe-divided links, matching the reference nav's link row — a hairline
-     rather than a literal "|" glyph, consistent with how the rest of the
-     site already draws dividers (feature strip, spec-sheet cards). */
+  /* Section links centered in the box, the end cluster pinned to the far
+     edge — the reference's layout. */
+  .links-main {
+    margin-inline: auto;
+  }
+
   .links li {
     padding-inline: var(--sp-3);
     border-inline-start: var(--border-hairline);
@@ -187,13 +285,6 @@ const hasMark = pixelArtExists('mark.png');
   .links li:first-child {
     padding-inline-start: 0;
     border-inline-start: none;
-  }
-
-  /* The set-apart cluster (Contact + language switch), pushed away from
-     the main links with real space — same device as the reference nav
-     separating O NAS / KONTAKT from the main link row. */
-  .links-end {
-    margin-inline-start: var(--sp-4);
   }
 
   .links a {
@@ -206,11 +297,15 @@ const hasMark = pixelArtExists('mark.png');
     color: var(--paper);
   }
 
-  /* Contact is the one action every other section funnels toward — --claim
-     is reserved for it alone, so it reads as the site's standing CTA
-     rather than a third equal nav item. Same color family as every other
-     CTA on the site — see REDESIGN-PLAN.md §2. */
-  .links a.contact {
+  /* Current section: weight + full-strength color, the reference's bold
+     current item. Contact keeps its --claim color either way. */
+  .links a[aria-current] {
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  .links a.contact,
+  .links a.contact[aria-current] {
     color: var(--claim);
   }
 
@@ -219,8 +314,12 @@ const hasMark = pixelArtExists('mark.png');
   }
 
   @media (max-width: 640px) {
-    .connector {
-      display: none;
+    .nav {
+      padding-inline: var(--sp-2);
+    }
+
+    .frame-edge {
+      inline-size: var(--sp-2);
     }
 
     .menu-toggle {
@@ -230,10 +329,11 @@ const hasMark = pixelArtExists('mark.png');
     .panel {
       display: block;
       position: absolute;
-      inset-inline: 0;
+      inset-inline: -1px;
       top: 100%;
       background: var(--ink);
-      border-block-end: var(--border-hairline);
+      border: 1px solid var(--line-light);
+      border-block-start: none;
       opacity: 0;
       visibility: hidden;
       transition:
@@ -251,15 +351,13 @@ const hasMark = pixelArtExists('mark.png');
       flex-direction: column;
     }
 
-    /* Pipe dividers only make sense in a horizontal row — reset them here
-       in favor of the existing stacked/full-width mobile link style. */
+    .links-main {
+      margin-inline: 0;
+    }
+
     .links li {
       padding-inline: 0;
       border-inline-start: none;
-    }
-
-    .links-end {
-      margin-inline-start: 0;
     }
 
     .links a {
