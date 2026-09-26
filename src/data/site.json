@@ -12,19 +12,37 @@
     "placeId": "ChIJPUDpyvk5HRURiQFLQf2maVU"
   },
   "bannerImage": "/uploads/img_1572.jpg",
-  "bannerVideo": "",
-  "bannerVideoFit": "contain",
+  "bannerVideo": "/uploads/קאבר-6-תדמית.png",
+  "bannerVideoFit": "cover",
   "bannerVideoPosition": "center",
   "featureStrip": {
     "en": [
-      { "label": "Precision-built", "detail": "Every square placed with the same precision a realist gives a line." },
-      { "label": "Real pixel art", "detail": "Not a filter. Drawn and tattooed, pixel by pixel." },
-      { "label": "Reviewed personally", "detail": "I read every message myself, and answer the same way." }
+      {
+        "label": "Precision-built",
+        "detail": "Every square placed with the same precision a realist gives a line."
+      },
+      {
+        "label": "Real pixel art",
+        "detail": "Not a filter. Drawn and tattooed, pixel by pixel."
+      },
+      {
+        "label": "Reviewed personally",
+        "detail": "I read every message myself, and answer the same way."
+      }
     ],
     "he": [
-      { "label": "בנייה מדויקת", "detail": "כל ריבוע ממוקם באותה דיוק שבה ריאליסט מותח קו." },
-      { "label": "פיקסל ארט אמיתי", "detail": "לא פילטר. מצויר ומקועקע, פיקסל אחרי פיקסל." },
-      { "label": "מענה אישי", "detail": "אני קורא כל הודעה בעצמי, ועונה באותה צורה." }
+      {
+        "label": "בנייה מדויקת",
+        "detail": "כל ריבוע ממוקם באותה דיוק שבה ריאליסט מותח קו."
+      },
+      {
+        "label": "פיקסל ארט אמיתי",
+        "detail": "לא פילטר. מצויר ומקועקע, פיקסל אחרי פיקסל."
+      },
+      {
+        "label": "מענה אישי",
+        "detail": "אני קורא כל הודעה בעצמי, ועונה באותה צורה."
+      }
     ]
   },
   "locales": {
