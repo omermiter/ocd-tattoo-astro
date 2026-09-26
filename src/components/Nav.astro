@@ -336,8 +336,11 @@ const hasMark = pixelArtExists('mark.png');
       border-block-start: none;
       opacity: 0;
       visibility: hidden;
+      transform: translateY(-0.5rem);
+      transform-origin: top;
       transition:
         opacity var(--dur-base) var(--ease-precise),
+        transform var(--dur-base) var(--ease-precise),
         visibility var(--dur-base) var(--ease-precise);
       z-index: 20;
     }
@@ -345,6 +348,7 @@ const hasMark = pixelArtExists('mark.png');
     .panel[data-open] {
       opacity: 1;
       visibility: visible;
+      transform: translateY(0);
     }
 
     .links {
