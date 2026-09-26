@@ -864,6 +864,20 @@ const descriptions = {
         max-height: 32vh;
         height: 32vh;
       }
+
+      /* On mobile the gallery is a native touch-swipe carousel — center
+         each card in the viewport as it's swiped to, instead of pinning
+         it to the leading edge. The padding (half the viewport minus half
+         the card) gives the first/last cards room to actually reach
+         center; padding-inline is logical, so this mirrors correctly
+         under RTL with no extra branching. */
+      .work-grid {
+        padding-inline: calc(50% - 8rem);
+      }
+
+      .work-item {
+        scroll-snap-align: center;
+      }
     }
   </style>
 
