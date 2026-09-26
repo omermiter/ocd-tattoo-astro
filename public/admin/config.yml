@@ -89,7 +89,16 @@ collections:
             media_folder: "/public/uploads"
             public_folder: "/uploads"
             required: false
-            hint: "Must be an actual video file (.mp4) — not a photo. This field accepts any file type, so nothing stops you from picking an image by mistake; if you do, the site just quietly keeps showing the Banner Image instead (a browser can't play a photo as a video). Vertical/portrait footage is fine — see Video Fit below for how it's shown. Leave empty to just show the Banner Image."
+            media_library:
+              config:
+                # Saving here commits the raw file straight to GitHub through
+                # its API, which has a real, fairly low ceiling per file —
+                # much lower than what an uncompressed clip needs. This stops
+                # an oversized pick with a clear message immediately, instead
+                # of a confusing failure after the fact. 8MB is comfortably
+                # above what a short, muted, well-compressed loop needs.
+                max_file_size: 8388608
+            hint: "Must be an actual video file (.mp4) — not a photo. This field accepts any file type, so nothing stops you from picking an image by mistake; if you do, the site just quietly keeps showing the Banner Image instead (a browser can't play a photo as a video). Keep it under 8MB and a few seconds long — a short, muted, looping clip, not a full recording; anything bigger will fail to save (GitHub's upload API has a hard limit here). Vertical/portrait footage is fine — see Video Fit below for how it's shown. Leave empty to just show the Banner Image."
           - label: "Video Fit"
             name: "bannerVideoFit"
             widget: "select"
