@@ -121,6 +121,32 @@ select {
   transform: translateY(0);
 }
 
+/* Letter-by-letter text built by src/scripts/motion.ts. */
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.split-char {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* The hero title stays hidden until motion.ts has split it and set each
+   letter's start position, so it never flashes whole first. The delayed
+   animation is a safety net: if the script never runs, the title still
+   appears after 2.5s. */
+.motion [data-split='hero'] {
+  opacity: 0;
+  animation: split-fallback 0s 2.5s forwards;
+}
+
+@keyframes split-fallback {
+  to {
+    opacity: 1;
+  }
+}
+
 /* Animated underline — a hairline that grows on hover/focus rather than a
    static border, used for every text link in the system (nav, footer,
    CTAs, ledger actions) so the whole site shares one hover language. */

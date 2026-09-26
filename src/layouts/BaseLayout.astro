@@ -34,6 +34,9 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
     <meta name="description" content={description} />
     <title>{title}</title>
     <meta name="color-scheme" content="dark" />
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+    </script>
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
