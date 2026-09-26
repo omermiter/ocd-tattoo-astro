@@ -13,6 +13,8 @@
   },
   "bannerImage": "/uploads/img_1572.jpg",
   "bannerVideo": "",
+  "bannerVideoFit": "contain",
+  "bannerVideoPosition": "center",
   "featureStrip": {
     "en": [
       { "label": "Precision-built", "detail": "Every square placed with the same precision a realist gives a line." },
