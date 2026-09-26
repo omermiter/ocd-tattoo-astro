@@ -113,58 +113,74 @@ collections:
               - { label: "Bottom left", value: "bottom left" }
               - { label: "Bottom right", value: "bottom right" }
             hint: "With \"Crop to fill\": which part of the video stays on-screen once the sides are cropped away. With \"Smart fill\": nudges the uncropped video toward that side instead of centering it. No effect with no Banner Video set."
-          - label: "Feature Strip (English)"
-            name: "featureStrip.en"
-            widget: "list"
+          - label: "Feature Strip"
+            name: "featureStrip"
+            widget: "object"
             hint: "The 3-item row shown right under the intro paragraph."
-            min: 3
-            max: 3
             fields:
-              - { label: "Label", name: "label", widget: "string" }
-              - { label: "Detail", name: "detail", widget: "text" }
-          - label: "Feature Strip (Hebrew)"
-            name: "featureStrip.he"
-            widget: "list"
-            min: 3
-            max: 3
-            fields:
-              - { label: "Label", name: "label", widget: "string" }
-              - { label: "Detail", name: "detail", widget: "text" }
-          - label: "Home Page (English)"
-            name: "locales.en.home"
+              - label: "English"
+                name: "en"
+                widget: "list"
+                min: 3
+                max: 3
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Detail", name: "detail", widget: "text" }
+              - label: "Hebrew"
+                name: "he"
+                widget: "list"
+                min: 3
+                max: 3
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Detail", name: "detail", widget: "text" }
+          - label: "Home & 404 Pages"
+            name: "locales"
             widget: "object"
             fields:
-              - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
-              - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
-              - { label: "Beat Text", name: "beatText", widget: "text" }
-              - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
-              - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
-              - { label: "Reviews Section Intro", name: "reviewsIntro", widget: "text" }
-              - { label: "Contact Intro", name: "contactIntro", widget: "text" }
-              - { label: "Closing Title", name: "closingTitle", widget: "string" }
-          - label: "Home Page (Hebrew)"
-            name: "locales.he.home"
-            widget: "object"
-            fields:
-              - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
-              - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
-              - { label: "Beat Text", name: "beatText", widget: "text" }
-              - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
-              - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
-              - { label: "Reviews Section Intro", name: "reviewsIntro", widget: "text" }
-              - { label: "Contact Intro", name: "contactIntro", widget: "text" }
-              - { label: "Closing Title", name: "closingTitle", widget: "string" }
-          - label: "404 Page (English)"
-            name: "locales.en.notFoundPage"
-            widget: "object"
-            fields:
-              - { label: "Code", name: "code", widget: "string", hint: "The small label above the heading — usually just \"404\"" }
-              - { label: "Heading", name: "heading", widget: "string" }
-              - { label: "Intro", name: "intro", widget: "text" }
-          - label: "404 Page (Hebrew)"
-            name: "locales.he.notFoundPage"
-            widget: "object"
-            fields:
-              - { label: "Code", name: "code", widget: "string" }
-              - { label: "Heading", name: "heading", widget: "string" }
-              - { label: "Intro", name: "intro", widget: "text" }
+              - label: "English"
+                name: "en"
+                widget: "object"
+                fields:
+                  - label: "Home Page"
+                    name: "home"
+                    widget: "object"
+                    fields:
+                      - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
+                      - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
+                      - { label: "Beat Text", name: "beatText", widget: "text" }
+                      - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
+                      - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
+                      - { label: "Reviews Section Intro", name: "reviewsIntro", widget: "text" }
+                      - { label: "Contact Intro", name: "contactIntro", widget: "text" }
+                      - { label: "Closing Title", name: "closingTitle", widget: "string" }
+                  - label: "404 Page"
+                    name: "notFoundPage"
+                    widget: "object"
+                    fields:
+                      - { label: "Code", name: "code", widget: "string", hint: "The small label above the heading — usually just \"404\"" }
+                      - { label: "Heading", name: "heading", widget: "string" }
+                      - { label: "Intro", name: "intro", widget: "text" }
+              - label: "Hebrew"
+                name: "he"
+                widget: "object"
+                fields:
+                  - label: "Home Page"
+                    name: "home"
+                    widget: "object"
+                    fields:
+                      - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
+                      - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
+                      - { label: "Beat Text", name: "beatText", widget: "text" }
+                      - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
+                      - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
+                      - { label: "Reviews Section Intro", name: "reviewsIntro", widget: "text" }
+                      - { label: "Contact Intro", name: "contactIntro", widget: "text" }
+                      - { label: "Closing Title", name: "closingTitle", widget: "string" }
+                  - label: "404 Page"
+                    name: "notFoundPage"
+                    widget: "object"
+                    fields:
+                      - { label: "Code", name: "code", widget: "string" }
+                      - { label: "Heading", name: "heading", widget: "string" }
+                      - { label: "Intro", name: "intro", widget: "text" }
