@@ -59,6 +59,15 @@
   --font-body: 'Archivo', sans-serif;
   --font-data: 'Martian Mono', ui-monospace, monospace;
 
+  /* ---- Type families: Hebrew locale ----
+     No true Hebrew monospace in common use, so --font-data-he reuses the
+     body face at the data/label tracking instead of substituting a
+     mismatched mono. Serials/dates (OCD·01, 2026.05) stay Latin/numeric
+     either way, so they render fine in --font-data on Hebrew pages too. */
+  --font-display-he: 'Frank Ruhl Libre', serif;
+  --font-body-he: 'Heebo', sans-serif;
+  --font-data-he: 'Heebo', sans-serif;
+
   /* ---- Type scale (body/UI, ratio 1.25) ---- */
   --fs-00: 0.75rem; /* 12px — micro labels */
   --fs-0: 0.9375rem; /* 15px — data/mono */
@@ -97,6 +106,16 @@
 
   /* ---- Grid unit — the literal "every square" backdrop (visual motif, distinct from the sprite construction unit — see REDESIGN-PLAN.md §4) ---- */
   --grid-unit: 28px;
+}
+
+/* Hebrew pages (src/pages/he/) render <html lang="he" dir="rtl">. Every
+   component already reads --font-display/--font-body/--font-data, so
+   overriding those three variables here is the only font wiring the
+   Hebrew route needs — no component-level font-family duplication. */
+html[lang='he'] {
+  --font-display: var(--font-display-he);
+  --font-body: var(--font-body-he);
+  --font-data: var(--font-data-he);
 }
 
 @media (prefers-reduced-motion: reduce) {
