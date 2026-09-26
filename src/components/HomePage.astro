@@ -39,11 +39,15 @@ const bannerVideoPosition = site.bannerVideoPosition || 'center';
 const featureStrip = site.featureStrip[locale];
 const reviewsData = await fetchGoogleReviews(googleReviews.placeId);
 
-// A real photographed piece, reused full-bleed as a scene break between
-// Pieces and More Work — same device as the reference brief's full-width
-// photography bands, built from real work already on disk rather than a
-// new asset.
-const breakPiece = pieces.find((p) => p.data.photo && hasPhoto(p.data.photo));
+// The full-bleed photo break between Pieces and More Work — its own
+// CMS-editable image (Middle Banner Image in /admin/), distinct from the
+// hero banner above. Falls back to the first real piece photo if the
+// configured path is unset or hasn't actually been uploaded, so the break
+// never just vanishes.
+const middleBannerImage =
+  site.middleBannerImage && hasPhoto(site.middleBannerImage)
+    ? site.middleBannerImage
+    : pieces.find((p) => p.data.photo && hasPhoto(p.data.photo))?.data.photo;
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -194,9 +198,9 @@ const descriptions = {
     </section>
 
     {
-      breakPiece && (
+      middleBannerImage && (
         <div class="photo-break" data-parallax>
-          <img src={breakPiece.data.photo} alt="" loading="lazy" />
+          <img src={middleBannerImage} alt="" loading="lazy" />
         </div>
       )
     }
