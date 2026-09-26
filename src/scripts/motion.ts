@@ -163,6 +163,64 @@ function dragScroll() {
       dismissHint = () => {};
     };
 
+    // Center-focus carousel (cynx.io-inspired): whichever card's center is
+    // nearest the track's center is "active" (full strength — see the
+    // .work-item.is-active CSS), everything else sits dimmed. Tracked on
+    // every scroll regardless of source (drag, wheel, touch, or the GSAP
+    // snap tween below all dispatch native 'scroll'), rAF-throttled since
+    // scroll fires far more often than a frame needs.
+    const items = Array.from(el.querySelectorAll<HTMLElement>('.work-item'));
+    const nearestIndex = () => {
+      const mid = el.getBoundingClientRect().left + el.clientWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      items.forEach((item, i) => {
+        const r = item.getBoundingClientRect();
+        const dist = Math.abs(r.left + r.width / 2 - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = i;
+        }
+      });
+      return best;
+    };
+    const setActive = () => {
+      const idx = nearestIndex();
+      items.forEach((item, i) => item.classList.toggle('is-active', i === idx));
+    };
+    let activeRaf = 0;
+    el.addEventListener(
+      'scroll',
+      () => {
+        if (activeRaf) return;
+        activeRaf = requestAnimationFrame(() => {
+          setActive();
+          activeRaf = 0;
+        });
+      },
+      { passive: true },
+    );
+    setActive();
+
+    // Mouse-drag release and wheel-idle both get a custom GSAP-eased snap
+    // to whichever card is nearest center, instead of leaving it to the
+    // browser's own scroll-snap timing — that's the "buttery" part of the
+    // cynx.io feel. Touch swipe is left to native momentum + the CSS
+    // scroll-snap-align: center fallback: layering a second animation on
+    // top of the platform's own fling physics fights it instead of adding
+    // to it. scrollIntoView (not manual offsetLeft math) finds the target,
+    // since it already gets the RTL negative-range scrollLeft model right.
+    const snapToNearest = () => {
+      const item = items[nearestIndex()];
+      if (!item) return;
+      const from = el.scrollLeft;
+      item.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' });
+      const to = el.scrollLeft;
+      el.scrollLeft = from;
+      if (Math.abs(to - from) < 0.5) return;
+      gsap.to(el, { scrollLeft: to, duration: 0.6, ease: 'power3.out' });
+    };
+
     // Cursor-follow badge — mouse/trackpad only; touch already gets the
     // static pill hint above and has no hover to follow anyway. Same
     // lerp-follow technique as the site's pixel-art cursor (Cursor.astro),
@@ -234,6 +292,7 @@ function dragScroll() {
 
     el.addEventListener('pointerdown', (e) => {
       if (e.pointerType !== 'mouse') return; // touch/pen already scroll natively
+      gsap.killTweensOf(el); // a fresh grab always wins over an in-flight snap-back
       dragging = true;
       startX = e.clientX;
       startScroll = el.scrollLeft;
@@ -248,38 +307,48 @@ function dragScroll() {
     });
 
     const stopDrag = () => {
+      if (!dragging) return;
       dragging = false;
       el.classList.remove('is-dragging');
+      snapToNearest();
     };
     el.addEventListener('pointerup', stopDrag);
     el.addEventListener('pointercancel', stopDrag);
 
+    let wheelIdleTimer = 0;
     el.addEventListener(
       'wheel',
       (e) => {
         if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // trackpad horizontal swipe: let it through natively
-        const max = el.scrollWidth - el.clientWidth;
-        if (max <= 0) return; // nothing to scroll
+        if (el.scrollWidth <= el.clientWidth) return; // nothing to scroll
 
-        // Only hijack the wheel tick while there's actually room left to
-        // move in that direction — otherwise it's an infinite trap: every
-        // tick gets swallowed into a horizontal scroll that goes nowhere,
-        // and preventDefault blocks the page from ever continuing past the
-        // strip. Once an edge is reached, let the same tick fall through to
-        // the page as normal vertical scroll, exactly like scrolling past
-        // any other element.
-        // RTL: scrollLeft runs 0 (start/right) to -max (end/left), the
-        // mirror of LTR — "scrolling down" still means "move forward
-        // through the strip" either way, so forward doesn't flip on
-        // direction; only the scrollLeft delta below does.
+        // Only hijack the wheel tick while there's actually another card
+        // left to reach in that direction — otherwise it's an infinite
+        // trap: every tick gets swallowed into a horizontal scroll that
+        // goes nowhere, and preventDefault blocks the page from ever
+        // continuing past the strip. Once the nearest-to-center card is
+        // the first/last one, let the same tick fall through to the page
+        // as normal vertical scroll instead.
+        // Index-based, not a raw scrollLeft/max comparison: centering the
+        // edge cards (see padding-inline above) means the true scroll
+        // extent reaches past their centered snap position, so comparing
+        // scrollLeft to scrollWidth-clientWidth would trap the page
+        // exactly like the bug this replaced. "Which card is nearest"
+        // doesn't have that problem, and is direction-agnostic by
+        // construction — no RTL branching needed here either.
         const forward = e.deltaY > 0;
-        const atStart = pageIsRtl ? el.scrollLeft >= -0.5 : el.scrollLeft <= 0.5;
-        const atEnd = pageIsRtl ? el.scrollLeft <= -max + 0.5 : el.scrollLeft >= max - 0.5;
+        const idx = nearestIndex();
+        const atStart = idx === 0;
+        const atEnd = idx === items.length - 1;
         if ((forward && atEnd) || (!forward && atStart)) return;
 
+        gsap.killTweensOf(el); // a fresh tick always wins over an in-flight snap-back
         e.preventDefault();
         el.scrollLeft += pageIsRtl ? -e.deltaY : e.deltaY;
         dismissHint();
+
+        window.clearTimeout(wheelIdleTimer);
+        wheelIdleTimer = window.setTimeout(snapToNearest, 150);
       },
       { passive: false },
     );
