@@ -37,43 +37,8 @@ collections:
         public_folder: "/pieces"
         hint: "Leave empty to show the 'Photography pending' placeholder."
 
-  - name: "flash"
-    label: "Flash (Register)"
-    label_singular: "Flash design"
-    folder: "src/content/flash"
-    create: true
-    delete: true
-    slug: "{{fields.serial}}"
-    format: "frontmatter"
-    summary: "{{serial}} — {{title}} ({{status}})"
-    fields:
-      - { label: "Serial", name: "serial", widget: "string", hint: "e.g. OCD-F07" }
-      - { label: "Title", name: "title", widget: "string" }
-      - label: "Status"
-        name: "status"
-        widget: "select"
-        options: ["available", "claimed"]
-      - { label: "Size", name: "size", widget: "string", hint: "e.g. 8cm" }
-      - label: "Grid Size"
-        name: "gridSize"
-        widget: "select"
-        options: ["8×8", "16×16", "24×24", "32×32", "80×80"]
-      - { label: "Placement", name: "placement", widget: "string" }
-      - label: "Claimed Date"
-        name: "claimedDate"
-        widget: "string"
-        required: false
-        hint: "Format YYYY.MM.DD — leave empty until claimed."
-      - label: "Photo"
-        name: "photo"
-        widget: "image"
-        required: false
-        media_folder: "/public/flash"
-        public_folder: "/flash"
-        hint: "Leave empty to show the 'Photography pending' placeholder."
-
   - name: "gallery"
-    label: "Rest of the Works"
+    label: "More Work"
     label_singular: "Photo"
     folder: "src/content/gallery"
     create: true
@@ -104,6 +69,14 @@ collections:
               - { label: "Instagram Handle", name: "instagramHandle", widget: "string" }
               - { label: "Instagram URL", name: "instagramUrl", widget: "string" }
               - { label: "Location", name: "location", widget: "string" }
+              - { label: "Studio Name", name: "studioName", widget: "string" }
+              - { label: "Studio Address", name: "address", widget: "string" }
+              - { label: "Google Maps / Reviews URL", name: "mapsUrl", widget: "string" }
+          - label: "Google Reviews (technical — leave as-is unless the Place ID changes)"
+            name: "googleReviews"
+            widget: "object"
+            fields:
+              - { label: "Google Place ID", name: "placeId", widget: "string", hint: "From Google Business Profile / Google Maps. Used at build time to pull live rating and reviews — see README." }
           - label: "Home Page"
             name: "home"
             widget: "object"
@@ -117,19 +90,10 @@ collections:
                 public_folder: "/uploads"
               - { label: "Beat Text", name: "beatText", widget: "text" }
               - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
-              - { label: "Register Section Intro", name: "registerIntro", widget: "text" }
+              - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
+              - { label: "Reviews Section Intro", name: "reviewsIntro", widget: "text" }
+              - { label: "Contact Intro", name: "contactIntro", widget: "text" }
               - { label: "Closing Title", name: "closingTitle", widget: "string" }
-              - { label: "Closing Text", name: "closingText", widget: "text" }
-          - label: "Contact Page"
-            name: "contactPage"
-            widget: "object"
-            fields:
-              - { label: "Intro", name: "intro", widget: "text" }
-          - label: "Register Page"
-            name: "registerPage"
-            widget: "object"
-            fields:
-              - { label: "Intro", name: "intro", widget: "text" }
               - { label: "Closing Text", name: "closingText", widget: "text" }
           - label: "404 Page"
             name: "notFoundPage"

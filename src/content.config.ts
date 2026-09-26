@@ -22,30 +22,14 @@ const pieces = defineCollection({
   }),
 });
 
-// gridSize is the actual pixel-grid resolution the design is built on — a
-// real spec, not decoration, and the most literal expression of the site's
-// "every square" precision thesis. Five tiers cover the realistic range for
-// flash at this physical size (6–13cm); 80×80 is the finest tier, reserved
-// for larger/more detailed designs.
-export const GRID_SIZES = ['8×8', '16×16', '24×24', '32×32', '80×80'] as const;
-
-const flash = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/flash' }),
-  schema: z.object({
-    serial: z.string(),
-    title: z.string(),
-    status: z.enum(['available', 'claimed']),
-    size: z.string(),
-    gridSize: z.enum(GRID_SIZES),
-    placement: z.string(),
-    claimedDate: z.string().default(''),
-    photo: z.string().optional(),
-  }),
-});
-
 // Rest of the Works — a lighter-weight companion to `pieces`: just a photo
 // and a short caption, no placement/sessions/hours/note fields. For work
 // that's worth showing but not worth the full documentation treatment.
+// The former "Register" flash designs live here too now (folded in — see
+// git history for the standalone `flash` collection this replaced): a
+// design being available to book isn't tracked as page state anymore, so it
+// doesn't need its own schema, just a photo and a title like everything
+// else in this collection.
 const gallery = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/gallery' }),
   schema: z.object({
@@ -54,4 +38,4 @@ const gallery = defineCollection({
   }),
 });
 
-export const collections = { pieces, flash, gallery };
+export const collections = { pieces, gallery };

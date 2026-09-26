@@ -3,16 +3,10 @@ import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from './PixelPlaceholder.astro';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 
-interface Props {
-  active?: 'pieces' | 'register' | 'contact';
-}
-
-const { active } = Astro.props;
-
 const links = [
-  { key: 'pieces', label: 'Pieces', href: '/pieces/' },
-  { key: 'register', label: 'Register', href: '/register/' },
-  { key: 'contact', label: 'Contact', href: '/contact/' },
+  { key: 'pieces', label: 'Pieces', href: '#pieces' },
+  { key: 'reviews', label: 'Reviews', href: '#reviews' },
+  { key: 'contact', label: 'Contact', href: '#contact' },
 ] as const;
 
 const markMissing = isAssetMissing('mark');
@@ -41,11 +35,7 @@ const hasMark = pixelArtExists('mark.png');
       {
         links.map((l) => (
           <li>
-            <a
-              class:list={['underline', { contact: l.key === 'contact' }]}
-              href={l.href}
-              aria-current={active === l.key ? 'page' : undefined}
-            >
+            <a class:list={['underline', { contact: l.key === 'contact' }]} href={l.href}>
               {l.label}
             </a>
           </li>
@@ -161,24 +151,15 @@ const hasMark = pixelArtExists('mark.png');
     color: var(--paper);
   }
 
-  .links a[aria-current='page'] {
-    color: var(--paper);
-  }
-
-  /* Contact is the one action every other page funnels toward — --claim is
-     reserved for it alone (current-page uses plain white above), so it
-     reads as the site's standing CTA rather than a third equal nav item.
-     Same color family as every other CTA on the site — see
-     REDESIGN-PLAN.md §2. */
+  /* Contact is the one action every other section funnels toward — --claim
+     is reserved for it alone, so it reads as the site's standing CTA
+     rather than a third equal nav item. Same color family as every other
+     CTA on the site — see REDESIGN-PLAN.md §2. */
   .links a.contact {
     color: var(--claim);
   }
 
   .links a.contact:hover {
-    color: var(--paper);
-  }
-
-  .links a.contact[aria-current='page'] {
     color: var(--paper);
   }
 

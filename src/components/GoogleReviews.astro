@@ -1,0 +1,219 @@
+---
+import type { GoogleReviewsData } from '../lib/googleReviews';
+
+interface Props {
+  data: GoogleReviewsData | null;
+  mapsUrl: string;
+  /** Compact renders just the rating numeral + link, for a trust strip near
+      the hero. Full renders the review snippet cards too, for the fuller
+      section further down the page. Same data, two moments — see
+      REDESIGN prompt's "trust strip near top + review cards near the
+      close" structure. */
+  variant?: 'compact' | 'full';
+}
+
+const { data, mapsUrl, variant = 'full' } = Astro.props;
+const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n));
+---
+
+{
+  variant === 'compact' ? (
+    <a class="trust-strip data underline" href={mapsUrl} target="_blank" rel="noopener noreferrer" data-reveal>
+      {data ? (
+        <>
+          <span class="trust-number">{data.rating.toFixed(1)}</span>
+          <span class="trust-stars" aria-hidden="true">
+            {stars(data.rating)}
+          </span>
+          <span>{data.reviewCount} Google reviews →</span>
+        </>
+      ) : (
+        <span>See reviews on Google →</span>
+      )}
+    </a>
+  ) : (
+    <section class="section reviews" id="reviews">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Reviews</p>
+        <slot />
+      </header>
+
+      {data ? (
+        <>
+          <div class="rating-block" data-reveal>
+            <span class="rating-number">{data.rating.toFixed(1)}</span>
+            <div class="rating-meta">
+              <span class="stars data" aria-hidden="true">
+                {stars(data.rating)}
+              </span>
+              <a class="data underline" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+                {data.reviewCount} Google reviews →
+              </a>
+            </div>
+          </div>
+
+          {data.reviews.length > 0 && (
+            <div class="review-grid">
+              {data.reviews.map((r) => (
+                <article class="review-card" data-reveal>
+                  <div class="review-head">
+                    <span class="stars data" aria-hidden="true">
+                      {stars(r.rating)}
+                    </span>
+                    <span class="data google-mark">Google</span>
+                  </div>
+                  <p class="review-text">{r.text}</p>
+                  <p class="data review-author">
+                    {r.authorName} · {r.relativeTime}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="no-data" data-reveal>
+          <p class="subhead">Reviews aren't pulled in here yet.</p>
+          <a class="cta data underline" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+            Read them on Google →
+          </a>
+        </div>
+      )}
+    </section>
+  )
+}
+
+<style>
+  /* ---- Compact trust strip ---- */
+  .trust-strip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    color: var(--dust);
+    text-transform: uppercase;
+  }
+
+  .trust-strip:hover {
+    color: var(--paper);
+  }
+
+  .trust-number {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--fs-2);
+    color: var(--violet-display);
+  }
+
+  .trust-stars {
+    color: var(--violet-ui);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---- Full section ---- */
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    margin-block-end: var(--sp-5);
+  }
+
+  .section-head .eyebrow {
+    text-transform: uppercase;
+  }
+
+  .rating-block {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    margin-block-end: var(--sp-5);
+    padding-block-end: var(--sp-4);
+    border-block-end: var(--border-hairline);
+  }
+
+  .rating-number {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--fs-display-sm);
+    color: var(--violet-display);
+    line-height: 1;
+  }
+
+  .rating-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+  }
+
+  .stars {
+    color: var(--violet-ui);
+    letter-spacing: 0.08em;
+    font-size: var(--fs-1);
+  }
+
+  .review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--sp-3);
+  }
+
+  .review-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-3);
+    background: var(--surface);
+    border: var(--border-hairline);
+  }
+
+  .review-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .google-mark {
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+
+  .review-text {
+    color: var(--paper);
+    font-size: var(--fs-0);
+    line-height: 1.6;
+    /* Real reviews vary a lot in length — cap it so one long one doesn't
+       blow out the grid rhythm; the author link goes to the full text. */
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .review-author {
+    color: var(--dust);
+    margin-block-start: auto;
+  }
+
+  .no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-2);
+  }
+
+  .subhead {
+    color: var(--dust);
+    font-size: var(--fs-2);
+  }
+
+  .cta {
+    color: var(--claim);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 640px) {
+    .rating-block {
+      flex-direction: column;
+      gap: var(--sp-1);
+    }
+  }
+</style>
