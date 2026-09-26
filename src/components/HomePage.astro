@@ -213,11 +213,15 @@ const descriptions = {
             <p class="intro">{home.galleryIntro}</p>
           </header>
 
-          <div class="work-grid">
+          <p class="drag-hint data" data-drag-hint aria-hidden="true">
+            {ui.gallery.dragHint}
+          </p>
+
+          <div class="work-grid" data-drag-scroll tabindex="0" role="region" aria-label={ui.gallery.scrollRegionLabel}>
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
                 <div class="work-frame" data-frame-reveal>
-                  <img src={g.data.photo} alt={g.data.title} loading="lazy" />
+                  <img src={g.data.photo} alt={g.data.title} loading="lazy" draggable="false" />
                 </div>
                 <figcaption class="data">{g.data.title}</figcaption>
               </figure>
@@ -520,10 +524,36 @@ const descriptions = {
       gap: var(--sp-6);
     }
 
+    /* Horizontal scroller: native swipe on touch, a custom mouse-drag (see
+       src/scripts/motion.ts) for anyone on a plain mouse, a wheel listener
+       that converts vertical scroll to horizontal while hovering it. Native
+       overflow-x is the fallback for everything — nothing here needs JS to
+       be functional, only to feel nicer. */
     .work-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      display: flex;
       gap: var(--sp-3);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      padding-block-end: var(--sp-1);
+      cursor: grab;
+      scrollbar-width: none;
+      user-select: none;
+    }
+
+    .work-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .work-grid.is-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+    }
+
+    .work-item {
+      flex: 0 0 auto;
+      width: 16rem;
+      scroll-snap-align: start;
     }
 
     /* Border/background live on the frame, not the image, so the image can
@@ -539,12 +569,42 @@ const descriptions = {
       aspect-ratio: 1;
       object-fit: cover;
       display: block;
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     .work-item figcaption {
       margin-block-start: var(--sp-1);
       color: var(--dust);
       font-size: var(--fs-00);
+    }
+
+    .drag-hint {
+      margin-block-end: var(--sp-2);
+      color: var(--dust);
+      text-align: end;
+      text-transform: uppercase;
+      transition: opacity var(--dur-base) var(--ease-precise);
+    }
+
+    .drag-hint.is-hidden {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .drag-hint {
+        animation: drag-hint-nudge 1.8s ease-in-out infinite;
+      }
+    }
+
+    @keyframes drag-hint-nudge {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(-6px);
+      }
     }
 
     .work-note {

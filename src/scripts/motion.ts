@@ -147,6 +147,64 @@ function parallaxBreak() {
   });
 }
 
+// Horizontal scroller (the More Work strip). Native touch swipe and
+// scrollbar-drag already work on any overflow-x element with zero JS below
+// — this only adds what a plain mouse can't do on its own: click-and-drag,
+// and treating an ordinary vertical wheel scroll as horizontal while
+// hovering the strip. Runs regardless of prefers-reduced-motion — this is
+// user-driven interaction, not autoplaying motion.
+function dragScroll() {
+  document.querySelectorAll<HTMLElement>('[data-drag-scroll]').forEach((el) => {
+    const hint = el.closest('.more-work')?.querySelector<HTMLElement>('[data-drag-hint]');
+    let dismissHint = () => {
+      hint?.classList.add('is-hidden');
+      dismissHint = () => {};
+    };
+
+    let dragging = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    el.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return; // touch/pen already scroll natively
+      dragging = true;
+      startX = e.clientX;
+      startScroll = el.scrollLeft;
+      el.classList.add('is-dragging');
+      el.setPointerCapture(e.pointerId);
+    });
+
+    el.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      el.scrollLeft = startScroll - (e.clientX - startX);
+      dismissHint();
+    });
+
+    const stopDrag = () => {
+      dragging = false;
+      el.classList.remove('is-dragging');
+    };
+    el.addEventListener('pointerup', stopDrag);
+    el.addEventListener('pointercancel', stopDrag);
+
+    el.addEventListener(
+      'wheel',
+      (e) => {
+        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // trackpad horizontal swipe: let it through natively
+        if (el.scrollWidth <= el.clientWidth) return; // nothing to scroll
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+        dismissHint();
+      },
+      { passive: false },
+    );
+
+    el.addEventListener('scroll', dismissHint, { passive: true, once: true });
+  });
+}
+
+dragScroll();
+
 if (!reduced) {
   heroIntro();
   scrubHeadings();
