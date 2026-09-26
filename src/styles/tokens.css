@@ -18,6 +18,7 @@
   --ink: #120e17; /* base ground — violet-black, not neutral */
   --surface: #1c1620; /* raised panel fill */
   --line: #332a3b; /* hairline borders — decorative, exempt from text-contrast rules */
+  --line-light: rgb(237 233 226 / 0.28); /* hairline that must stay visible over photography (the nav frame over the hero) */
   --paper: #ede9e2; /* primary text — warm off-white, unchanged */
   --dust: #8f8796; /* secondary/metadata text — 5.52:1 on --ink */
 
@@ -102,6 +103,7 @@
 
   /* ---- Layout ---- */
   --content-max: 84rem;
+  --nav-h: 6rem; /* fixed nav's footprint — content that sits under it (the hero) pads by this */
   --focus-ring: 2px solid var(--violet-ui);
 
   /* ---- Grid unit — the literal "every square" backdrop (visual motif, distinct from the sprite construction unit — see REDESIGN-PLAN.md §4) ---- */

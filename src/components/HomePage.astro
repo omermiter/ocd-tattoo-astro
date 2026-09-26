@@ -193,6 +193,8 @@ const descriptions = {
       justify-content: center;
       min-block-size: 88vh;
       padding: var(--sp-3);
+      /* The nav is fixed and transparent over this photo — clear it. */
+      padding-block-start: var(--nav-h);
       /* Banner image is CMS-editable — see bannerImage in
          src/data/site.json (shared across both locales). Dark gradient on top exists purely so the title
          stays readable against the photo underneath. Full-bleed across the
