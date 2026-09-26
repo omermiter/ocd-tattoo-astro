@@ -25,6 +25,11 @@ const ui = t(locale);
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
 const moreWork = (await getCollection('gallery')).filter((g) => hasPhoto(g.data.photo));
 const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
+// hasPhoto is a plain build-time "does this file exist under public/" check
+// despite the name (see src/lib/media.ts) — reused here so a bannerVideo
+// path that's unset, or set but not actually uploaded yet, falls back to
+// the banner image instead of a broken <video>.
+const bannerVideo = site.bannerVideo && hasPhoto(site.bannerVideo) ? site.bannerVideo : undefined;
 const featureStrip = site.featureStrip[locale];
 const reviewsData = await fetchGoogleReviews(googleReviews.placeId);
 
@@ -72,12 +77,51 @@ const descriptions = {
   <main>
     <PrecisionGrid>
       <section class="hero" style={`--heroBg: url(${bannerImage})`}>
+        {
+          bannerVideo && (
+            <div class="hero-media" data-hero-video aria-hidden="true">
+              {/* Same clip, twice. The blurred copy fills the whole banner
+                  (cover — cropping is fine, it's just ambient color); the
+                  sharp copy sits on top at object-fit: contain, so vertical
+                  footage always shows in full, at full quality, with no
+                  crop — the blur behind it fills what would otherwise be
+                  empty letterbox space either side. Works unmodified for
+                  landscape footage too: contain then just fills the frame
+                  and the blur layer is invisible behind it. */}
+              <video class="hero-video-blur" src={bannerVideo} poster={bannerImage} autoplay muted loop playsinline preload="metadata" />
+              <video class="hero-video-sharp" src={bannerVideo} poster={bannerImage} autoplay muted loop playsinline preload="metadata" />
+            </div>
+          )
+        }
+        <div class="hero-scrim" aria-hidden="true" />
         <div class="hero-content">
           <p class="eyebrow">{home.heroEyebrow}</p>
           <h1 data-split="hero" set:html={renderEmphasis(home.heroTitle)} />
           <GoogleReviews data={reviewsData} mapsUrl={contact.mapsUrl} variant="compact" locale={locale} />
         </div>
       </section>
+
+      {
+        bannerVideo && (
+          <script>
+            // Runs immediately after the two <video> elements above, before
+            // the page has done much else — stops autoplaying video from
+            // ever really starting to stream for anyone who's asked for
+            // less motion or less data. The banner image (already the
+            // poster) stays as the visual either way.
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+            if (reduced || saveData) {
+              document.querySelectorAll<HTMLVideoElement>('[data-hero-video] video').forEach((v) => {
+                v.pause();
+                v.removeAttribute('src');
+                v.load();
+              });
+              document.querySelector('[data-hero-video]')?.remove();
+            }
+          </script>
+        )
+      }
     </PrecisionGrid>
 
     <section class="beat" data-reveal>
@@ -188,6 +232,7 @@ const descriptions = {
 
   <style>
     .hero {
+      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -195,17 +240,63 @@ const descriptions = {
       padding: var(--sp-3);
       /* The nav is fixed and transparent over this photo — clear it. */
       padding-block-start: var(--nav-h);
+      overflow: hidden;
       /* Banner image is CMS-editable — see bannerImage in
-         src/data/site.json (shared across both locales). Dark gradient on top exists purely so the title
-         stays readable against the photo underneath. Full-bleed across the
-         whole section; the text itself stays width-constrained via
-         .hero-content below. */
-      background-image: linear-gradient(180deg, rgba(8, 8, 10, 0.6), rgba(8, 8, 10, 0.82)), var(--heroBg);
+         src/data/site.json (shared across both locales). Always painted,
+         video (if any) layers on top of it — so a slow/failed video load
+         never shows a gap, and reduced-motion/save-data visitors (see the
+         inline script below) just see this. */
+      background-image: var(--heroBg);
       background-size: cover;
       background-position: center;
     }
 
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-video-blur,
+    .hero-video-sharp {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Ambient fill: crops freely (it's just color/motion, never the
+       subject), blurred heavily and scaled up a touch so the soft blur
+       edge never peeks past the section's own edge. */
+    .hero-video-blur {
+      object-fit: cover;
+      filter: blur(60px) brightness(0.6) saturate(1.1);
+      transform: scale(1.15);
+    }
+
+    /* The actual footage: contain, never cover — this is the one rule that
+       makes vertical video work here. A portrait clip renders at full size
+       and full quality in the middle of the banner instead of being
+       cropped down to a thin horizontal sliver; a landscape clip just
+       fills the frame as normal and the blur layer sits invisibly behind
+       it. */
+    .hero-video-sharp {
+      object-fit: contain;
+    }
+
+    /* Same gradient as before, now its own layer so it sits above the
+       video too — stays readable whether the banner is a photo or a
+       vertical clip stretching well past the text column's width. */
+    .hero-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background-image: linear-gradient(180deg, rgba(8, 8, 10, 0.6), rgba(8, 8, 10, 0.82));
+    }
+
     .hero-content {
+      position: relative;
+      z-index: 2;
       display: flex;
       flex-direction: column;
       gap: var(--sp-3);
