@@ -1,9 +1,11 @@
 ---
-import { whatsappLink, INSTAGRAM_URL, INSTAGRAM_HANDLE, LOCATION } from '../lib/contact';
+import { whatsappLink, INSTAGRAM_URL } from '../lib/contact';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from './PixelPlaceholder.astro';
+import site from '../data/site.json';
 
+const { studioName, address, mapsUrl } = site.contact;
 const hasMark = pixelArtExists('mark.png');
 const hasInstagramIcon = pixelArtExists('icon-instagram.png');
 const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
@@ -29,10 +31,16 @@ const whatsappAsset = getAsset('icon-whatsapp');
         isAssetMissing('mark') && <PixelPlaceholder id="mark" width={markAsset.width} height={markAsset.height} label="mark" />
       )
     }
-    <span class="data">{INSTAGRAM_HANDLE} · {LOCATION}</span>
+    <span class="identity-text">
+      <span class="data studio">{studioName}</span>
+      <span class="data">{address}</span>
+    </span>
   </div>
 
   <div class="links data">
+    <a class="underline maps" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+      Google
+    </a>
     <a class="underline instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
       {
         hasInstagramIcon ? (
@@ -77,6 +85,16 @@ const whatsappAsset = getAsset('icon-whatsapp');
     gap: var(--sp-2);
   }
 
+  .identity-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+  }
+
+  .studio {
+    color: var(--paper);
+  }
+
   /* 20x40 = 1x mark.png's actual source canvas — matches Nav.astro,
      integer scale, per ASSETS-TO-DRAW.md. */
   .mark {
@@ -104,6 +122,7 @@ const whatsappAsset = getAsset('icon-whatsapp');
      brand green, not --claim: this link always means "you're leaving the
      site for a different app," a different kind of moment than an
      on-page action — see REDESIGN-PLAN.md §2 for the full defense. */
+  .links a.maps:hover,
   .links a.instagram:hover {
     color: var(--violet-ui);
   }

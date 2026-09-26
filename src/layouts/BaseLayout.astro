@@ -9,9 +9,11 @@ import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 interface Props {
   title: string;
   description: string;
+  /** Optional schema.org JSON-LD object, rendered verbatim in <head>. */
+  structuredData?: Record<string, unknown>;
 }
 
-const { title, description } = Astro.props;
+const { title, description, structuredData } = Astro.props;
 
 // The pixel-art favicon is additive, not a replacement: favicon.svg stays as
 // the permanent fallback so the tab icon is never missing, and the
@@ -32,6 +34,7 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {structuredData && <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />}
     <!-- Cloudflare Web Analytics — privacy-friendly (no cookies, no personal
          data). Stats live at dash.cloudflare.com → Analytics & Logs → Web
          Analytics. -->
