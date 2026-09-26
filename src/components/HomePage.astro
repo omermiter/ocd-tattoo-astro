@@ -102,7 +102,7 @@ const descriptions = {
                   muted
                   loop
                   playsinline
-                  preload="metadata"
+                  preload="auto"
                   style={`object-position: ${bannerVideoPosition}`}
                 />
               ) : (
@@ -118,7 +118,7 @@ const descriptions = {
                    just fills the frame and the blur layer sits invisibly
                    behind it. */
                 <>
-                  <video class="hero-video-blur" src={bannerVideo} poster={bannerImage} autoplay muted loop playsinline preload="metadata" />
+                  <video class="hero-video-blur" src={bannerVideo} poster={bannerImage} autoplay muted loop playsinline preload="auto" />
                   <video
                     class="hero-video-sharp"
                     src={bannerVideo}
@@ -127,7 +127,7 @@ const descriptions = {
                     muted
                     loop
                     playsinline
-                    preload="metadata"
+                    preload="auto"
                     style={`object-position: ${bannerVideoPosition}`}
                   />
                 </>
@@ -160,6 +160,23 @@ const descriptions = {
                 v.load();
               });
               document.querySelector('[data-hero-video]')?.remove();
+            } else {
+              // The declarative `autoplay` attribute is enough on most
+              // browsers, but some mobile engines silently never engage it
+              // (timing/engine quirks around element insertion), leaving a
+              // paused first frame with no error anywhere. Calling .play()
+              // ourselves is the standard belt-and-suspenders fix — still
+              // muted, still no user gesture required, so it's allowed by
+              // the same autoplay policy either way. Retried once on
+              // canplay in case the first attempt fires before the browser
+              // has buffered enough (preload="auto" makes that rare, but
+              // not impossible on a slow mobile connection).
+              document.querySelectorAll<HTMLVideoElement>('[data-hero-video] video').forEach((v) => {
+                v.muted = true;
+                const tryPlay = () => v.play().catch(() => {});
+                tryPlay();
+                v.addEventListener('canplay', tryPlay, { once: true });
+              });
             }
           </script>
         )
