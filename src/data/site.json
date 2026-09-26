@@ -11,21 +11,54 @@
   "googleReviews": {
     "placeId": "ChIJPUDpyvk5HRURiQFLQf2maVU"
   },
-  "home": {
-    "heroEyebrow": "OCD Tattoo",
-    "heroTitle": "Pixel Art, Held to a *Realist's* Standard.",
-    "heroBackground": "/uploads/img_1572.jpg",
-    "beatText": "Every square drawn, stenciled, and placed with the same precision built over years of black-and-gray realism work — now in color, one pixel at a time.",
-    "piecesIntro": "A growing collection of pixel art tattoos — precision-built, one at a time.",
-    "galleryIntro": "Flash designs ready to book, and the black-and-gray realism work the pivot was built on.",
-    "reviewsIntro": "What it's actually like to sit in the chair — straight from Google, unedited.",
-    "contactIntro": "I read every message myself. If it's a fit, I'll ask for a reference and a placement; if it isn't, I'll say so directly instead of leaving you waiting.",
-    "closingTitle": "Commissions are held to the same standard.",
-    "closingText": "Reviewed personally, not queued. Tell me what you want, and I'll tell you if it's a fit."
+  "featureStrip": {
+    "en": [
+      { "label": "Precision-built", "detail": "Every square placed with the same precision a realist gives a line." },
+      { "label": "Real pixel art", "detail": "Not a filter. Drawn and tattooed, pixel by pixel." },
+      { "label": "Reviewed personally", "detail": "I read every message myself, and answer the same way." }
+    ],
+    "he": [
+      { "label": "בנייה מדויקת", "detail": "כל ריבוע ממוקם באותה דיוק שבה ריאליסט מותח קו." },
+      { "label": "פיקסל ארט אמיתי", "detail": "לא פילטר. מצויר ומקועקע, פיקסל אחרי פיקסל." },
+      { "label": "מענה אישי", "detail": "אני קורא כל הודעה בעצמי, ועונה באותה צורה." }
+    ]
   },
-  "notFoundPage": {
-    "code": "404",
-    "heading": "Page not found.",
-    "intro": "This page doesn't exist, or the piece moved."
+  "locales": {
+    "en": {
+      "home": {
+        "heroEyebrow": "OCD Tattoo",
+        "heroTitle": "Pixel Art, Held to a *Realist's* Standard.",
+        "heroBackground": "/uploads/img_1572.jpg",
+        "beatText": "Every square drawn, stenciled, and placed with the same precision built over years of black-and-gray realism work — now in color, one pixel at a time.",
+        "piecesIntro": "A growing collection of pixel art tattoos — precision-built, one at a time.",
+        "galleryIntro": "Flash designs ready to book, and the black-and-gray realism work the pivot was built on.",
+        "reviewsIntro": "What it's actually like to sit in the chair — straight from Google, unedited.",
+        "contactIntro": "I read every message myself. If it's a fit, I'll ask for a reference and a placement; if it isn't, I'll say so directly instead of leaving you waiting.",
+        "closingTitle": "Commissions are held to the same standard."
+      },
+      "notFoundPage": {
+        "code": "404",
+        "heading": "Page not found.",
+        "intro": "This page doesn't exist, or the piece moved."
+      }
+    },
+    "he": {
+      "home": {
+        "heroEyebrow": "OCD Tattoo",
+        "heroTitle": "פיקסל ארט, בדיוק של *ריאליסט*.",
+        "heroBackground": "/uploads/img_1572.jpg",
+        "beatText": "כל ריבוע מצויר, מסומן בסטנסיל ומונח באותה רמת דיוק שנבנתה במשך שנות עבודה בריאליזם בשחור-אפור — עכשיו בצבע, פיקסל אחד בכל פעם.",
+        "piecesIntro": "אוסף הולך וגדל של קעקועי פיקסל ארט — בנייה מדויקת, אחד בכל פעם.",
+        "galleryIntro": "עיצובי פלאש מוכנים להזמנה, ועבודות הריאליזם בשחור-אפור שעליהן נבנה המעבר.",
+        "reviewsIntro": "איך זה באמת לשבת בכיסא הקעקוע — ישירות מגוגל, בלי עריכה.",
+        "contactIntro": "אני קורא כל הודעה בעצמי. אם זה מתאים, אבקש רפרנס ומיקום; אם לא, אגיד את זה בבירור במקום להשאיר אותך מחכה.",
+        "closingTitle": "עבודות מוזמנות נשמרות לאותו סטנדרט."
+      },
+      "notFoundPage": {
+        "code": "404",
+        "heading": "העמוד לא נמצא.",
+        "intro": "העמוד הזה לא קיים, או שהעבודה זזה."
+      }
+    }
   }
 }

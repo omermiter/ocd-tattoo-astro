@@ -5,15 +5,18 @@ import '../styles/global.css';
 import '../styles/pixel-art.css';
 import Cursor from '../components/Cursor.astro';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { localePath, type Locale } from '../i18n/ui';
 
 interface Props {
   title: string;
   description: string;
   /** Optional schema.org JSON-LD object, rendered verbatim in <head>. */
   structuredData?: Record<string, unknown>;
+  locale?: Locale;
 }
 
-const { title, description, structuredData } = Astro.props;
+const { title, description, structuredData, locale = 'en' } = Astro.props;
+const dir = locale === 'he' ? 'rtl' : 'ltr';
 
 // The pixel-art favicon is additive, not a replacement: favicon.svg stays as
 // the permanent fallback so the tab icon is never missing, and the
@@ -22,7 +25,7 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale} dir={dir}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,6 +37,9 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <link rel="alternate" hreflang="en" href={`https://ocdtattoo.com${localePath('en')}`} />
+    <link rel="alternate" hreflang="he" href={`https://ocdtattoo.com${localePath('he')}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://ocdtattoo.com${localePath('en')}`} />
     {structuredData && <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />}
     <!-- Cloudflare Web Analytics — privacy-friendly (no cookies, no personal
          data). Stats live at dash.cloudflare.com → Analytics & Logs → Web

@@ -49,4 +49,13 @@ export default defineConfig({
   trailingSlash: 'always',
   site: 'https://ocdtattoo.com',
   integrations: [placeholderSummary()],
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'he'],
+    routing: {
+      // English stays at "/" (no "/en/" prefix, matches every existing
+      // link/bookmark/indexed URL); Hebrew lives at "/he/".
+      prefixDefaultLocale: false,
+    },
+  },
 });

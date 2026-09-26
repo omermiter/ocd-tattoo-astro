@@ -1,39 +1,42 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import PieceMedia from './PieceMedia.astro';
+import { t, type Locale } from '../i18n/ui';
 
 interface Props {
   entry: CollectionEntry<'pieces'>;
+  locale?: Locale;
 }
 
-const { entry } = Astro.props;
+const { entry, locale = 'en' } = Astro.props;
+const ui = t(locale);
 const p = entry.data;
 ---
 
 <article class="piece">
-  <PieceMedia photo={p.photo} serial={p.serial} alt={p.title} />
+  <PieceMedia photo={p.photo} serial={p.serial} alt={p.title} locale={locale} />
   <div class="piece-meta">
     <span class="data serial">{p.serial}</span>
     <h2>{p.title}</h2>
     <dl class="data specs">
       <div>
-        <dt>Placement</dt>
+        <dt>{ui.pieceCard.placement}</dt>
         <dd>{p.placement}</dd>
       </div>
       <div>
-        <dt>Size</dt>
+        <dt>{ui.pieceCard.size}</dt>
         <dd>{p.size}</dd>
       </div>
       <div>
-        <dt>Sessions</dt>
+        <dt>{ui.pieceCard.sessions}</dt>
         <dd>{p.sessions}</dd>
       </div>
       <div>
-        <dt>Hours</dt>
+        <dt>{ui.pieceCard.hours}</dt>
         <dd>{p.hours}</dd>
       </div>
       <div>
-        <dt>Date</dt>
+        <dt>{ui.pieceCard.date}</dt>
         <dd>{p.date}</dd>
       </div>
     </dl>

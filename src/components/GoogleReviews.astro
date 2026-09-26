@@ -1,5 +1,6 @@
 ---
 import type { GoogleReviewsData } from '../lib/googleReviews';
+import { t, type Locale } from '../i18n/ui';
 
 interface Props {
   data: GoogleReviewsData | null;
@@ -10,9 +11,11 @@ interface Props {
       REDESIGN prompt's "trust strip near top + review cards near the
       close" structure. */
   variant?: 'compact' | 'full';
+  locale?: Locale;
 }
 
-const { data, mapsUrl, variant = 'full' } = Astro.props;
+const { data, mapsUrl, variant = 'full', locale = 'en' } = Astro.props;
+const ui = t(locale);
 const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n));
 ---
 
@@ -25,16 +28,16 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
           <span class="trust-stars" aria-hidden="true">
             {stars(data.rating)}
           </span>
-          <span>{data.reviewCount} Google reviews →</span>
+          <span>{ui.reviews.reviewCount(data.reviewCount)}</span>
         </>
       ) : (
-        <span>See reviews on Google →</span>
+        <span>{ui.reviews.trustFallback}</span>
       )}
     </a>
   ) : (
     <section class="section reviews" id="reviews">
       <header class="section-head" data-reveal>
-        <p class="eyebrow">Reviews</p>
+        <p class="eyebrow">{ui.reviews.eyebrow}</p>
         <slot />
       </header>
 
@@ -47,7 +50,7 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
                 {stars(data.rating)}
               </span>
               <a class="data underline" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-                {data.reviewCount} Google reviews →
+                {ui.reviews.reviewCount(data.reviewCount)}
               </a>
             </div>
           </div>
@@ -60,7 +63,7 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
                     <span class="stars data" aria-hidden="true">
                       {stars(r.rating)}
                     </span>
-                    <span class="data google-mark">Google</span>
+                    <span class="data google-mark">{ui.reviews.googleMark}</span>
                   </div>
                   <p class="review-text">{r.text}</p>
                   <p class="data review-author">
@@ -73,9 +76,9 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
         </>
       ) : (
         <div class="no-data" data-reveal>
-          <p class="subhead">Reviews aren't pulled in here yet.</p>
+          <p class="subhead">{ui.reviews.noDataText}</p>
           <a class="cta data underline" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            Read them on Google →
+            {ui.reviews.readOnGoogle}
           </a>
         </div>
       )}

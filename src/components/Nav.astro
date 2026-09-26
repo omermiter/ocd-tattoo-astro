@@ -2,11 +2,20 @@
 import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from './PixelPlaceholder.astro';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { t, localePath, type Locale } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const ui = t(locale);
+const otherLocale: Locale = locale === 'en' ? 'he' : 'en';
 
 const links = [
-  { key: 'pieces', label: 'Pieces', href: '#pieces' },
-  { key: 'reviews', label: 'Reviews', href: '#reviews' },
-  { key: 'contact', label: 'Contact', href: '#contact' },
+  { key: 'pieces', label: ui.nav.pieces, href: '#pieces' },
+  { key: 'reviews', label: ui.nav.reviews, href: '#reviews' },
+  { key: 'contact', label: ui.nav.contact, href: '#contact' },
 ] as const;
 
 const markMissing = isAssetMissing('mark');
@@ -15,7 +24,7 @@ const hasMark = pixelArtExists('mark.png');
 ---
 
 <nav class="nav">
-  <a class="brand" href="/">
+  <a class="brand" href={localePath(locale)}>
     {
       hasMark ? (
         <img class="brand-mark pixel-art" src={pixelArtPath('mark.png')} alt="" width={markAsset.width} height={markAsset.height} />
@@ -26,7 +35,7 @@ const hasMark = pixelArtExists('mark.png');
     <span class="data">OCD·TATTOO</span>
   </a>
 
-  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label="Menu">
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label={ui.nav.menu}>
     <span></span>
   </button>
 
@@ -41,6 +50,11 @@ const hasMark = pixelArtExists('mark.png');
           </li>
         ))
       }
+      <li>
+        <a class="underline lang-switch" href={localePath(otherLocale)} hreflang={otherLocale} lang={otherLocale} dir={otherLocale === 'he' ? 'rtl' : 'ltr'}>
+          {ui.nav.switchTo}
+        </a>
+      </li>
     </ul>
   </div>
 </nav>

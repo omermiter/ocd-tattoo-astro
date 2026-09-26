@@ -6,14 +6,23 @@ import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from '../components/PixelPlaceholder.astro';
 import site from '../data/site.json';
+import { t, localePath } from '../i18n/ui';
 
 const hasIllustration = pixelArtExists('404.png');
 const illustrationAsset = getAsset('404');
 const illustrationMissing = isAssetMissing('404');
-const { code, heading, intro } = site.notFoundPage;
+const { notFoundPage: en } = site.locales.en;
+const { notFoundPage: he } = site.locales.he;
+const uiEn = t('en');
+const uiHe = t('he');
+
+// GitHub Pages serves one static 404.html for every unmatched path, with no
+// server-side awareness of the /he/ prefix — so both locales render here,
+// and a tiny inline script below picks one based on the actual URL the
+// visitor landed on. Progressive: defaults to English if JS doesn't run.
 ---
 
-<BaseLayout title="Page not found — OCD Tattoo" description={intro}>
+<BaseLayout title="Page not found — OCD Tattoo" description={en.intro}>
   <Nav />
 
   <main class="not-found" data-reveal>
@@ -28,11 +37,22 @@ const { code, heading, intro } = site.notFoundPage;
     }
     <div class="scrim" aria-hidden="true" />
 
-    <div class="content">
-      <p class="data code">{code}</p>
-      <h1>{heading}</h1>
-      <p class="intro">{intro}</p>
-      <a class="back data underline" href="/pieces/">← Back to Pieces</a>
+    <div class="content" data-locale="en">
+      <p class="data code">{en.code}</p>
+      <h1>{en.heading}</h1>
+      <p class="intro">{en.intro}</p>
+      <a class="back data underline" href={`${localePath('en')}#pieces`}>
+        {uiEn.notFound.back}
+      </a>
+    </div>
+
+    <div class="content" data-locale="he" hidden dir="rtl" lang="he">
+      <p class="data code">{he.code}</p>
+      <h1>{he.heading}</h1>
+      <p class="intro">{he.intro}</p>
+      <a class="back data underline" href={`${localePath('he')}#pieces`}>
+        {uiHe.notFound.back}
+      </a>
     </div>
   </main>
 
@@ -104,4 +124,13 @@ const { code, heading, intro } = site.notFoundPage;
       text-transform: uppercase;
     }
   </style>
+
+  <script is:inline>
+    if (location.pathname.startsWith('/he/')) {
+      document.documentElement.lang = 'he';
+      document.documentElement.dir = 'rtl';
+      document.querySelector('[data-locale="en"]')?.setAttribute('hidden', '');
+      document.querySelector('[data-locale="he"]')?.removeAttribute('hidden');
+    }
+  </script>
 </BaseLayout>

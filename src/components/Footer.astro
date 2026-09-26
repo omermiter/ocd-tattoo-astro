@@ -4,7 +4,14 @@ import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 import { isAssetMissing, getAsset } from '../lib/placeholders';
 import PixelPlaceholder from './PixelPlaceholder.astro';
 import site from '../data/site.json';
+import { t, type Locale } from '../i18n/ui';
 
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const ui = t(locale);
 const { studioName, address, mapsUrl } = site.contact;
 const hasMark = pixelArtExists('mark.png');
 const hasInstagramIcon = pixelArtExists('icon-instagram.png');
@@ -39,7 +46,7 @@ const whatsappAsset = getAsset('icon-whatsapp');
 
   <div class="links data">
     <a class="underline maps" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-      Google
+      {ui.footer.google}
     </a>
     <a class="underline instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
       {
@@ -51,7 +58,7 @@ const whatsappAsset = getAsset('icon-whatsapp');
           )
         )
       }
-      Instagram
+      {ui.footer.instagram}
     </a>
     <a class="underline whatsapp" href={whatsappLink()} target="_blank" rel="noopener noreferrer">
       {
@@ -63,7 +70,7 @@ const whatsappAsset = getAsset('icon-whatsapp');
           )
         )
       }
-      WhatsApp
+      {ui.footer.whatsapp}
     </a>
   </div>
 </footer>
