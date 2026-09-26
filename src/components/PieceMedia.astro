@@ -17,7 +17,12 @@ const available = photo ? hasPhoto(photo) : false;
 const hasPendingMark = pixelArtExists('pending-mark.png');
 ---
 
-<div class="piece-media" class:list={[{ pending: !available }]} style={available ? `aspect-ratio: ${ratio}` : undefined}>
+<div
+  class="piece-media"
+  class:list={[{ pending: !available }]}
+  style={available ? `aspect-ratio: ${ratio}` : undefined}
+  data-frame-reveal={available ? '' : undefined}
+>
   {
     available && photo ? (
       <img src={photo} alt={alt} loading="lazy" />

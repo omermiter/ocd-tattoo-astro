@@ -74,24 +74,24 @@ const descriptions = {
       <section class="hero" style={`--heroBg: url(${bannerImage})`}>
         <div class="hero-content">
           <p class="eyebrow">{home.heroEyebrow}</p>
-          <h1 set:html={renderEmphasis(home.heroTitle)} />
+          <h1 data-split="hero" set:html={renderEmphasis(home.heroTitle)} />
           <GoogleReviews data={reviewsData} mapsUrl={contact.mapsUrl} variant="compact" locale={locale} />
         </div>
       </section>
     </PrecisionGrid>
 
     <section class="beat" data-reveal>
-      <p class="subhead">
+      <p class="subhead beat-text" data-grow-line>
         {home.beatText}
       </p>
       <a class="cta data underline" href="#pieces">{ui.beat.cta}</a>
     </section>
 
-    <section class="feature-strip" data-reveal>
+    <section class="feature-strip">
       {
         featureStrip.map((f) => (
-          <div class="feature">
-            <p class="feature-label">{f.label}</p>
+          <div class="feature" data-grow-line>
+            <p class="feature-label" data-split="scrub">{f.label}</p>
             <p class="feature-detail">{f.detail}</p>
           </div>
         ))
@@ -113,7 +113,7 @@ const descriptions = {
 
     {
       breakPiece && (
-        <div class="photo-break" data-reveal>
+        <div class="photo-break" data-parallax>
           <img src={breakPiece.data.photo} alt="" loading="lazy" />
         </div>
       )
@@ -130,7 +130,9 @@ const descriptions = {
           <div class="work-grid">
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
-                <img src={g.data.photo} alt={g.data.title} loading="lazy" />
+                <div class="work-frame" data-frame-reveal>
+                  <img src={g.data.photo} alt={g.data.title} loading="lazy" />
+                </div>
                 <figcaption class="data">{g.data.title}</figcaption>
               </figure>
             ))}
@@ -152,7 +154,7 @@ const descriptions = {
     <section class="section contact" id="contact">
       <header class="section-head" data-reveal>
         <p class="eyebrow">{ui.contact.eyebrow}</p>
-        <h2 class="caps-serif">{home.closingTitle}</h2>
+        <h2 class="caps-serif" data-split="scrub">{home.closingTitle}</h2>
         <p class="intro">
           {home.contactIntro}
         </p>
@@ -255,13 +257,46 @@ const descriptions = {
       text-align: center;
     }
 
+    /* Divider drawn as a pseudo-element rather than a border so
+       src/scripts/motion.ts can grow it top-to-bottom with scroll via
+       --line-scale (defaults to 1: fully drawn with no JS). */
     .feature {
+      position: relative;
       padding: var(--sp-3);
-      border-inline-start: var(--border-hairline);
     }
 
-    .feature:first-child {
-      border-inline-start: none;
+    .feature::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 1px;
+      background: var(--line);
+      transform: scaleY(var(--line-scale, 1));
+      transform-origin: top;
+    }
+
+    .feature:first-child::before {
+      display: none;
+    }
+
+    /* The accent line beside the intro paragraph, borrowed from the
+       reference site's growing vertical line — --violet, the structural
+       accent, not --claim (that stays reserved for CTAs). */
+    .beat-text {
+      position: relative;
+      padding-inline-start: var(--sp-3);
+    }
+
+    .beat-text::before {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      width: 2px;
+      background: var(--violet);
+      transform: scaleY(var(--line-scale, 1));
+      transform-origin: top;
     }
 
     .feature-label {
@@ -348,13 +383,19 @@ const descriptions = {
       gap: var(--sp-3);
     }
 
+    /* Border/background live on the frame, not the image, so the image can
+       zoom inside it during the scroll reveal without scaling its border. */
+    .work-frame {
+      overflow: hidden;
+      background: var(--surface);
+      border: var(--border-hairline);
+    }
+
     .work-item img {
       width: 100%;
       aspect-ratio: 1;
       object-fit: cover;
       display: block;
-      background: var(--surface);
-      border: var(--border-hairline);
     }
 
     .work-item figcaption {
@@ -470,13 +511,25 @@ const descriptions = {
       }
 
       .feature {
-        border-inline-start: none;
-        border-block-start: var(--border-hairline);
         padding-block-start: var(--sp-3);
       }
 
+      /* Stacked on mobile, so the divider becomes a top rule that draws
+         in from the reading-start edge instead. */
+      .feature::before {
+        inset-block: 0 auto;
+        inset-inline: 0;
+        width: auto;
+        height: 1px;
+        transform: scaleX(var(--line-scale, 1));
+        transform-origin: left;
+      }
+
+      :global([dir='rtl']) .feature::before {
+        transform-origin: right;
+      }
+
       .feature:first-child {
-        border-block-start: none;
         padding-block-start: 0;
       }
 
@@ -487,6 +540,10 @@ const descriptions = {
       }
     }
   </style>
+
+  <script>
+    import '../scripts/motion';
+  </script>
 
   <script is:inline define:vars={{ wa: whatsappLink(), ENDPOINT: CONTACT_ENDPOINT, uiContact: ui.contact }}>
   const form = document.querySelector('[data-contact-form]');

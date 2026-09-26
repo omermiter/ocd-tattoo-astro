@@ -28,6 +28,7 @@ const hasMark = !frames && pixelArtExists('mark.png');
           onerror="this.closest('[data-preloader]')?.remove()"
         />
       )}
+      <span class="preloader-bar" />
     </div>
   )
 }
@@ -51,9 +52,17 @@ const hasMark = !frames && pixelArtExists('mark.png');
       }
     };
 
+    // Tells the hero intro (src/scripts/motion.ts) it can start. The data
+    // attribute covers the case where this runs before that script loads.
+    const announceIntro = () => {
+      document.documentElement.dataset.intro = 'done';
+      window.dispatchEvent(new Event('ocd:intro'));
+    };
+
     if (seen || reduced) {
       preloader.remove();
       markSeen();
+      announceIntro();
     } else {
       let dismissed = false;
       const dismiss = () => {
@@ -62,6 +71,7 @@ const hasMark = !frames && pixelArtExists('mark.png');
         clearTimeout(holdTimer);
         preloader.classList.add('fade-out');
         markSeen();
+        announceIntro();
         setTimeout(() => preloader.remove(), 220);
       };
       const holdTimer = setTimeout(dismiss, 650);
@@ -77,7 +87,9 @@ const hasMark = !frames && pixelArtExists('mark.png');
     inset: 0;
     z-index: 100;
     display: grid;
-    place-items: center;
+    place-content: center;
+    justify-items: center;
+    gap: var(--sp-3);
     background: var(--ink);
     opacity: 1;
     transition: opacity var(--dur-base) var(--ease-precise);
@@ -97,5 +109,27 @@ const hasMark = !frames && pixelArtExists('mark.png');
   .preloader-mark {
     width: 40px;
     height: 80px;
+  }
+
+  /* Hairline that fills across the 650ms hold, so the wait reads as
+     progress rather than a stall. */
+  .preloader-bar {
+    width: 4rem;
+    height: 1px;
+    background: var(--line);
+    background-image: linear-gradient(var(--paper), var(--paper));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    animation: preloader-fill 600ms var(--ease-precise) forwards;
+  }
+
+  :global([dir='rtl']) .preloader-bar {
+    background-position: right;
+  }
+
+  @keyframes preloader-fill {
+    to {
+      background-size: 100% 100%;
+    }
   }
 </style>
