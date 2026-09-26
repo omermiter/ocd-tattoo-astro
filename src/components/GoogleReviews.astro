@@ -112,12 +112,16 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
     letter-spacing: 0.05em;
   }
 
-  /* ---- Full section ---- */
+  /* ---- Full section — centered on the page, matching the contact
+     section's editorial pacing. ---- */
   .section-head {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: var(--sp-1);
     margin-block-end: var(--sp-5);
+    margin-inline: auto;
   }
 
   .section-head .eyebrow {
@@ -127,7 +131,9 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
   .rating-block {
     display: flex;
     align-items: baseline;
+    justify-content: center;
     gap: var(--sp-3);
+    margin-inline: auto;
     margin-block-end: var(--sp-5);
     padding-block-end: var(--sp-4);
     border-block-end: var(--border-hairline);
@@ -153,9 +159,13 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
     font-size: var(--fs-1);
   }
 
+  /* auto-fit + a capped track size (not 1fr) so unused tracks collapse
+     instead of stretching — that's what lets justify-content actually
+     center the grid when there are fewer than a full row of reviews. */
   .review-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 20rem));
+    justify-content: center;
     gap: var(--sp-3);
   }
 
@@ -199,7 +209,8 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
   .no-data {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: var(--sp-2);
   }
 

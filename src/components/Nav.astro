@@ -12,10 +12,13 @@ const { locale = 'en' } = Astro.props;
 const ui = t(locale);
 const otherLocale: Locale = locale === 'en' ? 'he' : 'en';
 
-const links = [
+// Split into two clusters, matching the reference nav's structure: the
+// section links pipe-divided in the center, Contact + the language switch
+// set apart on the far end with extra space — not just another link in the
+// row.
+const mainLinks = [
   { key: 'pieces', label: ui.nav.pieces, href: '#pieces' },
   { key: 'reviews', label: ui.nav.reviews, href: '#reviews' },
-  { key: 'contact', label: ui.nav.contact, href: '#contact' },
 ] as const;
 
 const markMissing = isAssetMissing('mark');
@@ -35,6 +38,8 @@ const hasMark = pixelArtExists('mark.png');
     <span class="data">OCD·TATTOO</span>
   </a>
 
+  <span class="connector" aria-hidden="true"></span>
+
   <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-panel" aria-label={ui.nav.menu}>
     <span></span>
   </button>
@@ -42,14 +47,21 @@ const hasMark = pixelArtExists('mark.png');
   <div class="panel" id="nav-panel">
     <ul class="links data">
       {
-        links.map((l) => (
+        mainLinks.map((l) => (
           <li>
-            <a class:list={['underline', { contact: l.key === 'contact' }]} href={l.href}>
+            <a class="underline" href={l.href}>
               {l.label}
             </a>
           </li>
         ))
       }
+    </ul>
+    <ul class="links links-end data">
+      <li>
+        <a class="underline contact" href="#contact">
+          {ui.nav.contact}
+        </a>
+      </li>
       <li>
         <a class="underline lang-switch" href={localePath(otherLocale)} hreflang={otherLocale} lang={otherLocale} dir={otherLocale === 'he' ? 'rtl' : 'ltr'}>
           {ui.nav.switchTo}
@@ -111,6 +123,16 @@ const hasMark = pixelArtExists('mark.png');
     height: 40px;
   }
 
+  /* Thin rule connecting the brand mark to the links, borrowed from the
+     reference nav's logo-to-links divider. Desktop only — on mobile the
+     links move into the dropdown panel and this would just be dead space. */
+  .connector {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    margin-inline: var(--sp-3);
+  }
+
   .menu-toggle {
     display: none;
     width: 20px;
@@ -148,11 +170,30 @@ const hasMark = pixelArtExists('mark.png');
 
   .links {
     display: flex;
-    gap: var(--sp-4);
     list-style: none;
     margin: 0;
     padding: 0;
     text-transform: uppercase;
+  }
+
+  /* Pipe-divided links, matching the reference nav's link row — a hairline
+     rather than a literal "|" glyph, consistent with how the rest of the
+     site already draws dividers (feature strip, spec-sheet cards). */
+  .links li {
+    padding-inline: var(--sp-3);
+    border-inline-start: var(--border-hairline);
+  }
+
+  .links li:first-child {
+    padding-inline-start: 0;
+    border-inline-start: none;
+  }
+
+  /* The set-apart cluster (Contact + language switch), pushed away from
+     the main links with real space — same device as the reference nav
+     separating O NAS / KONTAKT from the main link row. */
+  .links-end {
+    margin-inline-start: var(--sp-4);
   }
 
   .links a {
@@ -178,6 +219,10 @@ const hasMark = pixelArtExists('mark.png');
   }
 
   @media (max-width: 640px) {
+    .connector {
+      display: none;
+    }
+
     .menu-toggle {
       display: block;
     }
@@ -204,7 +249,17 @@ const hasMark = pixelArtExists('mark.png');
 
     .links {
       flex-direction: column;
-      gap: 0;
+    }
+
+    /* Pipe dividers only make sense in a horizontal row — reset them here
+       in favor of the existing stacked/full-width mobile link style. */
+    .links li {
+      padding-inline: 0;
+      border-inline-start: none;
+    }
+
+    .links-end {
+      margin-inline-start: 0;
     }
 
     .links a {

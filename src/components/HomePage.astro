@@ -24,7 +24,7 @@ const ui = t(locale);
 
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
 const moreWork = (await getCollection('gallery')).filter((g) => hasPhoto(g.data.photo));
-const { home, contact, googleReviews } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews };
+const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
 const featureStrip = site.featureStrip[locale];
 const reviewsData = await fetchGoogleReviews(googleReviews.placeId);
 
@@ -38,7 +38,7 @@ const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: contact.studioName,
-  image: 'https://ocdtattoo.com/uploads/img_1572.jpg',
+  image: `https://ocdtattoo.com${bannerImage}`,
   url: `https://ocdtattoo.com${localePath(locale)}`,
   address: {
     '@type': 'PostalAddress',
@@ -71,7 +71,7 @@ const descriptions = {
 
   <main>
     <PrecisionGrid>
-      <section class="hero" style={`--heroBg: url(${home.heroBackground})`}>
+      <section class="hero" style={`--heroBg: url(${bannerImage})`}>
         <div class="hero-content">
           <p class="eyebrow">{home.heroEyebrow}</p>
           <h1 set:html={renderEmphasis(home.heroTitle)} />
@@ -191,8 +191,8 @@ const descriptions = {
       justify-content: center;
       min-block-size: 88vh;
       padding: var(--sp-3);
-      /* Background image is CMS-editable — see home.heroBackground in
-         src/data/site.json. Dark gradient on top exists purely so the title
+      /* Banner image is CMS-editable — see bannerImage in
+         src/data/site.json (shared across both locales). Dark gradient on top exists purely so the title
          stays readable against the photo underneath. Full-bleed across the
          whole section; the text itself stays width-constrained via
          .hero-content below. */
@@ -368,12 +368,24 @@ const descriptions = {
       color: var(--dust);
     }
 
-    /* ---- Contact form (folded in from the former /contact/ page) ---- */
+    /* ---- Contact section — centered on the page, editorial pacing
+       matching the borrowed layout language (see .feature-strip above). ---- */
+    .contact .section-head {
+      align-items: center;
+      text-align: center;
+      margin-inline: auto;
+    }
+
+    .contact .section-head .intro {
+      margin-inline: auto;
+    }
+
     .contact .form {
       display: flex;
       flex-direction: column;
       gap: var(--sp-4);
       max-width: 34rem;
+      margin-inline: auto;
     }
 
     .field {
@@ -405,6 +417,7 @@ const descriptions = {
     .actions {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: var(--sp-3);
       margin-block-start: var(--sp-2);
     }
