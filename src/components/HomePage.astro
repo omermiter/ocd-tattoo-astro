@@ -548,13 +548,22 @@ const descriptions = {
        src/scripts/motion.ts) for anyone on a plain mouse, a wheel listener
        that converts vertical scroll to horizontal while hovering it. Native
        overflow-x is the fallback for everything — nothing here needs JS to
-       be functional, only to feel nicer. */
+       be functional, only to feel nicer.
+       Center-focus carousel, inspired by cynx.io's gallery feel: one card
+       sits centered and at full strength, neighbors sit dimmed either
+       side. The padding (half the track minus half a card) is what lets
+       the first/last cards actually reach center; it's logical, so this
+       mirrors correctly under RTL with no extra branching. --work-item-w
+       is shared by the padding calc and the card width so they can never
+       drift out of sync. */
     .work-grid {
+      --work-item-w: clamp(14rem, 46vw, 20rem);
       display: flex;
       gap: var(--sp-3);
       overflow-x: auto;
       overscroll-behavior-x: contain;
       scroll-snap-type: x proximity;
+      padding-inline: calc(50% - var(--work-item-w) / 2);
       padding-block-end: var(--sp-1);
       cursor: grab;
       scrollbar-width: none;
@@ -572,21 +581,30 @@ const descriptions = {
 
     .work-item {
       flex: 0 0 auto;
-      width: 16rem;
-      scroll-snap-align: start;
+      width: var(--work-item-w);
+      scroll-snap-align: center;
     }
 
     /* Border/background live on the frame, not the image, so the image can
-       zoom inside it during the scroll reveal without scaling its border. */
+       zoom inside it during the scroll reveal without scaling its border.
+       The dim/undim is the "focus pulls to center" read — off-centre cards
+       sit darker and slightly desaturated until motion.ts's centerSnap()
+       marks them active. */
     .work-frame {
       overflow: hidden;
       background: var(--surface);
       border: var(--border-hairline);
+      filter: brightness(0.45) saturate(0.7);
+      transition: filter var(--dur-base) var(--ease-precise);
+    }
+
+    .work-item.is-active .work-frame {
+      filter: none;
     }
 
     .work-item img {
       width: 100%;
-      aspect-ratio: 1;
+      aspect-ratio: 3 / 4;
       object-fit: cover;
       display: block;
       -webkit-user-drag: none;
@@ -863,20 +881,6 @@ const descriptions = {
       .photo-break img {
         max-height: 32vh;
         height: 32vh;
-      }
-
-      /* On mobile the gallery is a native touch-swipe carousel — center
-         each card in the viewport as it's swiped to, instead of pinning
-         it to the leading edge. The padding (half the viewport minus half
-         the card) gives the first/last cards room to actually reach
-         center; padding-inline is logical, so this mirrors correctly
-         under RTL with no extra branching. */
-      .work-grid {
-        padding-inline: calc(50% - 8rem);
-      }
-
-      .work-item {
-        scroll-snap-align: center;
       }
     }
   </style>
