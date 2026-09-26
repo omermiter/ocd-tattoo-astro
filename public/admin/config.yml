@@ -71,7 +71,7 @@ collections:
               - { label: "Location", name: "location", widget: "string" }
               - { label: "Studio Name", name: "studioName", widget: "string" }
               - { label: "Studio Address", name: "address", widget: "string" }
-              - { label: "Google Maps / Reviews URL", name: "mapsUrl", widget: "string" }
+              - { label: "Google Maps / Reviews URL", name: "mapsUrl", widget: "string", hint: "The link visitors tap to see reviews / get directions. If you ever replace this, use the \"Share\" link from the Google Maps app/site (not a raw place-id URL) — some place-id link formats open fine on desktop but fail with \"can't find this place\" in the mobile Maps app." }
           - label: "Google Reviews (technical — leave as-is unless the Place ID changes)"
             name: "googleReviews"
             widget: "object"
