@@ -213,11 +213,35 @@ const descriptions = {
             <p class="intro">{home.galleryIntro}</p>
           </header>
 
-          <div class="work-grid">
+          <p class="drag-hint data" data-drag-hint aria-hidden="true">
+            <span class="drag-hint-arrow">←</span>
+            <span class="drag-hint-label">{ui.gallery.dragHint}</span>
+            <span class="drag-hint-arrow">→</span>
+          </p>
+
+          <div class="work-grid" data-drag-scroll tabindex="0" role="region" aria-label={ui.gallery.scrollRegionLabel}>
+            {/* Rotating badge that trails the cursor while it's over the
+                strip — fine-pointer only (see motion.ts), and stands in for
+                the site's usual pixel-art cursor for as long as it's shown,
+                rather than the two overlapping. A generic ring + label, not
+                photographic content, so it reads instantly as UI. */}
+            <div class="drag-badge" data-drag-badge aria-hidden="true">
+              <svg class="drag-badge-ring" viewBox="0 0 100 100">
+                <path id={`drag-badge-path-${locale}`} d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" fill="none" />
+                <text class="drag-badge-text data">
+                  <textPath href={`#drag-badge-path-${locale}`} startOffset="0%">
+                    {ui.gallery.dragBadge} · {ui.gallery.dragBadge} · {ui.gallery.dragBadge} ·{' '}
+                  </textPath>
+                </text>
+              </svg>
+              <span class="drag-badge-icon" aria-hidden="true">
+                ↔
+              </span>
+            </div>
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
                 <div class="work-frame" data-frame-reveal>
-                  <img src={g.data.photo} alt={g.data.title} loading="lazy" />
+                  <img src={g.data.photo} alt={g.data.title} loading="lazy" draggable="false" />
                 </div>
                 <figcaption class="data">{g.data.title}</figcaption>
               </figure>
@@ -520,10 +544,36 @@ const descriptions = {
       gap: var(--sp-6);
     }
 
+    /* Horizontal scroller: native swipe on touch, a custom mouse-drag (see
+       src/scripts/motion.ts) for anyone on a plain mouse, a wheel listener
+       that converts vertical scroll to horizontal while hovering it. Native
+       overflow-x is the fallback for everything — nothing here needs JS to
+       be functional, only to feel nicer. */
     .work-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+      display: flex;
       gap: var(--sp-3);
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      padding-block-end: var(--sp-1);
+      cursor: grab;
+      scrollbar-width: none;
+      user-select: none;
+    }
+
+    .work-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .work-grid.is-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+    }
+
+    .work-item {
+      flex: 0 0 auto;
+      width: 16rem;
+      scroll-snap-align: start;
     }
 
     /* Border/background live on the frame, not the image, so the image can
@@ -539,12 +589,145 @@ const descriptions = {
       aspect-ratio: 1;
       object-fit: cover;
       display: block;
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     .work-item figcaption {
       margin-block-start: var(--sp-1);
       color: var(--dust);
       font-size: var(--fs-00);
+    }
+
+    /* A real badge, not a caption — sharp corners and a claim-colored
+       hairline (--radius stays 0 everywhere on this site), so it reads as
+       an on-brand piece of UI rather than a stray instruction line. */
+    .drag-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      margin-inline-start: auto;
+      margin-block-end: var(--sp-3);
+      padding: var(--sp-1) var(--sp-3);
+      border: 1px solid var(--claim);
+      color: var(--claim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: opacity var(--dur-base) var(--ease-precise);
+    }
+
+    /* The header row already ends with margin-block-end: var(--sp-5) (see
+       .section-head) — pull the hint up into that gap instead of stacking
+       a second one on top, and set it on the flex row so it sits at the
+       far end (auto margin above does the actual pushing). */
+    .more-work {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .more-work .section-head {
+      margin-block-end: var(--sp-3);
+    }
+
+    .drag-hint.is-hidden {
+      opacity: 0;
+    }
+
+    .drag-hint-arrow {
+      display: inline-block;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .drag-hint-arrow:first-child {
+        animation: drag-hint-nudge 1.6s ease-in-out infinite;
+      }
+
+      .drag-hint-arrow:last-child {
+        animation: drag-hint-nudge 1.6s ease-in-out infinite reverse;
+      }
+    }
+
+    @keyframes drag-hint-nudge {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(-4px);
+      }
+    }
+
+    /* ---- Cursor-follow drag badge — fine-pointer only, see motion.ts.
+       Fixed positioning + JS transform, same technique as the site's own
+       pixel-art cursor in Cursor.astro, so the motion feel matches; hides
+       that cursor for as long as this is shown (see the html[data-drag-
+       hover] rule in pixel-art.css) rather than the two overlapping. ---- */
+    .drag-badge {
+      position: fixed;
+      top: 0;
+      /* Physical left, not inset-inline-start: the JS positions this with
+         translate() from real pointer clientX/clientY (always physical,
+         LTR-oriented coordinates), so the untransformed anchor must be
+         physical too — inset-inline-start flips to the right edge in RTL
+         and sends the badge off-screen. */
+      left: 0;
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      z-index: 40;
+      opacity: 0;
+      transition: opacity var(--dur-base) var(--ease-precise);
+      will-change: transform;
+    }
+
+    .drag-badge.is-visible {
+      opacity: 1;
+    }
+
+    .drag-badge-ring {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      animation: drag-badge-spin 12s linear infinite;
+      /* Decorative traversal order, not reading order — and Chromium fails
+         to lay textPath glyphs out at all (empty bbox) when direction:rtl
+         inherits onto an SVG <text>, so this needs an explicit override on
+         the Hebrew page rather than just leaving it inherited. */
+      direction: ltr;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .drag-badge-ring {
+        animation: none;
+      }
+    }
+
+    @keyframes drag-badge-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .drag-badge-text {
+      font-family: var(--font-data);
+      font-size: 10.5px;
+      letter-spacing: 0.15em;
+      fill: var(--claim);
+    }
+
+    .drag-badge-icon {
+      position: relative;
+      font-size: var(--fs-2);
+      color: var(--paper);
+      background: var(--ink);
+      border: var(--border-hairline);
+      width: 2.25rem;
+      height: 2.25rem;
+      display: grid;
+      place-items: center;
     }
 
     .work-note {

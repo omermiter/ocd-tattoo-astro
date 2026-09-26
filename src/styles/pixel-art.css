@@ -63,6 +63,13 @@
   opacity: 1;
 }
 
+/* The More Work drag badge (HomePage.astro) takes over cursor duty while
+   hovering the horizontal gallery strip — two cursor-follow elements
+   fighting for the same spot would look broken, so this one yields. */
+html[data-drag-hover='true'] .pixel-cursor {
+  opacity: 0 !important;
+}
+
 /* The sprite-strip cursor scrubs background-position frame by frame (driven
    by JS on hover state, not a looping CSS animation — see Cursor.astro). */
 .cursor-sprite {
