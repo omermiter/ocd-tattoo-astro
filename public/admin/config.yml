@@ -77,6 +77,12 @@ collections:
             widget: "object"
             fields:
               - { label: "Google Place ID", name: "placeId", widget: "string", hint: "From Google Business Profile / Google Maps. Used at build time to pull live rating and reviews — see README." }
+          - label: "Banner Image"
+            name: "bannerImage"
+            widget: "image"
+            media_folder: "/public/uploads"
+            public_folder: "/uploads"
+            hint: "The full-bleed hero photo behind the headline. Shared by both languages."
           - label: "Feature Strip (English)"
             name: "featureStrip.en"
             widget: "list"
@@ -100,11 +106,6 @@ collections:
             fields:
               - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
               - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
-              - label: "Hero Background Image"
-                name: "heroBackground"
-                widget: "image"
-                media_folder: "/public/uploads"
-                public_folder: "/uploads"
               - { label: "Beat Text", name: "beatText", widget: "text" }
               - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
               - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }
@@ -117,11 +118,6 @@ collections:
             fields:
               - { label: "Hero Eyebrow", name: "heroEyebrow", widget: "string" }
               - { label: "Hero Title", name: "heroTitle", widget: "string", hint: "Wrap the emphasized word/phrase in *asterisks*." }
-              - label: "Hero Background Image"
-                name: "heroBackground"
-                widget: "image"
-                media_folder: "/public/uploads"
-                public_folder: "/uploads"
               - { label: "Beat Text", name: "beatText", widget: "text" }
               - { label: "Pieces Section Intro", name: "piecesIntro", widget: "text" }
               - { label: "Gallery Section Intro", name: "galleryIntro", widget: "text" }

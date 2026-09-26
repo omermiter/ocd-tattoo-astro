@@ -67,15 +67,20 @@ export async function fetchGoogleReviews(placeId: string): Promise<GoogleReviews
       return null;
     }
 
-    // Google's Place Details (legacy) API returns up to 5 reviews, ranked by
-    // its own "most relevant" ordering — not fully controllable from here.
-    // Real text, real names, real ratings only; never rewritten.
-    const reviews: GoogleReview[] = (result.reviews ?? []).slice(0, 4).map((r) => ({
-      authorName: r.author_name,
-      rating: r.rating,
-      relativeTime: r.relative_time_description,
-      text: r.text,
-    }));
+    // Google's Place Details (legacy) API returns AT MOST 5 reviews total,
+    // chosen by Google's own "most relevant" ranking — there is no way to
+    // fetch every review on the profile through this endpoint, only filter
+    // within whatever five it hands back. Keep all of those, filtered to
+    // 4★ and 5★ only per Omer's request. Real text, real names, real
+    // ratings only; never rewritten.
+    const reviews: GoogleReview[] = (result.reviews ?? [])
+      .filter((r) => r.rating >= 4)
+      .map((r) => ({
+        authorName: r.author_name,
+        rating: r.rating,
+        relativeTime: r.relative_time_description,
+        text: r.text,
+      }));
 
     return {
       rating: result.rating,
