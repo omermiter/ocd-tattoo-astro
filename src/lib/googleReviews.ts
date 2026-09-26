@@ -49,7 +49,11 @@ export async function fetchGoogleReviews(placeId: string): Promise<GoogleReviews
 
     const json = await res.json();
     if (json.status !== 'OK' || !json.result) {
-      console.warn(`[googleReviews] Places API returned status "${json.status}"`);
+      // error_message is Google's own diagnostic text (e.g. why a key was
+      // denied) — never sensitive (it doesn't echo the key back), so it's
+      // safe to log in CI output.
+      const reason = json.error_message ? ` — ${json.error_message}` : '';
+      console.warn(`[googleReviews] Places API returned status "${json.status}"${reason}`);
       return null;
     }
 
