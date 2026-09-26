@@ -154,12 +154,79 @@ function parallaxBreak() {
 // hovering the strip. Runs regardless of prefers-reduced-motion — this is
 // user-driven interaction, not autoplaying motion.
 function dragScroll() {
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+
   document.querySelectorAll<HTMLElement>('[data-drag-scroll]').forEach((el) => {
     const hint = el.closest('.more-work')?.querySelector<HTMLElement>('[data-drag-hint]');
     let dismissHint = () => {
       hint?.classList.add('is-hidden');
       dismissHint = () => {};
     };
+
+    // Cursor-follow badge — mouse/trackpad only; touch already gets the
+    // static pill hint above and has no hover to follow anyway. Same
+    // lerp-follow technique as the site's pixel-art cursor (Cursor.astro),
+    // and it takes over from that cursor for as long as it's shown instead
+    // of the two overlapping (see html[data-drag-hover] in pixel-art.css).
+    const badge = el.querySelector<HTMLElement>('[data-drag-badge]');
+    if (badge && finePointer) {
+      const LERP = 0.35;
+      let targetX = 0;
+      let targetY = 0;
+      let x = 0;
+      let y = 0;
+      let raf = 0;
+      let active = false;
+      const half = badge.offsetWidth / 2 || 46;
+
+      const tick = () => {
+        x += (targetX - x) * LERP;
+        y += (targetY - y) * LERP;
+        badge.style.transform = `translate(${x - half}px, ${y - half}px)`;
+        if (active || Math.abs(targetX - x) > 0.5 || Math.abs(targetY - y) > 0.5) {
+          raf = requestAnimationFrame(tick);
+        } else {
+          raf = 0;
+        }
+      };
+
+      const start = () => {
+        active = true;
+        document.documentElement.setAttribute('data-drag-hover', 'true');
+        badge.classList.add('is-visible');
+        if (!raf) raf = requestAnimationFrame(tick);
+      };
+      const move = (e: PointerEvent) => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+        if (!active) {
+          x = targetX;
+          y = targetY;
+          start();
+        }
+      };
+      const stop = () => {
+        active = false;
+        document.documentElement.removeAttribute('data-drag-hover');
+        badge.classList.remove('is-visible');
+      };
+
+      el.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        move(e);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        move(e);
+      });
+      el.addEventListener('pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        stop();
+      });
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse') stop(); // dragging: get out of the way
+      });
+    }
 
     let dragging = false;
     let startX = 0;
@@ -191,9 +258,27 @@ function dragScroll() {
       'wheel',
       (e) => {
         if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // trackpad horizontal swipe: let it through natively
-        if (el.scrollWidth <= el.clientWidth) return; // nothing to scroll
+        const max = el.scrollWidth - el.clientWidth;
+        if (max <= 0) return; // nothing to scroll
+
+        // Only hijack the wheel tick while there's actually room left to
+        // move in that direction — otherwise it's an infinite trap: every
+        // tick gets swallowed into a horizontal scroll that goes nowhere,
+        // and preventDefault blocks the page from ever continuing past the
+        // strip. Once an edge is reached, let the same tick fall through to
+        // the page as normal vertical scroll, exactly like scrolling past
+        // any other element.
+        // RTL: scrollLeft runs 0 (start/right) to -max (end/left), the
+        // mirror of LTR — "scrolling down" still means "move forward
+        // through the strip" either way, so forward doesn't flip on
+        // direction; only the scrollLeft delta below does.
+        const forward = e.deltaY > 0;
+        const atStart = pageIsRtl ? el.scrollLeft >= -0.5 : el.scrollLeft <= 0.5;
+        const atEnd = pageIsRtl ? el.scrollLeft <= -max + 0.5 : el.scrollLeft >= max - 0.5;
+        if ((forward && atEnd) || (!forward && atStart)) return;
+
         e.preventDefault();
-        el.scrollLeft += e.deltaY;
+        el.scrollLeft += pageIsRtl ? -e.deltaY : e.deltaY;
         dismissHint();
       },
       { passive: false },
