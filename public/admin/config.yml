@@ -37,23 +37,6 @@ collections:
         public_folder: "/pieces"
         hint: "Leave empty to show the 'Photography pending' placeholder."
 
-  - name: "gallery"
-    label: "More Work"
-    label_singular: "Photo"
-    folder: "src/content/gallery"
-    create: true
-    delete: true
-    slug: "{{fields.title}}"
-    format: "frontmatter"
-    summary: "{{title}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string", hint: "Short caption shown under the photo." }
-      - label: "Photo"
-        name: "photo"
-        widget: "image"
-        media_folder: "/public/gallery"
-        public_folder: "/gallery"
-
   - name: "site"
     label: "Site Text & Settings"
     files:
@@ -128,6 +111,18 @@ collections:
             media_folder: "/public/uploads"
             public_folder: "/uploads"
             hint: "The full-bleed photo further down the homepage, between Pieces and More Work — a separate image from the hero banner above (that one's controlled by Banner Image/Video higher up this page)."
+          - label: "More Work (Gallery)"
+            name: "gallery"
+            widget: "list"
+            hint: "The scrollable photo strip near the bottom of the homepage. Drag the ≡ handle on the left of each item to reorder — the site shows them in this exact order."
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string", hint: "Short caption shown under the photo." }
+              - label: "Photo"
+                name: "photo"
+                widget: "image"
+                media_folder: "/public/gallery"
+                public_folder: "/gallery"
           - label: "Feature Strip"
             name: "featureStrip"
             widget: "object"

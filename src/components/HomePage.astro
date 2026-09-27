@@ -23,7 +23,10 @@ const { locale = 'en' } = Astro.props;
 const ui = t(locale);
 
 const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b.data.serial ? -1 : 1));
-const moreWork = (await getCollection('gallery')).filter((g) => hasPhoto(g.data.photo));
+// A plain list field in site.json (not a content collection, unlike pieces)
+// so the admin panel's list widget gives real drag-to-reorder — see
+// src/content.config.ts for why this moved off a folder collection.
+const moreWork = site.gallery.filter((g) => hasPhoto(g.photo));
 const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
 // hasPhoto is a plain build-time "does this file exist under public/" check
 // despite the name (see src/lib/media.ts) — reused here so a bannerVideo
@@ -258,9 +261,9 @@ const descriptions = {
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
                 <div class="work-frame" data-frame-reveal>
-                  <img src={g.data.photo} alt={g.data.title} loading="lazy" draggable="false" />
+                  <img src={g.photo} alt={g.title} loading="lazy" draggable="false" />
                 </div>
-                <figcaption class="data">{g.data.title}</figcaption>
+                <figcaption class="data">{g.title}</figcaption>
               </figure>
             ))}
           </div>
