@@ -16,12 +16,12 @@
         "detail": "Every square placed with the same precision a realist gives a line."
       },
       {
-        "label": "Built by hand",
-        "detail": "No filters, no shortcuts — every piece is drawn and tattooed by hand."
+        "label": "Hand-drawn, hand-placed",
+        "detail": "Every piece is stenciled and set by hand — never a template, never traced."
       },
       {
-        "label": "Reviewed personally",
-        "detail": "I read every message myself, and answer the same way."
+        "label": "Read personally",
+        "detail": "Every message goes straight to me — no assistant, no auto-reply."
       }
     ],
     "he": [
@@ -30,12 +30,12 @@
         "detail": "כל ריבוע ממוקם באותה דיוק שבה ריאליסט מותח קו."
       },
       {
-        "label": "עבודת יד אמיתית",
-        "detail": "בלי פילטרים, בלי קיצורי דרך — כל עבודה מצוירת ומקועקעת ביד."
+        "label": "ציור והנחה ביד",
+        "detail": "כל עבודה מסומנת בסטנסיל ומונחת ביד — בלי תבנית, בלי העתקה."
       },
       {
-        "label": "מענה אישי",
-        "detail": "אני קורא כל הודעה בעצמי, ועונה באותה צורה."
+        "label": "קריאה אישית",
+        "detail": "כל הודעה מגיעה ישירות אליי — בלי עוזר, בלי מענה אוטומטי."
       }
     ]
   },
@@ -81,5 +81,23 @@
       }
     }
   },
-  "middleBannerImage": "/uploads/סרטון-8-תדמית.00_00_20_35.still001.jpg"
+  "middleBannerImage": "/uploads/סרטון-8-תדמית.00_00_20_35.still001.jpg",
+  "gallery": [
+    { "title": "Gear 5", "photo": "/gallery/fullsizerender.png" },
+    { "title": "gojo", "photo": "/gallery/img_6465.png" },
+    { "title": "Lego head", "photo": "/gallery/img_7372.jpeg" },
+    { "title": "Hummingbird", "photo": "/gallery/img_8797.jpeg" },
+    { "title": "Manta ray", "photo": "/gallery/img_8761.jpeg" },
+    { "title": "smoke dragon", "photo": "/gallery/img_7418.jpeg" },
+    { "title": "saluki", "photo": "/gallery/img_8159.jpeg" },
+    { "title": "Swords and tigers", "photo": "/gallery/img_9103.jpeg" },
+    { "title": "Statue", "photo": "/gallery/img_8429.jpeg" },
+    { "title": "Tiger", "photo": "/gallery/img_8612.jpeg" },
+    { "title": "the great wave", "photo": "/gallery/img_8507.jpeg" },
+    { "title": "Vase", "photo": "/gallery/img_7387.jpeg" },
+    { "title": "ballerina", "photo": "/gallery/img_7560.jpeg" },
+    { "title": "Japanese stamp", "photo": "/gallery/img_8448.jpeg" },
+    { "title": "Lady with a pearl earring", "photo": "/gallery/untitled-design-4-.png" },
+    { "title": "text", "photo": "/gallery/img_8523.jpeg" }
+  ]
 }

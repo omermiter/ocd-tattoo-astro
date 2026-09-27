@@ -22,20 +22,11 @@ const pieces = defineCollection({
   }),
 });
 
-// Rest of the Works — a lighter-weight companion to `pieces`: just a photo
-// and a short caption, no placement/sessions/hours/note fields. For work
-// that's worth showing but not worth the full documentation treatment.
-// The former "Register" flash designs live here too now (folded in — see
-// git history for the standalone `flash` collection this replaced): a
-// design being available to book isn't tracked as page state anymore, so it
-// doesn't need its own schema, just a photo and a title like everything
-// else in this collection.
-const gallery = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/gallery' }),
-  schema: z.object({
-    title: z.string(),
-    photo: z.string(),
-  }),
-});
+// "More Work" (the gallery) used to live here too, one file per photo — moved
+// to a plain list field in site.json (`gallery`) so the admin panel's list
+// widget gives real drag-to-reorder, which a folder collection like this one
+// can't offer (its entry list only supports a fixed alphabetical/sort-field
+// order, not a persisted custom one). See git history for the old
+// `src/content/gallery/*.md` files this replaced.
 
-export const collections = { pieces, gallery };
+export const collections = { pieces };
