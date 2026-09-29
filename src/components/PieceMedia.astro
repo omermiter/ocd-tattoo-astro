@@ -1,5 +1,5 @@
 ---
-import { hasPhoto } from '../lib/media';
+import { hasPhoto, toWebp } from '../lib/media';
 import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
 import { t, type Locale } from '../i18n/ui';
 
@@ -25,7 +25,7 @@ const hasPendingMark = pixelArtExists('pending-mark.png');
 >
   {
     available && photo ? (
-      <img src={photo} alt={alt} loading="lazy" />
+      <img src={toWebp(photo)} alt={alt} loading="lazy" />
     ) : (
       <div class="pending-panel grid-texture" role="img" aria-label={`${alt} — ${ui.pieceCard.photographyPending}`}>
         {hasPendingMark && <img class="pending-mark pixel-art" src={pixelArtPath('pending-mark.png')} alt="" width="32" height="32" loading="lazy" />}

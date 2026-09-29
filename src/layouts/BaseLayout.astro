@@ -13,9 +13,17 @@ interface Props {
   /** Optional schema.org JSON-LD object, rendered verbatim in <head>. */
   structuredData?: Record<string, unknown>;
   locale?: Locale;
+  /**
+   * Path to this page's likely LCP image. The homepage hero sets it via a
+   * CSS custom property (--heroBg, see HomePage.astro), which the HTML
+   * preload scanner can't see — it only resolves url()/var() once the
+   * stylesheet that uses it has downloaded and parsed. An explicit preload
+   * link here is discoverable immediately, straight off the initial HTML.
+   */
+  preloadImage?: string;
 }
 
-const { title, description, structuredData, locale = 'en' } = Astro.props;
+const { title, description, structuredData, locale = 'en', preloadImage } = Astro.props;
 const dir = locale === 'he' ? 'rtl' : 'ltr';
 
 // The pixel-art favicon is additive, not a replacement: favicon.svg stays as
@@ -31,6 +39,7 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     {hasPixelFavicon && <link rel="icon" href={pixelArtPath('favicon.png')} sizes="32x32" />}
+    {preloadImage && <link rel="preload" as="image" fetchpriority="high" href={preloadImage} />}
     <meta name="description" content={description} />
     <title>{title}</title>
     <meta name="color-scheme" content="dark" />

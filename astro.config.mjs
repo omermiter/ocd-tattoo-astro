@@ -1,7 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import { existsSync } from 'node:fs';
+import { readdir, stat } from 'node:fs/promises';
+import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 import react from '@astrojs/react';
 
@@ -44,13 +47,85 @@ function placeholderSummary() {
   };
 }
 
+// CMS-uploaded photos land in /public/{gallery,pieces,uploads} at whatever
+// resolution the artist's phone shoots (some 19MB+, 4000px+ on the long
+// edge) and get served straight through by GitHub Pages, since Astro's
+// astro:assets pipeline only optimizes images imported from src/, never
+// public/. This hook runs after the static build, walks those same three
+// directories inside dist/ (never touching the public/ originals — the CMS
+// and Decap's media library both operate on public/, not dist/), and
+// writes a resized, WebP-encoded sibling next to each PNG/JPEG. Components
+// reference the sibling directly via toWebp() (src/lib/media.ts); the
+// original stays in dist/ unused by any page — harmless dead weight,
+// kept only so hot-linked/cached/OG URLs at the old extension don't 404.
+const IMAGE_DIRS = [
+  { dir: 'gallery', maxEdge: 1200, quality: 80 },
+  { dir: 'pieces', maxEdge: 1200, quality: 80 },
+  { dir: 'uploads', maxEdge: 2000, quality: 82 },
+];
+const RASTER_EXT = new Set(['.png', '.jpg', '.jpeg']);
+
+/** @param {string} root @returns {Promise<string[]>} */
+async function walkImages(root) {
+  let entries;
+  try {
+    entries = await readdir(root, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  /** @type {string[]} */
+  const files = [];
+  for (const entry of entries) {
+    const full = join(root, entry.name);
+    if (entry.isDirectory()) files.push(...(await walkImages(full)));
+    else if (RASTER_EXT.has(extname(entry.name).toLowerCase())) files.push(full);
+  }
+  return files;
+}
+
+function optimizeImages() {
+  return {
+    name: 'optimize-images',
+    hooks: {
+      'astro:build:done': async (/** @type {{ dir: URL }} */ { dir }) => {
+        const outRoot = fileURLToPath(dir);
+        let before = 0;
+        let after = 0;
+        let count = 0;
+
+        for (const { dir: sub, maxEdge, quality } of IMAGE_DIRS) {
+          const files = await walkImages(join(outRoot, sub));
+          for (const file of files) {
+            const webpPath = file.replace(/\.(png|jpe?g)$/i, '.webp');
+            const image = sharp(file).rotate();
+            const meta = await image.metadata();
+            const oversized = (meta.width ?? 0) > maxEdge || (meta.height ?? 0) > maxEdge;
+            const pipeline = oversized
+              ? image.resize({ width: maxEdge, height: maxEdge, fit: 'inside', withoutEnlargement: true })
+              : image;
+            await pipeline.webp({ quality }).toFile(webpPath);
+
+            before += (await stat(file)).size;
+            after += (await stat(webpPath)).size;
+            count++;
+          }
+        }
+
+        if (count === 0) return;
+        const mb = (/** @type {number} */ n) => `${(n / 1024 / 1024).toFixed(1)} MB`;
+        console.log(`\n✓ Optimized ${count} image(s) to WebP: ${mb(before)} → ${mb(after)}\n`);
+      },
+    },
+  };
+}
+
 // Custom domain (see public/CNAME) — served from the root, not a GitHub
 // Pages project subpath, so base stays "/".
 export default defineConfig({
   base: '/',
   trailingSlash: 'always',
   site: 'https://ocdtattoo.com',
-  integrations: [placeholderSummary(), react()],
+  integrations: [placeholderSummary(), optimizeImages(), react()],
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'he'],
