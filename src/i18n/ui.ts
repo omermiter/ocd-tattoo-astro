@@ -39,9 +39,6 @@ export const ui = {
     },
     gallery: {
       note: 'Anything above marked "flash" is a one-off design, ready to book as-is — ask about it below.',
-      dragHint: 'Drag sideways',
-      dragBadge: 'Drag',
-      scrollRegionLabel: 'More work, scrollable sideways',
     },
     reviews: {
       eyebrow: 'Reviews',
@@ -96,9 +93,6 @@ export const ui = {
     },
     gallery: {
       note: 'כל עבודה שמסומנת למעלה כ"פלאש" היא עיצוב חד-פעמי, מוכן להזמנה כמו שהוא — שאלו עליו למטה.',
-      dragHint: 'גררו הצידה',
-      dragBadge: 'גררו',
-      scrollRegionLabel: 'עוד עבודות, גלילה הצידה',
     },
     reviews: {
       eyebrow: 'ביקורות',
