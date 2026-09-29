@@ -1,0 +1,77 @@
+---
+// A persistent shortcut to the studio's primary contact channel — fixed in
+// place regardless of scroll position, so reaching out never depends on
+// scrolling all the way down to the on-page form (the nav's own Contact
+// link doesn't help here either: the nav hides itself while scrolling
+// down, see Nav.astro). Standard pattern for local-service sites, and this
+// one already treats WhatsApp as the primary channel everywhere else
+// (Footer, the contact form's own error-state fallback).
+import { whatsappLink } from '../lib/contact';
+import { pixelArtExists, pixelArtPath } from '../lib/pixelArt';
+import { isAssetMissing, getAsset } from '../lib/placeholders';
+import PixelPlaceholder from './PixelPlaceholder.astro';
+import { t, type Locale } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const ui = t(locale);
+const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');
+const whatsappAsset = getAsset('icon-whatsapp');
+---
+
+<a class="floating-whatsapp data" href={whatsappLink()} target="_blank" rel="noopener noreferrer" aria-label={ui.footer.whatsapp}>
+  {
+    hasWhatsappIcon ? (
+      <img class="icon pixel-art" src={pixelArtPath('icon-whatsapp.png')} alt="" width={whatsappAsset.width} height={whatsappAsset.height} />
+    ) : (
+      isAssetMissing('icon-whatsapp') && <PixelPlaceholder id="icon-whatsapp" width={whatsappAsset.width} height={whatsappAsset.height} label="wa" />
+    )
+  }
+  <span class="label">{ui.footer.whatsapp}</span>
+</a>
+
+<style>
+  /* Same boxed-pill treatment as the site's other on-brand badges (sharp
+     corners — --radius stays 0 everywhere here), but --whatsapp, never
+     --claim: this link always means "you're leaving the site for a
+     different app," the same distinction Footer.astro draws. */
+  .floating-whatsapp {
+    position: fixed;
+    inset-block-end: var(--sp-3);
+    inset-inline-end: var(--sp-3);
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: var(--sp-2) var(--sp-3);
+    background: var(--ink);
+    border: 1px solid var(--whatsapp);
+    color: var(--whatsapp);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      background var(--dur-base) var(--ease-precise),
+      color var(--dur-base) var(--ease-precise);
+  }
+
+  .floating-whatsapp:hover {
+    background: var(--whatsapp);
+    color: var(--ink);
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Icon-only on narrow screens — keeps it compact and out of the way of
+     the content underneath. */
+  @media (max-width: 640px) {
+    .label {
+      display: none;
+    }
+  }
+</style>
