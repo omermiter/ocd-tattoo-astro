@@ -9,6 +9,7 @@ import PieceCard from './PieceCard.astro';
 import GoogleReviews from './GoogleReviews.astro';
 import Preloader from './Preloader.astro';
 import PixelDivider from './PixelDivider.astro';
+import { LiquidGlassCarousel } from './react/LiquidGlassCarousel';
 import { renderEmphasis } from '../lib/text';
 import { hasPhoto } from '../lib/media';
 import { whatsappLink, CONTACT_ENDPOINT } from '../lib/contact';
@@ -28,6 +29,10 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
 // so the admin panel's list widget gives real drag-to-reorder — see
 // src/content.config.ts for why this moved off a folder collection.
 const moreWork = site.gallery.filter((g) => hasPhoto(g.photo));
+// Same photos/order as the grid above, reshaped for the mobile-only WebGL
+// carousel (see react/MobileGalleryCarousel) — no aspect override, so it
+// measures each photo's real ratio once loaded instead of assuming one.
+const carouselItems = moreWork.map((g) => ({ src: g.photo, title: g.title }));
 const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
 // hasPhoto is a plain build-time "does this file exist under public/" check
 // despite the name (see src/lib/media.ts) — reused here so a bannerVideo
@@ -235,12 +240,14 @@ const descriptions = {
             <p class="intro">{home.galleryIntro}</p>
           </header>
 
-          {/* A plain responsive grid — auto-fill collapses the column count
-              on its own as the viewport narrows, so this needs no manual
-              breakpoints and no JS: most/all of the collection is visible
-              at a glance on desktop, and it's an ordinary scroll (not a
-              side-scrolling strip) on mobile. Each figure keeps the same
-              frame-open reveal already used for the Pieces photos above. */}
+          {/* A plain responsive grid on desktop — auto-fill collapses the
+              column count on its own as the viewport narrows, so this
+              needs no manual breakpoints and no JS: most/all of the
+              collection is visible at a glance. Hidden past the same
+              800px cutoff the carousel below is gated to (see .work-grid
+              below and MobileGalleryCarousel's own MOBILE_QUERY) — the
+              two are alternatives, never both visible. Each figure keeps
+              the same frame-open reveal already used for Pieces above. */}
           <div class="work-grid">
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
@@ -250,6 +257,28 @@ const descriptions = {
                 <figcaption class="data">{g.title}</figcaption>
               </figure>
             ))}
+          </div>
+
+          {/* Mobile-only WebGL carousel. client:media (not client:only)
+              deliberately: Astro only fetches this component's JS bundle
+              — Three.js, React, the shader, all of it — once the media
+              query first matches, so a desktop visitor never downloads
+              any of it at all, rather than downloading it and having it
+              no-op. Same 800px cutoff the grid above hides past. */}
+          {/* background is a literal hex, not var(--ink): it becomes a
+              WebGL clear color (renderer.setClearColor), which can only
+              resolve to an actual color value, not a live CSS custom
+              property — keep this in sync with --ink in tokens.css. */}
+          <div class="work-carousel-mount">
+            <LiquidGlassCarousel
+              client:media="(max-width: 800px)"
+              items={carouselItems}
+              panelHeight={420}
+              gap={16}
+              background="#120e17"
+              style={{ color: 'var(--paper)' }}
+              closeLabel={ui.gallery.close}
+            />
           </div>
 
           <p class="work-note data">{ui.gallery.note}</p>
@@ -574,6 +603,27 @@ const descriptions = {
     @media (min-width: 800px) {
       .work-grid {
         grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+      }
+    }
+
+    /* The carousel mount: sized and visible only on mobile. Zero footprint
+       on desktop — no height, no border — since MobileGalleryCarousel
+       itself also declines to mount there; this is belt-and-suspenders so
+       there's no empty gap even for the one frame before that JS check
+       runs. Needs an explicit height (the component's own requirement). */
+    .work-carousel-mount {
+      display: none;
+    }
+
+    @media (max-width: 800px) {
+      .work-grid {
+        display: none;
+      }
+
+      .work-carousel-mount {
+        display: block;
+        height: 70vh;
+        max-height: 32rem;
       }
     }
 

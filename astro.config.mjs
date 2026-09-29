@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+import react from '@astrojs/react';
+
 // Prints how many redesign pixel-art assets (ASSETS-TO-DRAW.md) are still
 // unfilled after every build — the build-time half of the placeholder
 // system described in REDESIGN-PLAN.md §7.
@@ -48,7 +50,7 @@ export default defineConfig({
   base: '/',
   trailingSlash: 'always',
   site: 'https://ocdtattoo.com',
-  integrations: [placeholderSummary()],
+  integrations: [placeholderSummary(), react()],
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'he'],
