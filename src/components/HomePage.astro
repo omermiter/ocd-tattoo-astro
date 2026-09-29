@@ -11,7 +11,7 @@ import Preloader from './Preloader.astro';
 import PixelDivider from './PixelDivider.astro';
 import { LiquidGlassCarousel } from './react/LiquidGlassCarousel';
 import { renderEmphasis } from '../lib/text';
-import { hasPhoto } from '../lib/media';
+import { hasPhoto, toWebp } from '../lib/media';
 import { whatsappLink, CONTACT_ENDPOINT } from '../lib/contact';
 import { fetchGoogleReviews } from '../lib/googleReviews';
 import { t, localePath, type Locale } from '../i18n/ui';
@@ -30,9 +30,9 @@ const pieces = (await getCollection('pieces')).sort((a, b) => (a.data.serial < b
 // src/content.config.ts for why this moved off a folder collection.
 const moreWork = site.gallery.filter((g) => hasPhoto(g.photo));
 // Same photos/order as the grid above, reshaped for the mobile-only WebGL
-// carousel (see react/MobileGalleryCarousel) — no aspect override, so it
-// measures each photo's real ratio once loaded instead of assuming one.
-const carouselItems = moreWork.map((g) => ({ src: g.photo, title: g.title }));
+// carousel (LiquidGlassCarousel below) — no aspect override, so it measures
+// each photo's real ratio once loaded instead of assuming one.
+const carouselItems = moreWork.map((g) => ({ src: toWebp(g.photo), title: g.title }));
 const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
 // hasPhoto is a plain build-time "does this file exist under public/" check
 // despite the name (see src/lib/media.ts) — reused here so a bannerVideo
@@ -89,14 +89,20 @@ const descriptions = {
 };
 ---
 
-<BaseLayout title={titles[locale]} description={descriptions[locale]} structuredData={structuredData} locale={locale}>
+<BaseLayout
+  title={titles[locale]}
+  description={descriptions[locale]}
+  structuredData={structuredData}
+  locale={locale}
+  preloadImage={toWebp(bannerImage)}
+>
   <Preloader />
   <Nav locale={locale} />
   <FloatingWhatsapp locale={locale} />
 
   <main>
     <PrecisionGrid>
-      <section class="hero" style={`--heroBg: url(${bannerImage})`}>
+      <section class="hero" style={`--heroBg: url(${toWebp(bannerImage)})`}>
         {
           bannerVideo && (
             <div class="hero-media" data-hero-video aria-hidden="true">
@@ -107,7 +113,7 @@ const descriptions = {
                 <video
                   class="hero-video-cover"
                   src={bannerVideo}
-                  poster={bannerImage}
+                  poster={toWebp(bannerImage)}
                   autoplay
                   muted
                   loop
@@ -128,11 +134,11 @@ const descriptions = {
                    just fills the frame and the blur layer sits invisibly
                    behind it. */
                 <>
-                  <video class="hero-video-blur" src={bannerVideo} poster={bannerImage} autoplay muted loop playsinline preload="auto" />
+                  <video class="hero-video-blur" src={bannerVideo} poster={toWebp(bannerImage)} autoplay muted loop playsinline preload="auto" />
                   <video
                     class="hero-video-sharp"
                     src={bannerVideo}
-                    poster={bannerImage}
+                    poster={toWebp(bannerImage)}
                     autoplay
                     muted
                     loop
@@ -227,7 +233,7 @@ const descriptions = {
     {
       middleBannerImage && (
         <div class="photo-break" data-parallax>
-          <img src={middleBannerImage} alt="" loading="lazy" />
+          <img src={toWebp(middleBannerImage)} alt="" loading="lazy" />
         </div>
       )
     }
@@ -252,7 +258,7 @@ const descriptions = {
             {moreWork.map((g) => (
               <figure class="work-item" data-reveal>
                 <div class="work-frame" data-frame-reveal>
-                  <img src={g.photo} alt={g.title} loading="lazy" />
+                  <img src={toWebp(g.photo)} alt={g.title} loading="lazy" />
                 </div>
                 <figcaption class="data">{g.title}</figcaption>
               </figure>

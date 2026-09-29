@@ -16,3 +16,12 @@ export function hasPhoto(path: string): boolean {
     return false;
   }
 }
+
+// Points at the WebP sibling the astro.config.mjs optimizeImages() build
+// hook generates next to every PNG/JPEG under public/{gallery,pieces,
+// uploads} — deterministic extension swap, not an existence check, since
+// the sibling is created post-build (dist/) and won't exist yet at the
+// point this runs (Astro frontmatter, pre-build).
+export function toWebp(path: string): string {
+  return path.replace(/\.(png|jpe?g)$/i, '.webp');
+}
