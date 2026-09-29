@@ -25,10 +25,15 @@ const hasPendingMark = pixelArtExists('pending-mark.png');
 >
   {
     available && photo ? (
+      /* sizes' mobile branch subtracts .section's own horizontal padding
+         (--sp-3, 1.75rem each side — see HomePage.astro) from 100vw: the
+         image never actually renders edge-to-edge on mobile, and claiming
+         it does was making the browser fetch the 1100w candidate where
+         600w already covers the real rendered width. */
       <img
         src={pieceFallback(photo)}
         srcset={pieceSrcset(photo)}
-        sizes="(min-width: 800px) 26rem, 100vw"
+        sizes="(min-width: 800px) 26rem, calc(100vw - 3.5rem)"
         alt={alt}
         loading="lazy"
       />
