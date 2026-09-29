@@ -53,13 +53,17 @@ function splitChars(el: HTMLElement): HTMLElement[] | null {
   };
 
   // role="text" (a de-facto, widely-supported convention, not a formal
-  // ARIA role) is what makes aria-label valid here per the ARIA-in-HTML
-  // spec — without it, a <p>/<h1>/etc.'s default role doesn't support an
-  // author-supplied accessible name, which is exactly what Lighthouse's
-  // "prohibited ARIA attributes" / "accessibility tree is not well-formed"
-  // audits flag. Every individual .split-char span stays aria-hidden, so
-  // this is the only accessible name for the whole phrase.
-  el.setAttribute('role', 'text');
+  // ARIA role) is what makes aria-label valid on a plain <p>/<span>/etc.
+  // per the ARIA-in-HTML spec — its default role doesn't support an
+  // author-supplied accessible name, which is what Lighthouse's
+  // "prohibited ARIA attributes" audit flags. A heading's implicit
+  // role="heading" already supports aria-label natively, and overriding
+  // it here would drop the element out of the page's heading outline —
+  // Lighthouse's "accessibility tree is not well-formed" audit flags
+  // that instead. Every individual .split-char span stays aria-hidden,
+  // so aria-label (on whichever role the element already has) is the
+  // only accessible name for the whole phrase either way.
+  if (!/^H[1-6]$/.test(el.tagName)) el.setAttribute('role', 'text');
   el.setAttribute('aria-label', text.trim());
   walk(el);
   return chars;
