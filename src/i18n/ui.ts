@@ -39,7 +39,6 @@ export const ui = {
     },
     gallery: {
       note: 'Anything above marked "flash" is a one-off design, ready to book as-is — ask about it below.',
-      close: 'Close',
     },
     reviews: {
       eyebrow: 'Reviews',
@@ -94,7 +93,6 @@ export const ui = {
     },
     gallery: {
       note: 'כל עבודה שמסומנת למעלה כ"פלאש" היא עיצוב חד-פעמי, מוכן להזמנה כמו שהוא — שאלו עליו למטה.',
-      close: 'סגור',
     },
     reviews: {
       eyebrow: 'ביקורות',
