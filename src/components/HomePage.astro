@@ -9,7 +9,7 @@ import PieceCard from './PieceCard.astro';
 import GoogleReviews from './GoogleReviews.astro';
 import Preloader from './Preloader.astro';
 import PixelDivider from './PixelDivider.astro';
-import { LiquidGlassCarousel } from './react/LiquidGlassCarousel';
+import { WorkCarousel } from './react/WorkCarousel';
 import { renderEmphasis } from '../lib/text';
 import { hasPhoto, toWebp } from '../lib/media';
 import { whatsappLink, CONTACT_ENDPOINT } from '../lib/contact';
@@ -246,45 +246,11 @@ const descriptions = {
             <p class="intro">{home.galleryIntro}</p>
           </header>
 
-          {/* A plain responsive grid on desktop — auto-fill collapses the
-              column count on its own as the viewport narrows, so this
-              needs no manual breakpoints and no JS: most/all of the
-              collection is visible at a glance. Hidden past the same
-              800px cutoff the carousel below is gated to (see .work-grid
-              below and MobileGalleryCarousel's own MOBILE_QUERY) — the
-              two are alternatives, never both visible. Each figure keeps
-              the same frame-open reveal already used for Pieces above. */}
-          <div class="work-grid">
-            {moreWork.map((g) => (
-              <figure class="work-item" data-reveal>
-                <div class="work-frame" data-frame-reveal>
-                  <img src={toWebp(g.photo)} alt={g.title} loading="lazy" />
-                </div>
-                <figcaption class="data">{g.title}</figcaption>
-              </figure>
-            ))}
-          </div>
-
-          {/* Mobile-only WebGL carousel. client:media (not client:only)
-              deliberately: Astro only fetches this component's JS bundle
-              — Three.js, React, the shader, all of it — once the media
-              query first matches, so a desktop visitor never downloads
-              any of it at all, rather than downloading it and having it
-              no-op. Same 800px cutoff the grid above hides past. */}
-          {/* background is a literal hex, not var(--ink): it becomes a
-              WebGL clear color (renderer.setClearColor), which can only
-              resolve to an actual color value, not a live CSS custom
-              property — keep this in sync with --ink in tokens.css. */}
-          <div class="work-carousel-mount">
-            <LiquidGlassCarousel
-              client:media="(max-width: 800px)"
-              items={carouselItems}
-              panelHeight={420}
-              gap={16}
-              background="#120e17"
-              style={{ color: 'var(--paper)' }}
-              closeLabel={ui.gallery.close}
-            />
+          {/* One coverflow carousel for every viewport — client:visible
+              defers fetching/hydrating Swiper until this section actually
+              scrolls into view, since it's well below the fold. */}
+          <div class="work-carousel-mount" data-reveal>
+            <WorkCarousel client:visible items={carouselItems} locale={locale} />
           </div>
 
           <p class="work-note data">{ui.gallery.note}</p>
@@ -583,75 +549,13 @@ const descriptions = {
       gap: var(--sp-6);
     }
 
-    /* Plain responsive grid — auto-fill works out the column count from
-       the available width on its own (4 columns on a typical desktop
-       viewport, 1 on a phone), so most or all of the collection is
-       visible at a glance without any drag/scroll gymnastics, and it
-       needs no JS and no manual breakpoints to do it. Replaced an
-       earlier cynx.io-inspired horizontal drag carousel that looked
-       good but wasted most of the viewport on desktop — showing only
-       ~1.5 of 16 photos at a time — and carried real complexity (wheel
-       hijacking, RTL-aware boundary detection, a cursor-follow badge)
-       for a browsing experience this plain grid does better with none
-       of it. See git history for that version. */
-    .work-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-      gap: var(--sp-3);
-    }
-
-    /* A higher floor past the same breakpoint the rest of the page treats
-       as "desktop" — fewer, noticeably bigger cards (4 columns at a
-       typical desktop width instead of 6) rather than the same small
-       thumbnails just given more room. Mobile keeps the lower floor above:
-       a taller floor there would drop it to a single column and make an
-       already-long page longer, the opposite of what's wanted. */
-    @media (min-width: 800px) {
-      .work-grid {
-        grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-      }
-    }
-
-    /* The carousel mount: sized and visible only on mobile. Zero footprint
-       on desktop — no height, no border — since MobileGalleryCarousel
-       itself also declines to mount there; this is belt-and-suspenders so
-       there's no empty gap even for the one frame before that JS check
-       runs. Needs an explicit height (the component's own requirement). */
+    /* WorkCarousel (src/components/react/WorkCarousel.tsx) owns its own
+       slide/frame styling — this section only needs to give it room.
+       Replaced an earlier split design (a plain CSS grid on desktop, a
+       separate WebGL shader carousel gated to mobile) with one coverflow
+       carousel used at every viewport. See git history for both. */
     .work-carousel-mount {
-      display: none;
-    }
-
-    @media (max-width: 800px) {
-      .work-grid {
-        display: none;
-      }
-
-      .work-carousel-mount {
-        display: block;
-        height: 70vh;
-        max-height: 32rem;
-      }
-    }
-
-    /* Border/background live on the frame, not the image, so the image can
-       zoom inside it during the scroll reveal without scaling its border. */
-    .work-frame {
-      overflow: hidden;
-      background: var(--surface);
-      border: var(--border-hairline);
-    }
-
-    .work-item img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      display: block;
-    }
-
-    .work-item figcaption {
-      margin-block-start: var(--sp-1);
-      color: var(--dust);
-      font-size: var(--fs-00);
+      margin-inline: calc(var(--sp-3) * -1);
     }
 
     .work-note {

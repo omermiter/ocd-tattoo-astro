@@ -1,0 +1,77 @@
+/* Restyled from a Tailwind/shadcn showcase demo to this site's flat,
+   hairline-bordered, no-radius look (see src/styles/tokens.css — --radius
+   is 0px everywhere on purpose) — the coverflow drag/swipe/loop mechanics
+   underneath (Swiper + EffectCoverflow) are untouched. */
+
+.root {
+  /* Swiper's own theming hooks — see swiper/modules/{navigation,pagination}.css
+     for the full variable list. --violet-ui matches "nav hover/current,
+     inline links, focus rings" everywhere else on the site (tokens.css);
+     --claim (the CTA-only color) is deliberately not used here. */
+  --swiper-theme-color: var(--violet-ui);
+  --swiper-navigation-size: 22px;
+  --swiper-pagination-fraction-color: var(--dust);
+}
+
+.swiper {
+  width: 100%;
+  padding-block: var(--sp-2) var(--sp-4);
+}
+
+.swiper :global(.swiper-pagination-fraction) {
+  bottom: 0;
+  font-family: var(--font-data);
+  font-size: var(--fs-00);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.swiper :global(.swiper-button-prev),
+.swiper :global(.swiper-button-next) {
+  top: 42%;
+}
+
+.swiper :global(.swiper-button-prev:focus-visible),
+.swiper :global(.swiper-button-next:focus-visible) {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Coverflow's default drop-shadow gradients on each slide's flanks read as
+   a smudge against a flat dark ground — off, same call the ported source
+   made. */
+.swiper :global(.swiper-3d .swiper-slide-shadow-left),
+.swiper :global(.swiper-3d .swiper-slide-shadow-right) {
+  background-image: none;
+}
+
+.slide {
+  width: clamp(13rem, 60vw, 17rem);
+}
+
+@media (min-width: 800px) {
+  .slide {
+    width: 19rem;
+  }
+}
+
+.frame {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--surface);
+  border: var(--border-hairline);
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Typography (color, font, size) comes from the global .data class already
+   applied alongside this one — only the layout is this component's job. */
+.caption {
+  margin-block-start: var(--sp-1);
+  text-align: center;
+}
