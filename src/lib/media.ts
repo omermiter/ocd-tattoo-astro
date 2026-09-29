@@ -31,7 +31,7 @@ export function toWebp(path: string): string {
 // at a fixed column on desktop but full-bleed on mobile). Must match that
 // file's PIECE_WIDTHS by hand; it can't import this module (see the
 // comment there on why the build hook runs outside Astro's Vite pipeline).
-const PIECE_WIDTHS = [600, 1100];
+const PIECE_WIDTHS = [500, 800, 1200];
 
 export function pieceSrcset(path: string): string {
   const base = path.replace(/\.(png|jpe?g)$/i, '');

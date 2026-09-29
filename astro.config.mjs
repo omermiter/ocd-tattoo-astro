@@ -67,11 +67,16 @@ function placeholderSummary() {
 // displays it at a fixed 26rem column on desktop but full-bleed on mobile
 // (see its 800px breakpoint), so a single size is either soft on desktop
 // retina or, per PageSpeed's "Improve image delivery" audit, oversized for
-// mobile. PIECE_WIDTHS must match src/lib/media.ts's copy by hand — this
+// mobile. Three tiers, not two: a first pass at [600, 1100] left a real
+// gap — Lighthouse's own mobile emulation profile needs ~620px, just
+// past 600, so the browser had no choice but to jump straight to the
+// 1100w candidate (nearly double what that viewport actually needs). 800
+// closes that gap; 1200 still covers desktop's 26rem column at up to 3x
+// DPR. PIECE_WIDTHS must match src/lib/media.ts's copy by hand — this
 // hook runs in a raw Node ESM context post-build, after Astro's Vite
 // pipeline has torn down, same reason REDESIGN_ASSETS above is a plain
 // duplicate rather than an import.
-const PIECE_WIDTHS = [600, 1100];
+const PIECE_WIDTHS = [500, 800, 1200];
 const IMAGE_DIRS = [
   { dir: 'gallery', maxEdge: 1200, quality: 80 },
   { dir: 'pieces', widths: PIECE_WIDTHS, quality: 80 },
