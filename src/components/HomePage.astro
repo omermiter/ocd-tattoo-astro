@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
+import FloatingWhatsapp from './FloatingWhatsapp.astro';
 import PrecisionGrid from './PrecisionGrid.astro';
 import PieceCard from './PieceCard.astro';
 import GoogleReviews from './GoogleReviews.astro';
@@ -86,6 +87,7 @@ const descriptions = {
 <BaseLayout title={titles[locale]} description={descriptions[locale]} structuredData={structuredData} locale={locale}>
   <Preloader />
   <Nav locale={locale} />
+  <FloatingWhatsapp locale={locale} />
 
   <main>
     <PrecisionGrid>
@@ -561,6 +563,18 @@ const descriptions = {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
       gap: var(--sp-3);
+    }
+
+    /* A higher floor past the same breakpoint the rest of the page treats
+       as "desktop" — fewer, noticeably bigger cards (4 columns at a
+       typical desktop width instead of 6) rather than the same small
+       thumbnails just given more room. Mobile keeps the lower floor above:
+       a taller floor there would drop it to a single column and make an
+       already-long page longer, the opposite of what's wanted. */
+    @media (min-width: 800px) {
+      .work-grid {
+        grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+      }
     }
 
     /* Border/background live on the frame, not the image, so the image can
