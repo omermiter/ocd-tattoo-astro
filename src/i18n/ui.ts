@@ -14,7 +14,7 @@ export const ui = {
   en: {
     dir: 'ltr' as const,
     nav: {
-      pieces: 'Work',
+      pieces: 'Pieces',
       gallery: 'More work',
       reviews: 'Reviews',
       contact: 'Contact',
@@ -36,9 +36,6 @@ export const ui = {
       hours: 'Hours',
       date: 'Date',
       photographyPending: 'Photography pending',
-    },
-    gallery: {
-      note: 'Pieces marked "Flash" are one-of-one designs, ready to book as they are. Message me to claim one.',
     },
     reviews: {
       eyebrow: 'Reviews',
@@ -90,9 +87,6 @@ export const ui = {
       hours: 'שעות',
       date: 'תאריך',
       photographyPending: 'צילום בהמתנה',
-    },
-    gallery: {
-      note: 'עבודות שמסומנות "פלאש" הן עיצובים חד-פעמיים, מוכנים להזמנה כמו שהם. כתבו לי כדי לתפוס אחד.',
     },
     reviews: {
       eyebrow: 'ביקורות',

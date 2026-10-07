@@ -252,8 +252,6 @@ const descriptions = {
           <div class="work-carousel-mount" data-reveal>
             <WorkCarousel client:visible items={carouselItems} locale={locale} />
           </div>
-
-          <p class="work-note data">{ui.gallery.note}</p>
         </section>
       )
     }
@@ -556,11 +554,6 @@ const descriptions = {
        carousel used at every viewport. See git history for both. */
     .work-carousel-mount {
       margin-inline: calc(var(--sp-3) * -1);
-    }
-
-    .work-note {
-      margin-block-start: var(--sp-4);
-      color: var(--dust);
     }
 
     /* ---- Contact section — centered on the page, editorial pacing
