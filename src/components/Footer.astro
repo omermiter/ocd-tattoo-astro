@@ -12,7 +12,9 @@ interface Props {
 
 const { locale = 'en' } = Astro.props;
 const ui = t(locale);
-const { studioName, address, mapsUrl } = site.contact;
+const { mapsUrl } = site.contact;
+const studioName = locale === 'he' ? site.contact.studioNameHe : site.contact.studioName;
+const address = locale === 'he' ? site.contact.addressHe : site.contact.address;
 const hasMark = pixelArtExists('mark.png');
 const hasInstagramIcon = pixelArtExists('icon-instagram.png');
 const hasWhatsappIcon = pixelArtExists('icon-whatsapp.png');

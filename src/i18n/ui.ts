@@ -14,7 +14,7 @@ export const ui = {
   en: {
     dir: 'ltr' as const,
     nav: {
-      pieces: 'Pieces',
+      pieces: 'Work',
       gallery: 'More work',
       reviews: 'Reviews',
       contact: 'Contact',
@@ -22,7 +22,7 @@ export const ui = {
       switchTo: 'עברית',
     },
     footer: {
-      google: 'Google',
+      google: 'Google Maps',
       instagram: 'Instagram',
       whatsapp: 'WhatsApp',
     },
@@ -38,7 +38,7 @@ export const ui = {
       photographyPending: 'Photography pending',
     },
     gallery: {
-      note: 'Anything above marked "flash" is a one-off design, ready to book as-is — ask about it below.',
+      note: 'Pieces marked "Flash" are one-of-one designs, ready to book as they are. Message me to claim one.',
     },
     reviews: {
       eyebrow: 'Reviews',
@@ -52,9 +52,9 @@ export const ui = {
       eyebrow: 'Contact',
       nameLabel: 'Name',
       emailLabel: 'Email',
-      messageLabel: 'What are you looking for?',
-      messagePlaceholder: 'Placement, size, the idea — as much or as little as you have.',
-      send: 'Send →',
+      messageLabel: 'Your idea',
+      messagePlaceholder: 'A character, a reference link, where on the body, roughly how big.',
+      send: 'Send my idea →',
       sending: 'Sending…',
       sent: 'Sent. I read every message myself — expect a reply within a few days.',
       errorPrefix: 'Something went wrong. Message me directly on',
@@ -76,12 +76,12 @@ export const ui = {
       switchTo: 'English',
     },
     footer: {
-      google: 'גוגל',
+      google: 'גוגל מפות',
       instagram: 'אינסטגרם',
       whatsapp: 'וואטסאפ',
     },
     beat: {
-      cta: '← לצפייה בעבודות',
+      cta: 'לעבודות ←',
     },
     pieceCard: {
       placement: 'מיקום',
@@ -92,7 +92,7 @@ export const ui = {
       photographyPending: 'צילום בהמתנה',
     },
     gallery: {
-      note: 'כל עבודה שמסומנת למעלה כ"פלאש" היא עיצוב חד-פעמי, מוכן להזמנה כמו שהוא — שאלו עליו למטה.',
+      note: 'עבודות שמסומנות "פלאש" הן עיצובים חד-פעמיים, מוכנים להזמנה כמו שהם. כתבו לי כדי לתפוס אחד.',
     },
     reviews: {
       eyebrow: 'ביקורות',
@@ -106,9 +106,9 @@ export const ui = {
       eyebrow: 'צור קשר',
       nameLabel: 'שם',
       emailLabel: 'אימייל',
-      messageLabel: 'מה מעניין אותך?',
-      messagePlaceholder: 'מיקום, גודל, הרעיון — כמה שתרצו לספר, גם אם זה מעט.',
-      send: 'שליחה ←',
+      messageLabel: 'הרעיון שלכם',
+      messagePlaceholder: 'דמות, קישור לרפרנס, מיקום על הגוף וגודל משוער.',
+      send: 'שליחת הרעיון ←',
       sending: 'שולח…',
       sent: 'נשלח. אני קורא כל הודעה בעצמי — צפו לתשובה תוך כמה ימים.',
       errorPrefix: 'משהו השתבש. אפשר לפנות אליי ישירות',

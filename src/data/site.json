@@ -5,37 +5,39 @@
     "instagramUrl": "https://instagram.com/ocd_tattoo",
     "location": "Israel",
     "studioName": "Topa Tattoo Studio",
-    "address": "Weizmann St 42, Kefar Sava, Israel",
-    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=OCD+Tattoo%2C+Weizmann+St+42%2C+Kefar+Sava%2C+Israel&query_place_id=ChIJPUDpyvk5HRURiQFLQf2maVU"
+    "studioNameHe": "טופה טאטו סטודיו",
+    "address": "Weizmann St 42, Kfar Saba, Israel",
+    "addressHe": "ויצמן 42, כפר סבא",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=OCD+Tattoo%2C+Weizmann+St+42%2C+Kfar+Saba%2C+Israel&query_place_id=ChIJPUDpyvk5HRURiQFLQf2maVU"
   },
   "bannerVideoFit": "cover",
   "featureStrip": {
     "en": [
       {
-        "label": "Precision-built",
-        "detail": "Every square placed with the same precision a realist gives a line."
+        "label": "Every square, on purpose.",
+        "detail": "Placed with the care a realist gives a single line."
       },
       {
-        "label": "Hand-drawn, hand-placed",
-        "detail": "Every piece is stenciled and set by hand — never a template, never traced."
+        "label": "Real pixel art, not a filter.",
+        "detail": "Drawn, stenciled and tattooed by hand. Never a template, never traced."
       },
       {
-        "label": "Read personally",
-        "detail": "Every message goes straight to me — no assistant, no auto-reply."
+        "label": "Straight to me.",
+        "detail": "I read and answer every message myself. No assistant, no auto-reply."
       }
     ],
     "he": [
       {
-        "label": "בנייה מדויקת",
-        "detail": "כל ריבוע ממוקם באותה דיוק שבה ריאליסט מותח קו."
+        "label": "כל ריבוע, בכוונה.",
+        "detail": "מונח בדיוק שבו ריאליסט היה מותח קו."
       },
       {
-        "label": "ציור והנחה ביד",
-        "detail": "כל עבודה מסומנת בסטנסיל ומונחת ביד — בלי תבנית, בלי העתקה."
+        "label": "פיקסל ארט אמיתי, לא פילטר.",
+        "detail": "מצויר, מסומן בסטנסיל ומקועקע ביד. בלי תבניות ובלי העתקה."
       },
       {
-        "label": "קריאה אישית",
-        "detail": "כל הודעה מגיעה ישירות אליי — בלי עוזר, בלי מענה אוטומטי."
+        "label": "ישר אליי.",
+        "detail": "אני קורא כל הודעה ועונה עליה בעצמי. בלי עוזר, בלי מענה אוטומטי."
       }
     ]
   },
@@ -49,13 +51,15 @@
     "en": {
       "home": {
         "heroEyebrow": "OCD Tattoo",
-        "heroTitle": "Color Work, Held to a *Realist's* Standard.",
-        "beatText": "Every piece is still drawn, stenciled, and placed with the same precision built over years of black-and-gray realism work — now in color.",
-        "piecesIntro": "A growing collection of precision-built pieces, one at a time.",
-        "galleryIntro": "More finished work, including the black-and-gray realism it's all built on.",
-        "reviewsIntro": "What it's actually like to sit in the chair — straight from Google, unedited.",
-        "contactIntro": "I read every message myself. If it's a fit, I'll ask for a reference and a placement; if it isn't, I'll say so directly instead of leaving you waiting.",
-        "closingTitle": "Commissions are held to the same standard."
+        "heroTitle": "Pixel Art Tattoos, with a *Realist's* Precision.",
+        "beatText": "Years of black-and-gray realism taught the hand where every square belongs. Now it places them in full color: drawn by hand, stenciled by hand, set one square at a time.",
+        "piecesHeading": "The Work",
+        "piecesIntro": "Full-color pixel art, one piece at a time.",
+        "galleryHeading": "The Realism Behind the Pixels",
+        "galleryIntro": "Black-and-gray realism, plus flash designs ready to book.",
+        "reviewsIntro": "What it's like to sit in the chair. Word for word from Google.",
+        "contactIntro": "Every message gets read by me. If it's a fit, I'll ask for a reference and a placement. If it isn't, I'll tell you straight instead of leaving you waiting.",
+        "closingTitle": "Got an idea? Let's turn it into pixels."
       },
       "notFoundPage": {
         "code": "404",
@@ -66,13 +70,15 @@
     "he": {
       "home": {
         "heroEyebrow": "OCD Tattoo",
-        "heroTitle": "עבודת צבע, בדיוק של *ריאליסט*.",
-        "beatText": "כל עבודה מצוירת, מסומנת בסטנסיל ומונחת באותה רמת דיוק שנבנתה במשך שנות עבודה בריאליזם בשחור-אפור — עכשיו בצבע.",
-        "piecesIntro": "אוסף הולך וגדל של עבודות מדויקות, אחת בכל פעם.",
-        "galleryIntro": "עוד עבודות גמורות, כולל הריאליזם בשחור-אפור שעליו הכול נבנה.",
-        "reviewsIntro": "איך זה באמת לשבת בכיסא הקעקוע — ישירות מגוגל, בלי עריכה.",
-        "contactIntro": "אני קורא כל הודעה בעצמי. אם זה מתאים, אבקש רפרנס ומיקום; אם לא, אגיד את זה בבירור במקום להשאיר אותך מחכה.",
-        "closingTitle": "עבודות מוזמנות נשמרות לאותו סטנדרט."
+        "heroTitle": "פיקסל ארט, עם דיוק של *ריאליסט*.",
+        "beatText": "שנים של ריאליזם בשחור-אפור לימדו את היד איפה כל ריבוע שייך. עכשיו היא מניחה אותו בצבע מלא: כל קעקוע מצויר ביד, מסומן בסטנסיל ונבנה ריבוע אחרי ריבוע.",
+        "piecesHeading": "עבודות",
+        "piecesIntro": "קעקועי פיקסל ארט בצבע מלא, אחד בכל פעם.",
+        "galleryHeading": "הריאליזם שמאחורי הפיקסלים",
+        "galleryIntro": "ריאליזם בשחור-אפור, ועיצובי פלאש מוכנים להזמנה.",
+        "reviewsIntro": "איך זה באמת לשבת בכיסא. ישר מגוגל, בלי עריכה.",
+        "contactIntro": "אני קורא כל הודעה בעצמי. אם זה מתאים, אבקש רפרנס ומיקום על הגוף. אם לא, תשמעו את זה ממני ישר, בלי להשאיר אתכם מחכים.",
+        "closingTitle": "יש רעיון? בואו נהפוך אותו לפיקסלים."
       },
       "notFoundPage": {
         "code": "404",
