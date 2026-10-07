@@ -9,6 +9,7 @@ import PieceCard from './PieceCard.astro';
 import GoogleReviews from './GoogleReviews.astro';
 import Preloader from './Preloader.astro';
 import PixelDivider from './PixelDivider.astro';
+import Lightbox from './Lightbox.astro';
 import { WorkCarousel } from './react/WorkCarousel';
 import { renderEmphasis } from '../lib/text';
 import { hasPhoto, toWebp } from '../lib/media';
@@ -298,6 +299,7 @@ const descriptions = {
   </main>
 
   <Footer locale={locale} />
+  <Lightbox locale={locale} />
 
   <style>
     .hero {
@@ -368,7 +370,20 @@ const descriptions = {
       position: absolute;
       inset: 0;
       z-index: 1;
-      background-image: linear-gradient(180deg, rgba(8, 8, 10, 0.6), rgba(8, 8, 10, 0.82));
+      /* Two layers: the original top-to-bottom read, plus a second gradient
+         that darkens specifically behind the text column (left-aligned,
+         see .hero-content's max-width) and fades out toward the right —
+         a vignette, not a flat tint, so the headline reads clearly over
+         busy banner footage without flattening the rest of the frame. */
+      background-image:
+        linear-gradient(180deg, rgba(8, 8, 10, 0.68), rgba(8, 8, 10, 0.86)),
+        linear-gradient(100deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 50%, rgba(8, 8, 10, 0) 78%);
+    }
+
+    :global([dir='rtl']) .hero-scrim {
+      background-image:
+        linear-gradient(180deg, rgba(8, 8, 10, 0.68), rgba(8, 8, 10, 0.86)),
+        linear-gradient(260deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 50%, rgba(8, 8, 10, 0) 78%);
     }
 
     .hero-content {

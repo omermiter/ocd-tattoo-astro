@@ -36,6 +36,8 @@ export const ui = {
       hours: 'Hours',
       date: 'Date',
       photographyPending: 'Photography pending',
+      expand: 'View larger',
+      close: 'Close',
     },
     reviews: {
       eyebrow: 'Reviews',
@@ -87,6 +89,8 @@ export const ui = {
       hours: 'שעות',
       date: 'תאריך',
       photographyPending: 'צילום בהמתנה',
+      expand: 'הגדלת תמונה',
+      close: 'סגירה',
     },
     reviews: {
       eyebrow: 'ביקורות',

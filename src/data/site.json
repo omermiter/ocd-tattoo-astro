@@ -90,20 +90,20 @@
   "middleBannerImage": "/uploads/סרטון-8-תדמית.00_00_20_35.still001.jpg",
   "gallery": [
     { "title": "Gear 5", "photo": "/gallery/fullsizerender.png" },
-    { "title": "gojo", "photo": "/gallery/img_6465.png" },
-    { "title": "Lego head", "photo": "/gallery/img_7372.jpeg" },
+    { "title": "Gojo", "photo": "/gallery/img_6465.png" },
+    { "title": "Lego Head", "photo": "/gallery/img_7372.jpeg" },
     { "title": "Hummingbird", "photo": "/gallery/img_8797.jpeg" },
-    { "title": "Manta ray", "photo": "/gallery/img_8761.jpeg" },
-    { "title": "smoke dragon", "photo": "/gallery/img_7418.jpeg" },
-    { "title": "saluki", "photo": "/gallery/img_8159.jpeg" },
-    { "title": "Swords and tigers", "photo": "/gallery/img_9103.jpeg" },
+    { "title": "Manta Ray", "photo": "/gallery/img_8761.jpeg" },
+    { "title": "Smoke Dragon", "photo": "/gallery/img_7418.jpeg" },
+    { "title": "Saluki", "photo": "/gallery/img_8159.jpeg" },
+    { "title": "Swords and Tigers", "photo": "/gallery/img_9103.jpeg" },
     { "title": "Statue", "photo": "/gallery/img_8429.jpeg" },
     { "title": "Tiger", "photo": "/gallery/img_8612.jpeg" },
-    { "title": "the great wave", "photo": "/gallery/img_8507.jpeg" },
+    { "title": "The Great Wave", "photo": "/gallery/img_8507.jpeg" },
     { "title": "Vase", "photo": "/gallery/img_7387.jpeg" },
-    { "title": "ballerina", "photo": "/gallery/img_7560.jpeg" },
-    { "title": "Japanese stamp", "photo": "/gallery/img_8448.jpeg" },
-    { "title": "Lady with a pearl earring", "photo": "/gallery/untitled-design-4-.png" },
-    { "title": "text", "photo": "/gallery/img_8523.jpeg" }
+    { "title": "Ballerina", "photo": "/gallery/img_7560.jpeg" },
+    { "title": "Japanese Stamp", "photo": "/gallery/img_8448.jpeg" },
+    { "title": "Lady with a Pearl Earring", "photo": "/gallery/untitled-design-4-.png" },
+    { "title": "Text", "photo": "/gallery/img_8523.jpeg" }
   ]
 }

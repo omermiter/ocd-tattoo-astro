@@ -1,0 +1,101 @@
+---
+// Full-size viewer for any [data-lightbox-trigger] button on the page
+// (currently just PieceMedia's piece photos — pixel art rewards getting
+// close). One <dialog>, mounted once; native showModal() gives us focus
+// trapping, Escape-to-close and a ::backdrop for free.
+import { t, type Locale } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const ui = t(locale);
+---
+
+<dialog class="lightbox" data-lightbox aria-label={ui.pieceCard.expand}>
+  <button type="button" class="lightbox-close" data-lightbox-close aria-label={ui.pieceCard.close}>
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <img data-lightbox-img alt="" />
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (dialog) {
+    const img = dialog.querySelector<HTMLImageElement>('[data-lightbox-img]');
+    const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-lightbox-close]');
+
+    document.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-lightbox-trigger]');
+      if (!trigger || !img) return;
+      const src = trigger.dataset.lightboxSrc;
+      if (!src) return;
+      img.src = src;
+      img.alt = trigger.dataset.lightboxAlt ?? '';
+      dialog.showModal();
+    });
+
+    closeBtn?.addEventListener('click', () => dialog.close());
+
+    // Click on the backdrop (the dialog element itself receives the click
+    // when nothing inside it was hit) also dismisses — standard lightbox
+    // behavior, in addition to the close button and native Escape.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Clears the image so a slow network doesn't keep showing the
+    // previous piece for a beat the next time the dialog opens.
+    dialog.addEventListener('close', () => {
+      if (img) img.src = '';
+    });
+  }
+</script>
+
+<style>
+  .lightbox {
+    border: none;
+    background: transparent;
+    padding: 0;
+    max-width: min(92vw, 70rem);
+    max-height: 92vh;
+  }
+
+  .lightbox::backdrop {
+    background: rgba(8, 8, 10, 0.92);
+  }
+
+  .lightbox[open] {
+    display: flex;
+  }
+
+  .lightbox img {
+    display: block;
+    max-width: min(92vw, 70rem);
+    max-height: 92vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin: auto;
+  }
+
+  .lightbox-close {
+    position: fixed;
+    top: var(--sp-3);
+    inset-inline-end: var(--sp-3);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    color: var(--paper);
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .lightbox-close:hover,
+  .lightbox-close:focus-visible {
+    color: var(--claim);
+  }
+</style>

@@ -95,6 +95,21 @@ const p = entry.data;
     color: var(--paper);
     max-width: 30rem;
     line-height: 1.6;
+    /* Always English (see i18n/ui.ts — per-piece notes stay untranslated).
+       `unicode-bidi: isolate` alone isn't enough here — it still resolves
+       against the *inherited* `direction` (rtl on the Hebrew page), same
+       as plain `isolate` on <bdi> without dir="auto": the trailing period
+       reorders to the front, ".Steelix in full-color pixel art" instead of
+       "Steelix in full-color pixel art." `direction: ltr` is what actually
+       fixes the ordering; `text-align: right` keeps the block itself
+       flush right so it still sits like the rest of the Hebrew card. */
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: right;
+  }
+
+  :global([dir='ltr']) .note {
+    text-align: left;
   }
 
   @media (max-width: 800px) {

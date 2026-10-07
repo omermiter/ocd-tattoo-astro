@@ -65,6 +65,7 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
                     </span>
                     <span class="data google-mark">{ui.reviews.googleMark}</span>
                   </div>
+                  <span class="review-mark" aria-hidden="true">”</span>
                   <p class="review-text">{r.text}</p>
                   <p class="data review-author">
                     {r.authorName} · {r.relativeTime}
@@ -169,13 +170,15 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
     gap: var(--sp-3);
   }
 
+  /* Hairline-topped, no fill — matches how the rest of the site marks off
+     a block (PieceCard's spec table, .rating-block above) instead of the
+     generic filled-card-in-a-grid look a review widget defaults to. */
   .review-card {
     display: flex;
     flex-direction: column;
-    gap: var(--sp-2);
-    padding: var(--sp-3);
-    background: var(--surface);
-    border: var(--border-hairline);
+    gap: var(--sp-1);
+    padding-block-start: var(--sp-3);
+    border-block-start: var(--border-hairline);
   }
 
   .review-head {
@@ -187,6 +190,18 @@ const stars = (n: number) => '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math
   .google-mark {
     text-transform: uppercase;
     color: var(--dust);
+  }
+
+  /* Same italic-serif/violet signature as .rating-number and .trust-number
+     — a decorative close-quote, not literal punctuation around the review
+     (real review text already carries its own), echoing the one
+     typographic flourish the rest of the page already uses for emphasis. */
+  .review-mark {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--fs-display-sm);
+    line-height: 0.5;
+    color: var(--violet-display);
   }
 
   .review-text {

@@ -25,18 +25,27 @@ const hasPendingMark = pixelArtExists('pending-mark.png');
 >
   {
     available && photo ? (
-      /* sizes' mobile branch subtracts .section's own horizontal padding
-         (--sp-3, 1.75rem each side — see HomePage.astro) from 100vw: the
-         image never actually renders edge-to-edge on mobile, and claiming
-         it does was making the browser fetch the 1100w candidate where
-         600w already covers the real rendered width. */
-      <img
-        src={pieceFallback(photo)}
-        srcset={pieceSrcset(photo)}
-        sizes="(min-width: 800px) 26rem, calc(100vw - 3.5rem)"
-        alt={alt}
-        loading="lazy"
-      />
+      <button
+        type="button"
+        class="piece-media-trigger"
+        data-lightbox-trigger
+        data-lightbox-src={pieceFallback(photo)}
+        data-lightbox-alt={alt}
+        aria-label={`${ui.pieceCard.expand} — ${alt}`}
+      >
+        {/* sizes' mobile branch subtracts .section's own horizontal padding
+           (--sp-3, 1.75rem each side — see HomePage.astro) from 100vw: the
+           image never actually renders edge-to-edge on mobile, and claiming
+           it does was making the browser fetch the 1100w candidate where
+           600w already covers the real rendered width. */}
+        <img
+          src={pieceFallback(photo)}
+          srcset={pieceSrcset(photo)}
+          sizes="(min-width: 800px) 26rem, calc(100vw - 3.5rem)"
+          alt={alt}
+          loading="lazy"
+        />
+      </button>
     ) : (
       <div class="pending-panel grid-texture" role="img" aria-label={`${alt} — ${ui.pieceCard.photographyPending}`}>
         {hasPendingMark && <img class="pending-mark pixel-art" src={pixelArtPath('pending-mark.png')} alt="" width="32" height="32" loading="lazy" />}
@@ -59,6 +68,16 @@ const hasPendingMark = pixelArtExists('pending-mark.png');
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .piece-media-trigger {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
   }
 
   /* A missing photo is treated as a deliberate specimen card, not an empty

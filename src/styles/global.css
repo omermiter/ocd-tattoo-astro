@@ -187,3 +187,21 @@ hr {
   border-block-start: var(--border-hairline);
   margin: 0;
 }
+
+/* Sitewide film-grain — tactility to match an ink/paper subject, and an
+   on-trend texture pass that costs nothing (SVG noise, no image asset).
+   Fixed + pointer-events:none so it never affects layout, scrolling or
+   hit-testing; kept well under the cursor (z-index 9999 in pixel-art.css)
+   and the preloader (100), but above the nav/WhatsApp button (30/50) so
+   the texture reads across the whole viewport, not just the page body. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}

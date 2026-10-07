@@ -92,8 +92,21 @@ function heroIntro() {
   else window.addEventListener('ocd:intro', play, { once: true });
 }
 
-// Letters rise into place as the heading scrolls through the lower half of
-// the viewport — scrubbed, so scrolling back up plays it in reverse.
+// Letters rise into place once the heading reaches the lower half of the
+// viewport, and settle back out if you scroll back up past it.
+//
+// Deliberately NOT a continuous scroll-scrub (that was the original
+// implementation, and it was broken): with a per-character stagger, a
+// scrubbed tween's progress is bound to scroll position through a lagged
+// "catch-up" tween, so each character — offset from the next by `stagger`
+// — ends up resolved against a slightly different moment of that lag.
+// Scroll at anything like normal speed and the catch-up tween never
+// finishes before you're past the trigger's `end`, leaving characters
+// permanently stuck mid-transform (tilted, half-opacity, sunk below the
+// baseline) instead of settling — reproduced live on both the feature
+// strip labels and every piece title. A toggled play/reverse instead runs
+// each character's tween to full, guaranteed completion once it starts,
+// independent of scroll speed.
 function scrubHeadings() {
   document.querySelectorAll<HTMLElement>('[data-split="scrub"]').forEach((el) => {
     const chars = splitChars(el);
@@ -104,9 +117,10 @@ function scrubHeadings() {
         opacity: 1,
         yPercent: 0,
         rotation: 0,
+        duration: 0.8,
         ease: 'power2.out',
         stagger: chars ? 0.04 : 0,
-        scrollTrigger: { trigger: el, start: 'top 88%', end: 'top 55%', scrub: 0.8 },
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' },
       },
     );
   });
@@ -122,7 +136,7 @@ function growLines() {
       {
         '--line-scale': 1,
         ease: 'none',
-        scrollTrigger: { trigger: el, start: 'top 85%', end: 'bottom 55%', scrub: 0.8 },
+        scrollTrigger: { trigger: el, start: 'top 85%', end: 'bottom 55%', scrub: 0.8, fastScrollEnd: true },
       },
     );
   });
@@ -135,7 +149,7 @@ function openFrames() {
     const img = frame.querySelector('img');
     if (!img) return;
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: frame, start: 'top 92%', end: 'top 45%', scrub: 0.8 },
+      scrollTrigger: { trigger: frame, start: 'top 92%', end: 'top 45%', scrub: 0.8, fastScrollEnd: true },
     });
     tl.fromTo(frame, { clipPath: 'inset(12% 12% 12% 12%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none' }, 0);
     tl.fromTo(img, { scale: 1.25 }, { scale: 1, ease: 'none' }, 0);
