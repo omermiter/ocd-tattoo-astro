@@ -58,11 +58,41 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
          Analytics. -->
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "34c31e0adcca4b61b893e5ae41a28f17"}'
     ></script>
+    <!-- Google Analytics 4 (property "ocdtattoo.com"). Enhanced measurement
+         covers page views, scrolls, outbound clicks and engagement time;
+         bounce rate / avg. engagement time come built into GA4 reports. The
+         custom events (whatsapp_click, instagram_click, language_switch) are
+         sent by the click listener at the bottom of this file. -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-L9DVDZ3Q3F"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-L9DVDZ3Q3F');
+    </script>
   </head>
   <body>
     <Cursor />
     <slot />
   </body>
+
+  <script is:inline>
+    // GA4 custom events, delegated so it covers every link on the page
+    // (nav, hero, footer, floating button) without per-component wiring.
+    document.addEventListener('click', (e) => {
+      const a = e.target instanceof Element ? e.target.closest('a') : null;
+      if (!a || typeof gtag !== 'function') return;
+      const href = a.getAttribute('href') || '';
+      const page = location.pathname;
+      if (href.includes('wa.me') || href.includes('whatsapp.com')) {
+        gtag('event', 'whatsapp_click', { page_path: page });
+      } else if (href.includes('instagram.com')) {
+        gtag('event', 'instagram_click', { page_path: page });
+      } else if (a.classList.contains('lang-switch')) {
+        gtag('event', 'language_switch', { to_language: a.getAttribute('hreflang') || '' });
+      }
+    });
+  </script>
 
   <script>
     // Global scroll-reveal: any element marked data-reveal fades/rises in
