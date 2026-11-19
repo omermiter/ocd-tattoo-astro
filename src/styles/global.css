@@ -77,6 +77,14 @@ select {
   font-weight: 500;
 }
 
+/* Section eyebrows are real <h2>s for the document outline; undo the global
+   heading weight/leading so they look exactly like the <p> they replaced. */
+h2.eyebrow {
+  font-weight: inherit;
+  line-height: inherit;
+  text-wrap: wrap;
+}
+
 .eyebrow {
   font-family: var(--font-data);
   font-size: var(--fs-00);

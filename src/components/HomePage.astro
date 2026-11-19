@@ -33,7 +33,7 @@ const moreWork = site.gallery.filter((g) => hasPhoto(g.photo));
 // Same photos/order as the grid above, reshaped for the mobile-only WebGL
 // carousel (LiquidGlassCarousel below) — no aspect override, so it measures
 // each photo's real ratio once loaded instead of assuming one.
-const carouselItems = moreWork.map((g) => ({ src: toWebp(g.photo), title: g.title }));
+const carouselItems = moreWork.map((g) => ({ src: toWebp(g.photo), title: g.title, alt: ui.alt.work(g.title) }));
 const { home, contact, googleReviews, bannerImage } = { home: site.locales[locale].home, contact: site.contact, googleReviews: site.googleReviews, bannerImage: site.bannerImage };
 // hasPhoto is a plain build-time "does this file exist under public/" check
 // despite the name (see src/lib/media.ts) — reused here so a bannerVideo
@@ -59,27 +59,6 @@ const middleBannerImage =
     ? site.middleBannerImage
     : pieces.find((p) => p.data.photo && hasPhoto(p.data.photo))?.data.photo;
 
-const structuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: contact.studioName,
-  image: `https://ocdtattoo.com${bannerImage}`,
-  url: `https://ocdtattoo.com${localePath(locale)}`,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: contact.address,
-    addressCountry: 'IL',
-  },
-  sameAs: [contact.instagramUrl],
-  ...(reviewsData && {
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: reviewsData.rating,
-      reviewCount: reviewsData.reviewCount,
-    },
-  }),
-};
-
 const titles = {
   en: 'OCD Tattoo — Pixel Art Tattoos in Kfar Saba, Israel',
   he: 'OCD Tattoo — קעקועי פיקסל ארט בכפר סבא',
@@ -87,6 +66,35 @@ const titles = {
 const descriptions = {
   en: 'Full-color pixel art tattoos from a black-and-gray realist. Drawn, stenciled and placed by hand at Topa Tattoo Studio, Kfar Saba. 5.0 on Google.',
   he: 'קעקועי פיקסל ארט בצבע מלא מאמן שבא מריאליזם בשחור-אפור. מצוירים, מסומנים ומונחים ביד בטופה טאטו סטודיו, כפר סבא. 5.0 בגוגל.',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': ['TattooParlor', 'LocalBusiness'],
+  name: 'OCD Tattoo',
+  // The artist's brand works out of this studio — keep both names so the
+  // Google listing (OCD Tattoo) and the venue (Topa) both resolve.
+  alternateName: [contact.studioName, contact.studioNameHe],
+  description: descriptions[locale],
+  inLanguage: locale,
+  image: `https://ocdtattoo.com${toWebp(bannerImage)}`,
+  url: `https://ocdtattoo.com${localePath(locale)}`,
+  telephone: `+${contact.whatsappNumber}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: locale === 'he' ? contact.addressHe : contact.address,
+    addressLocality: locale === 'he' ? 'כפר סבא' : 'Kfar Saba',
+    addressCountry: 'IL',
+  },
+  hasMap: contact.mapsUrl,
+  sameAs: [contact.instagramUrl, contact.mapsUrl],
+  ...(reviewsData && {
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: reviewsData.rating,
+      reviewCount: reviewsData.reviewCount,
+    },
+  }),
 };
 ---
 
@@ -222,7 +230,7 @@ const descriptions = {
 
     <section class="section pieces" id="pieces">
       <header class="section-head" data-reveal>
-        <p class="eyebrow">{home.piecesHeading}</p>
+        <h2 class="eyebrow">{home.piecesHeading}</h2>
         <p class="intro">{home.piecesIntro}</p>
       </header>
 
@@ -234,7 +242,7 @@ const descriptions = {
     {
       middleBannerImage && (
         <div class="photo-break" data-parallax>
-          <img src={toWebp(middleBannerImage)} alt="" loading="lazy" />
+          <img src={toWebp(middleBannerImage)} alt={ui.alt.photoBreak} loading="lazy" />
         </div>
       )
     }
@@ -243,7 +251,7 @@ const descriptions = {
       moreWork.length > 0 && (
         <section class="section more-work" id="gallery">
           <header class="section-head" data-reveal>
-            <p class="eyebrow">{home.galleryHeading}</p>
+            <h2 class="eyebrow">{home.galleryHeading}</h2>
             <p class="intro">{home.galleryIntro}</p>
           </header>
 

@@ -26,6 +26,12 @@ interface Props {
 const { title, description, structuredData, locale = 'en', preloadImage } = Astro.props;
 const dir = locale === 'he' ? 'rtl' : 'ltr';
 
+// Absolute URLs for canonical + social previews. The preload image doubles as
+// the share image: it's already the hero's optimized WebP (~48 KB), well under
+// WhatsApp's ~300 KB preview limit, unlike the 1.6 MB source PNG.
+const canonicalUrl = new URL(Astro.url.pathname, 'https://ocdtattoo.com').href;
+const ogImageUrl = preloadImage ? new URL(preloadImage, 'https://ocdtattoo.com').href : undefined;
+
 // The pixel-art favicon is additive, not a replacement: favicon.svg stays as
 // the permanent fallback so the tab icon is never missing, and the
 // hand-drawn one appears automatically once dropped in and rebuilt.
@@ -46,9 +52,18 @@ const hasPixelFavicon = pixelArtExists('favicon.png');
     <script is:inline>
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
     </script>
+    <link rel="canonical" href={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="OCD Tattoo" />
+    <meta property="og:locale" content={locale === 'he' ? 'he_IL' : 'en_US'} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    <meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
     <link rel="alternate" hreflang="en" href={`https://ocdtattoo.com${localePath('en')}`} />
     <link rel="alternate" hreflang="he" href={`https://ocdtattoo.com${localePath('he')}`} />
     <link rel="alternate" hreflang="x-default" href={`https://ocdtattoo.com${localePath('en')}`} />

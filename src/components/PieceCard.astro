@@ -14,10 +14,10 @@ const p = entry.data;
 ---
 
 <article class="piece">
-  <PieceMedia photo={p.photo} serial={p.serial} alt={p.title} locale={locale} />
+  <PieceMedia photo={p.photo} serial={p.serial} alt={ui.alt.piece(p.title, p.placement)} locale={locale} />
   <div class="piece-meta">
     <span class="data serial">{p.serial}</span>
-    <h2 data-split="scrub">{p.title}</h2>
+    <h3 data-split="scrub">{p.title}</h3>
     <dl class="data specs">
       <div>
         <dt>{ui.pieceCard.placement}</dt>
@@ -63,7 +63,7 @@ const p = entry.data;
     color: var(--dust);
   }
 
-  .piece-meta h2 {
+  .piece-meta h3 {
     font-size: var(--fs-3);
   }
 

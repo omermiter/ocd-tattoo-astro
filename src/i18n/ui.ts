@@ -63,6 +63,11 @@ export const ui = {
     notFound: {
       back: '← Back to the work',
     },
+    alt: {
+      piece: (title: string, placement: string) => `${title}, full-color pixel art tattoo (${placement})`,
+      work: (title: string) => `${title}, tattoo by OCD Tattoo in Kfar Saba`,
+      photoBreak: 'Close-up of a tattoo needle at work on skin',
+    },
   },
   he: {
     dir: 'rtl' as const,
@@ -115,6 +120,11 @@ export const ui = {
     },
     notFound: {
       back: '→ חזרה לעבודות',
+    },
+    alt: {
+      piece: (title: string, placement: string) => `${title}, קעקוע פיקסל ארט בצבע מלא (${placement})`,
+      work: (title: string) => `${title}, קעקוע של OCD Tattoo בכפר סבא`,
+      photoBreak: 'תקריב של מחט קעקוע בעבודה על העור',
     },
   },
 } as const;

@@ -11,6 +11,7 @@ import sharp from 'sharp';
 const execFileAsync = promisify(execFile);
 
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 
 // Prints how many redesign pixel-art assets (ASSETS-TO-DRAW.md) are still
 // unfilled after every build — the build-time half of the placeholder
@@ -247,7 +248,18 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
-  integrations: [placeholderSummary(), optimizeImages(), optimizeVideo(), react()],
+  integrations: [
+    placeholderSummary(),
+    optimizeImages(),
+    optimizeVideo(),
+    react(),
+    // 404 is excluded so it never appears in the sitemap; the en/he pair is
+    // cross-linked with hreflang alternates for Google.
+    sitemap({
+      filter: (page) => !page.includes('/404'),
+      i18n: { defaultLocale: 'en', locales: { en: 'en', he: 'he' } },
+    }),
+  ],
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'he'],

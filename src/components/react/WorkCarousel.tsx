@@ -11,6 +11,8 @@ import styles from './WorkCarousel.module.css';
 export interface WorkCarouselItem {
   src: string;
   title: string;
+  /** Descriptive alt text; falls back to the title if omitted. */
+  alt?: string;
 }
 
 interface Props {
@@ -53,7 +55,7 @@ export function WorkCarousel({ items, locale = 'en' }: Props) {
         {items.map((item) => (
           <SwiperSlide key={item.src} className={styles.slide}>
             <div className={styles.frame}>
-              <img src={item.src} alt={item.title} loading="lazy" />
+              <img src={item.src} alt={item.alt ?? item.title} loading="lazy" />
             </div>
             <p className={`${styles.caption} data`}>{item.title}</p>
           </SwiperSlide>
